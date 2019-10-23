@@ -1,0 +1,2 @@
+include ':app'
+rootProject.name='ithaca-transit-android-v2'

@@ -2,33 +2,25 @@ package com.example.ithaca_transit_android_v2.Models
 
 import com.example.ithaca_transit_android_v2.models.Coordinate
 import com.example.ithaca_transit_android_v2.models.Location
-import java.util.*
+import java.util.Date
 
 sealed class MapState(
-    val trip:Trip = Trip(
-        emptyList(),
-        Location("", Coordinate(0.0, 0.0), ""),
-        Location("", Coordinate(0.0, 0.0), ""),
-        false,
-        Date(0),
-        Date(0),
-        0)
-) {}
+    trips: List<Trip>
+)
 
-class LaunchState():MapState()
+class LaunchState():MapState(emptyList())
+
 class LaunchStateFilled(
     busStops: List<Coordinate>
-): MapState()
+): MapState(emptyList())
 
-class BusStopsShown():MapState() {}
+class BusStopsShown():MapState(emptyList())
 
 class TripOptions(
     firstBusTrip: Trip,
     walkingTrip: Trip
-): MapState(){}
+): MapState(listOf(firstBusTrip, walkingTrip))
 
 class SelectedTrip(
     selectedTrip: Trip
-):MapState(
-    selectedTrip
-){}
+):MapState(listOf(selectedTrip))

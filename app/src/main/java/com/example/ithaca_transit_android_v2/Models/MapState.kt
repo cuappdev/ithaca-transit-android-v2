@@ -12,7 +12,7 @@ class LaunchState():MapState(emptyList())
 
 //State that represents the map with all bus stops marked and marks the user's current location.
 class LaunchStateFilled(
-    busStops: List<Coordinate>,
+    busStops: List<Location>,
     currentLocation: Coordinate
 ): MapState(emptyList())
 

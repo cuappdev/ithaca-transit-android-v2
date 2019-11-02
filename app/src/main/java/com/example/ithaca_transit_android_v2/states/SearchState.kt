@@ -9,8 +9,10 @@ sealed class SearchState(
     val endLocation: Location = Location("", Coordinate(0.0, 0.0), "")
 ) {}
 
+// Default search state
 class LaunchState() : SearchState()
 
+// Search state when user has no favorite or recent destinations
 class EmptyInitClickState() : SearchState()
 
 /*
@@ -18,7 +20,6 @@ class EmptyInitClickState() : SearchState()
  * Destinations. **Will be different from EmptyInitSearchState after v.0**
  */
 class InitClickState() : SearchState()
-
 
 // Immediately following InitClickState or EmptyInitClickState when user begins typing.
 class InitSearchState(
@@ -31,7 +32,7 @@ class InitSearchState(
 class RouteDisplayState(
     startLocation: Location,
     endLocation: Location
-) : SearchState(startLocation = startLocation, endLocation = endLocation) {}
+) : SearchState(startLocation, endLocation) {}
 
 /*
  * A clickable bar with Start Location name
@@ -40,7 +41,7 @@ class RouteDisplayState(
 class RouteOptionState(
     startLocation: Location,
     endLocation: Location
-) : SearchState(startLocation = startLocation, endLocation = endLocation) {}
+) : SearchState(startLocation, endLocation) {}
 
 /*
  * In the Route Options state, when the user clicks either the start or end location,
@@ -51,5 +52,3 @@ class ChangeLocationState(
     searchText: String,
     searchedLocations: List<Location>
 ) : SearchState() {}
-
-

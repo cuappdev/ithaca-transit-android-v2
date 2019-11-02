@@ -4,11 +4,11 @@ import com.example.ithaca_transit_android_v2.models.Location
 import java.util.*
 
 data class Route(
-    val listOfCoordinates: Array<Coordinate>,
+    val listOfCoordinates: List<Coordinate>,
     val startTime: Date,
     val endTime: Date,
     val startLocation: Location,
     val endLocation: Location,
-    val busStops: Array<Location>,
+    val busStops: List<Location>,
     val busNumber: Int
 ) {}

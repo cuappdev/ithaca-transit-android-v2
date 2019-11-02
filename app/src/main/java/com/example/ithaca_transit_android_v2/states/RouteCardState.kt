@@ -8,19 +8,13 @@ sealed class RouteCardState (
 )
 
 /*
- * Route cards at the bottom of launch screen.
- * Bus number displayed is obtained from [trip.routes].
- */
-class LaunchCardState(trips: List<Trip>): RouteCardState(trips = trips)
-
-/*
  * A default display of a route card in route option view.
  * [trip.isWalkingOnly] and number of [trip.routes] affects the drawing of transit details.
  */
 class RouteOptionState(trips: List<Trip>): RouteCardState(trips = trips)
 
 /*
- * A route card at [RouteOptionState] or [LaunchCardState] is clicked.
+ * A route card from [RouteOptionState] is clicked.
  * [RouteDetailViewState] displays the selected trip in detail.
  * Takes in only one [trip] object because only one trip is displayed.
  */

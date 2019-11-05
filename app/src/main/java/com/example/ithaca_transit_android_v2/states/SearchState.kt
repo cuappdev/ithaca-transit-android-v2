@@ -10,7 +10,7 @@ sealed class SearchState(
 ) {}
 
 // Default search state
-class LaunchState() : SearchState()
+class SearchLaunchState() : SearchState()
 
 // Search state when user has no favorite or recent destinations
 class EmptyInitClickState() : SearchState()
@@ -38,13 +38,13 @@ class RouteDisplayState(
  * A clickable bar with Start Location name
  * A clickable bar with Destination name
  */
-class RouteOptionState(
+class SearchRouteOptionState(
     startLocation: Location,
     endLocation: Location
 ) : SearchState(startLocation, endLocation) {}
 
 /*
- * In the Route Options state, when the user clicks either the start or end location,
+ * In the Direction Options state, when the user clicks either the start or end location,
  * automatically creating a blank typing field for changes
  */
 class ChangeLocationState(

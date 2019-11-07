@@ -17,7 +17,6 @@ import com.example.ithaca_transit_android_v2.Models.LocationType
 import com.example.ithaca_transit_android_v2.models.Coordinate
 import com.squareup.moshi.*
 
-
 /*
  * NetworkUtils include all the networking calls needed
  */
@@ -27,11 +26,12 @@ class NetworkUtils {
         client: OkHttpClient,
         url: String,
         query: String
-    ) {
+    ): List<Location> {
 
         val json = JSONObject()
         json.put("query", query)
         val mediaType = ("application/json; charset=utf-8").toMediaType()
+        var locListReturn: List<Location> = emptyList()
 
         val requestBody = json.toString().toRequestBody(mediaType)
 
@@ -57,11 +57,18 @@ class NetworkUtils {
 
                 val adapter: JsonAdapter<List<Location>> = moshi.adapter(type)
 
-                val locList : List<Location>? = (adapter.fromJson(body))
+                val locList: List<Location>? = (adapter.fromJson(body))
                 // Test to see if we are successfully wrapping json into objects
                 Log.d("Return Value", locList.toString())
+
+                if (locList != null) {
+                    locListReturn = locList
+                }
+
             }
         })
+
+        return locListReturn
     }
 }
 
@@ -96,14 +103,13 @@ class LocationAdapter {
     @FromJson
     private fun fromJson(json: DataLocation): List<Location> {
 //        var finalLoc : Array<Location> = arrayOf()
-        var type : LocationType
+        var type: LocationType
 
 
         val finalLoc = json.data.map { loc ->
-            if(loc.type.equals("busStop")){
+            if (loc.type.equals("busStop")) {
                 type = LocationType.BUSSTOP
-            }
-            else{
+            } else {
                 type = LocationType.GOOGLEPLACE
             }
 
@@ -116,7 +122,13 @@ class LocationAdapter {
     private fun toJson(json: List<Location>): DataLocation {
 
         val final = json.map { loc ->
-            JsonLocation("Nothing", loc.name, loc.coordinate.latitude, loc.coordinate.longitude, loc.detail)
+            JsonLocation(
+                "Nothing",
+                loc.name,
+                loc.coordinate.latitude,
+                loc.coordinate.longitude,
+                loc.detail
+            )
         }
         return DataLocation(final)
     }

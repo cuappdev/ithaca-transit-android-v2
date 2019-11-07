@@ -39,7 +39,7 @@ class RouteDisplayState(
  * A clickable bar with Start Location name
  * A clickable bar with Destination name
  */
-class RouteOptionStateTemp(
+class SearchRouteOptionState(
     startLocation: Location,
     endLocation: Location
 ) : SearchState(startLocation, endLocation) {}

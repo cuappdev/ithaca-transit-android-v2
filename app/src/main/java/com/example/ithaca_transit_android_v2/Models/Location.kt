@@ -10,4 +10,4 @@ data class Location (
     val name: String,
     val coordinate : Coordinate,
     val detail: String?
-) {}
+)

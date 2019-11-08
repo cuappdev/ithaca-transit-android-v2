@@ -22,9 +22,11 @@ import com.squareup.moshi.*
  */
 class NetworkUtils {
 
+    val client = OkHttpClient()
+    val url = "https://transit-backend.cornellappdev.com/api/v2/"
+
+    // Function that takes in query and returns list of Locations
     fun getSearchedLocations(
-        client: OkHttpClient,
-        url: String,
         query: String
     ): List<Location> {
 
@@ -47,8 +49,6 @@ class NetworkUtils {
 
             override fun onResponse(call: Call, response: Response) {
                 val body = response.body?.string()
-                println(body)
-
                 val type = newParameterizedType(List::class.java, Location::class.java)
                 val moshi = Moshi.Builder()
                     .add(LocationAdapter())
@@ -58,8 +58,6 @@ class NetworkUtils {
                 val adapter: JsonAdapter<List<Location>> = moshi.adapter(type)
 
                 val locList: List<Location>? = (adapter.fromJson(body))
-                // Test to see if we are successfully wrapping json into objects
-                Log.d("Return Value", locList.toString())
 
                 if (locList != null) {
                     locListReturn = locList
@@ -72,6 +70,7 @@ class NetworkUtils {
     }
 }
 
+// Will be moved to a separate class
 @JsonClass(generateAdapter = true)
 class LocationAdapter {
     class DataLocation(
@@ -92,25 +91,15 @@ class LocationAdapter {
         val detail: String?
     )
 
-//    @FromJson private fun fromJson(json: JsonLocation) : Location {
-//        return Location(json.name, Coordinate(json.lat, json.long), json.detail)
-//    }
-//
-//    @ToJson private fun toJson(loc: Location): JsonLocation {
-//        return JsonLocation(loc.name, loc.coordinate.latitude, loc.coordinate.longitude, loc.detail)
-//    }
-
     @FromJson
     private fun fromJson(json: DataLocation): List<Location> {
-//        var finalLoc : Array<Location> = arrayOf()
         var type: LocationType
 
-
         val finalLoc = json.data.map { loc ->
-            if (loc.type.equals("busStop")) {
-                type = LocationType.BUSSTOP
-            } else {
-                type = LocationType.GOOGLEPLACE
+
+            when (loc.type) {
+                "busStop" -> type = LocationType.googlePlace
+                else -> type = LocationType.busStop
             }
 
             Location(type, loc.name, Coordinate(loc.lat, loc.long), loc.detail)
@@ -123,7 +112,7 @@ class LocationAdapter {
 
         val final = json.map { loc ->
             JsonLocation(
-                "Nothing",
+                loc.type.toString(),
                 loc.name,
                 loc.coordinate.latitude,
                 loc.coordinate.longitude,
@@ -132,5 +121,4 @@ class LocationAdapter {
         }
         return DataLocation(final)
     }
-
 }

@@ -12,12 +12,5 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-
-        val client = OkHttpClient()
-        val url = "https://transit-backend.cornellappdev.com/api/v2/"
-
-        val network = NetworkUtils()
-        network.getSearchedLocations(client,url,"Balch")
-
     }
 }

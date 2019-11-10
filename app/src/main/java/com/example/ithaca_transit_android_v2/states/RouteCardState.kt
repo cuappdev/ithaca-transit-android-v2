@@ -3,9 +3,7 @@ package com.example.ithaca_transit_android_v2.states
 import com.example.ithaca_transit_android_v2.models.Route
 
 // Parent Class
-sealed class RouteCardState (
-    val routes: List<Route> = listOf()
-)
+sealed class RouteCardState (val routes: List<Route> = listOf())
 
 /*
  * A default display of a route card in route option view.
@@ -25,4 +23,4 @@ class RouteDetailViewState(route: Route): RouteCardState(listOf(route))
  * When the dialog box is set, do a networking call and go back to [RouteOptionState] with
  * the directions refreshed.
  */
-class LeaveAtClickedState: RouteCardState()
+class LeaveAtClickedState : RouteCardState()

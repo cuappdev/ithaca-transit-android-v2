@@ -12,4 +12,4 @@ data class Route (
     val arrival: Date,
     val depart: Date,
     val boardInMin: Int
-) {}
+)

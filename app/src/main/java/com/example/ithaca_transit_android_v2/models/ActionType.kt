@@ -1,7 +1,7 @@
 package com.example.ithaca_transit_android_v2.models
 
 /*
-Represents the types of action a user can take while on their Route.
+Represents the types of action a user can take while on their Trip.
  */
 enum class ActionType {
     ARRIVE,

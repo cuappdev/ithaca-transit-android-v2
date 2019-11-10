@@ -9,4 +9,4 @@ data class Direction(
     val endLocation: Location,
     val busStops: List<Location>,
     val busNumber: Int
-) {}
+)

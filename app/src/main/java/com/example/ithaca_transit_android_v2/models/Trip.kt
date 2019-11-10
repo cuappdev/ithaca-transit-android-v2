@@ -1,6 +1,5 @@
-package com.example.ithaca_transit_android_v2.Models
+package com.example.ithaca_transit_android_v2.models
 
-import com.example.ithaca_transit_android_v2.models.Location
 import java.util.Date
 
 // [Trip] is a collection of [Route] objects and other essential information

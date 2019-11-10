@@ -39,7 +39,6 @@ class NetworkUtils {
             .build()
 
         val adapter: JsonAdapter<List<Location>> = moshi.adapter(type)
-        val locList: List<Location> = adapter.fromJson(body) ?: emptyList()
-        return locList
+        return adapter.fromJson(body) ?: emptyList()
     }
 }

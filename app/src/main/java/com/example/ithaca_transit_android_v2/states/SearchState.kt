@@ -45,7 +45,7 @@ class SearchRouteOptionState(
 ) : SearchState(startLocation, endLocation)
 
 /*
- * In the Route Options state, when the user clicks either the start or end location,
+ * In the Direction Options state, when the user clicks either the start or end location,
  * automatically creating a blank typing field for changes
  */
 class ChangeLocationState(

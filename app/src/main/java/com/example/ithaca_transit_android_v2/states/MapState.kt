@@ -1,14 +1,14 @@
-package com.example.ithaca_transit_android_v2.Models
+package com.example.ithaca_transit_android_v2.states
 
 import com.example.ithaca_transit_android_v2.models.Coordinate
 import com.example.ithaca_transit_android_v2.models.Location
-import java.util.Date
+import com.example.ithaca_transit_android_v2.models.Trip
 
 sealed class MapState(
     trips: List<Trip>
 )
 //State that represents the empty map before a network call has been
-class LaunchState():MapState(emptyList())
+class LaunchState: MapState(emptyList())
 
 //State that represents the map with all bus stops marked and marks the user's current location.
 class LaunchStateFilled(
@@ -25,4 +25,4 @@ class TripOptions(
 //state that shows just selected path
 class SelectedTrip(
     selectedTrip: Trip
-):MapState(listOf(selectedTrip))
+): MapState(listOf(selectedTrip))

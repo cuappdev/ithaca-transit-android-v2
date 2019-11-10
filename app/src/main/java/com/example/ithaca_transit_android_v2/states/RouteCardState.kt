@@ -1,6 +1,6 @@
 package com.example.ithaca_transit_android_v2.states
 
-import com.example.ithaca_transit_android_v2.Models.Trip
+import com.example.ithaca_transit_android_v2.models.Trip
 
 // Parent Class
 sealed class RouteCardState (

@@ -1,8 +1,8 @@
 package com.example.ithaca_transit_android_v2
 
-import com.example.ithaca_transit_android_v2.models.LocationType
 import com.example.ithaca_transit_android_v2.models.Coordinate
 import com.example.ithaca_transit_android_v2.models.Location
+import com.example.ithaca_transit_android_v2.models.LocationType
 import com.squareup.moshi.FromJson
 import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass

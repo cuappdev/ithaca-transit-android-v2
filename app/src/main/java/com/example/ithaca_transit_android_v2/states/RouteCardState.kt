@@ -3,7 +3,7 @@ package com.example.ithaca_transit_android_v2.states
 import com.example.ithaca_transit_android_v2.models.Trip
 
 // Parent Class
-sealed class RouteCardState (
+sealed class RouteCardState(
     val trips: List<Trip> = listOf()
 )
 
@@ -11,18 +11,18 @@ sealed class RouteCardState (
  * A default display of a route card in route option view.
  * [trip.isWalkingOnly] and number of [trip.routes] affects the drawing of transit details.
  */
-class RouteOptionState(trips: List<Trip>): RouteCardState(trips = trips)
+class RouteOptionState(trips: List<Trip>) : RouteCardState(trips = trips)
 
 /*
  * A route card from [RouteOptionState] is clicked.
  * [RouteDetailViewState] displays the selected trip in detail.
  * Takes in only one [trip] object because only one trip is displayed.
  */
-class RouteDetailViewState(trip: Trip): RouteCardState(listOf(trip))
+class RouteDetailViewState(trip: Trip) : RouteCardState(listOf(trip))
 
 /*
  * User clicks on the [Leave Now] button in [RouteOptionState] and a dialog pops up (UI change).
  * When the dialog box is set, do a networking call and go back to [RouteOptionState] with
  * the routes refreshed.
  */
-class LeaveAtClickedState: RouteCardState()
+class LeaveAtClickedState : RouteCardState()

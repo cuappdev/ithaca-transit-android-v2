@@ -2,13 +2,15 @@ package com.example.ithaca_transit_android_v2.networking
 
 import com.example.ithaca_transit_android_v2.LocationAdapter
 import com.example.ithaca_transit_android_v2.models.Location
-import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
-import okhttp3.*
-import okhttp3.RequestBody.Companion.toRequestBody
-import okhttp3.MediaType.Companion.toMediaType
-import org.json.JSONObject
+import com.squareup.moshi.JsonAdapter
+import com.squareup.moshi.Moshi
 import com.squareup.moshi.Types.newParameterizedType
-import com.squareup.moshi.*
+import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
+import okhttp3.MediaType.Companion.toMediaType
+import okhttp3.OkHttpClient
+import okhttp3.Request
+import okhttp3.RequestBody.Companion.toRequestBody
+import org.json.JSONObject
 
 /*
  * NetworkUtils include all the networking calls needed

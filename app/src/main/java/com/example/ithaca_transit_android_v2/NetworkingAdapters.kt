@@ -11,15 +11,15 @@ import com.squareup.moshi.ToJson
 @JsonClass(generateAdapter = true)
 class LocationAdapter {
     class DataLocation(
-        @Json(name = "data") val data: List<JsonLocation>
+        val data: List<JsonLocation>
     )
-
+    @JsonClass(generateAdapter = true)
     class JsonLocation(
-        @Json(name = "type") val type: String,
-        @Json(name = "name") val name: String,
-        @Json(name = "lat") val lat: Double,
-        @Json(name = "long") val long: Double,
-        @Json(name = "detail") val detail: String?
+        val type: LocationType,
+        val name: String,
+        val lat: Double,
+        val long: Double,
+        val detail: String?
     )
 
     @FromJson
@@ -27,13 +27,7 @@ class LocationAdapter {
         var type: LocationType
 
         val finalLoc = json.data.map { loc ->
-
-            when (loc.type) {
-                "BUS_STOP" -> type = LocationType.GOOGLE_PLACE
-                else -> type = LocationType.BUS_STOP
-            }
-
-            Location(type, loc.name, Coordinate(loc.lat, loc.long), loc.detail)
+            Location(loc.type, loc.name, Coordinate(loc.lat, loc.long), loc.detail)
         }
         return finalLoc
     }
@@ -43,7 +37,7 @@ class LocationAdapter {
 
         val final = json.map { loc ->
             JsonLocation(
-                loc.type.toString(),
+                loc.type,
                 loc.name,
                 loc.coordinate.latitude,
                 loc.coordinate.longitude,

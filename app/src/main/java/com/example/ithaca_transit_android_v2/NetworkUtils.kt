@@ -21,7 +21,6 @@ class NetworkUtils {
     val url = "https://transit-backend.cornellappdev.com/api/v2/"
     val mediaType = ("application/json; charset=utf-8").toMediaType()
 
-
     // Function that takes in query and returns list of Locations
     fun getSearchedLocations(query: String): List<Location> {
         val json = JSONObject()
@@ -58,5 +57,4 @@ class NetworkUtils {
         val adapter: JsonAdapter<List<Location>> = moshi.adapter(type)
         return adapter.fromJson(body) ?: emptyList()
     }
-
 }

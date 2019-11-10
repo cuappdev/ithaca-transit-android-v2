@@ -5,10 +5,7 @@ import com.example.ithaca_transit_android_v2.models.Location
 import com.example.ithaca_transit_android_v2.models.LocationType
 
 // Parent Class
-sealed class SearchState(
-    val startLocation: Location = Location(LocationType.BUS_STOP, "", Coordinate(0.0, 0.0), ""),
-    val endLocation: Location = Location(LocationType.BUS_STOP, "", Coordinate(0.0, 0.0), "")
-)
+sealed class SearchState
 
 // Default search state
 class SearchLaunchState : SearchState()
@@ -33,7 +30,7 @@ class InitSearchState(
 class RouteDisplayState(
     startLocation: Location,
     endLocation: Location
-) : SearchState(startLocation, endLocation)
+) : SearchState()
 
 /*
  * A clickable bar with Start Location name
@@ -42,7 +39,7 @@ class RouteDisplayState(
 class SearchRouteOptionState(
     startLocation: Location,
     endLocation: Location
-) : SearchState(startLocation, endLocation)
+) : SearchState()
 
 /*
  * In the Direction Options state, when the user clicks either the start or end location,

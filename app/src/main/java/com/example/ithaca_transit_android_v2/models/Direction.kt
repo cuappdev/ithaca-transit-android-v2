@@ -1,9 +1,7 @@
-package com.example.ithaca_transit_android_v2.Models
-import com.example.ithaca_transit_android_v2.models.Coordinate
-import com.example.ithaca_transit_android_v2.models.Location
+package com.example.ithaca_transit_android_v2.models
 import java.util.*
 
-data class Route(
+data class Direction(
     val listOfCoordinates: List<Coordinate>,
     val startTime: Date,
     val endTime: Date,

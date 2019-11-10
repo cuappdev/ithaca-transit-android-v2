@@ -1,12 +1,11 @@
-package com.example.ithaca_transit_android_v2.Models
+package com.example.ithaca_transit_android_v2.models
 
-import com.example.ithaca_transit_android_v2.models.Location
 import java.util.Date
 
-// [Trip] is a collection of [Route] objects and other essential information
+// [Route] is a collection of [Direction] objects and other essential information
 // to represent a way of getting to the destination
-data class Trip (
-    val routes: List<Route>,
+data class Route (
+    val directions: List<Direction>,
     val startLocation: Location,
     val endLocation: Location,
     val isWalkingOnly: Boolean,

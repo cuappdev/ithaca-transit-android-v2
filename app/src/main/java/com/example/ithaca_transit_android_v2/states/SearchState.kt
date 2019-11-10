@@ -1,13 +1,13 @@
 package com.example.ithaca_transit_android_v2.states
 
-import com.example.ithaca_transit_android_v2.models.LocationType
+import com.example.ithaca_transit_android_v2.Models.LocationType
 import com.example.ithaca_transit_android_v2.models.Coordinate
 import com.example.ithaca_transit_android_v2.models.Location
 
 // Parent Class
 sealed class SearchState(
-    val startLocation: Location = Location(LocationType.BUS_STOP,"", Coordinate(0.0, 0.0), ""),
-    val endLocation: Location = Location(LocationType.BUS_STOP,"", Coordinate(0.0, 0.0), "")
+    val startLocation: Location = Location(LocationType.BUSSTOP,"", Coordinate(0.0, 0.0), ""),
+    val endLocation: Location = Location(LocationType.BUSSTOP,"", Coordinate(0.0, 0.0), "")
 ) {}
 
 // Default search state

@@ -19,7 +19,7 @@ class MainActivity : AppCompatActivity() {
         // TODO (lesley): just for testing purposes - replace with rxjava
         runBlocking {
             val deferred = CoroutineScope(Dispatchers.IO).async {
-                NetworkUtils().getSearchedLocations("7-Eleven")
+                NetworkUtils().getAllBusStops()
             }.await()
 
             Log.d("testing-final", deferred.toString())

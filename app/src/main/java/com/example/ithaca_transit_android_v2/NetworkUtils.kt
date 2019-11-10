@@ -21,16 +21,30 @@ class NetworkUtils {
     val url = "https://transit-backend.cornellappdev.com/api/v2/"
     val mediaType = ("application/json; charset=utf-8").toMediaType()
 
-
     // Function that takes in query and returns list of Locations
     fun getSearchedLocations(query: String): List<Location> {
-
         val json = JSONObject()
         json.put("query", query)
         val requestBody = json.toString().toRequestBody(mediaType)
         val request: Request = Request.Builder()
             .url(url + "search")
             .post(requestBody)
+            .build()
+
+        val body = client.newCall(request).execute().body?.string()
+        val type = newParameterizedType(List::class.java, Location::class.java)
+        val moshi = Moshi.Builder()
+            .add(LocationAdapter())
+            .add(KotlinJsonAdapterFactory())
+            .build()
+
+        val adapter: JsonAdapter<List<Location>> = moshi.adapter(type)
+        return adapter.fromJson(body) ?: emptyList()
+    }
+
+    fun getAllBusStops(): List<Location> {
+        val request: Request = Request.Builder()
+            .url(url + "allstops")
             .build()
 
         val body = client.newCall(request).execute().body?.string()

@@ -5,7 +5,7 @@ import com.example.ithaca_transit_android_v2.models.Location
 import com.example.ithaca_transit_android_v2.models.LocationType
 
 // Parent Class
-sealed class SearchState()
+sealed class SearchState
 
 // Default search state
 class SearchLaunchState : SearchState()

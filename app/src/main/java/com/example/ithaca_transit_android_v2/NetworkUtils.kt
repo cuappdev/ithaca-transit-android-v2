@@ -57,4 +57,8 @@ class NetworkUtils {
         val adapter: JsonAdapter<List<Location>> = moshi.adapter(type)
         return adapter.fromJson(body) ?: emptyList()
     }
+
+    fun getRouteOptions() {
+        
+    }
 }

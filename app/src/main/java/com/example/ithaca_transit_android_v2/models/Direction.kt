@@ -5,8 +5,8 @@ data class Direction(
     val listOfCoordinates: List<Coordinate>,
     val startTime: Date,
     val endTime: Date,
-    val startLocation: Location,
-    val endLocation: Location,
+    val startLocation: Coordinate,
+    val endLocation: Coordinate,
     val busStops: List<Location>,
     val busNumber: Int
 )

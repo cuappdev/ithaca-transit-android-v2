@@ -1,7 +1,9 @@
 package com.example.ithaca_transit_android_v2.networking
 
 import com.example.ithaca_transit_android_v2.LocationAdapter
+import com.example.ithaca_transit_android_v2.RouteAdapter
 import com.example.ithaca_transit_android_v2.models.Location
+import com.example.ithaca_transit_android_v2.models.RouteOptions
 import com.squareup.moshi.JsonAdapter
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.Types.newParameterizedType
@@ -58,7 +60,23 @@ class NetworkUtils {
         return adapter.fromJson(body) ?: emptyList()
     }
 
-    fun getRouteOptions() {
-        
+    fun getRouteOptions(query: String): RouteOptions {
+        val json = JSONObject()
+        json.put("query", query)
+        val requestBody = json.toString().toRequestBody(mediaType)
+        val request: Request = Request.Builder()
+            .url(url + "route")
+            .post(requestBody)
+            .build()
+
+        val body = client.newCall(request).execute().body?.string()
+        val type = newParameterizedType(RouteOptions::class.java)
+        val moshi = Moshi.Builder()
+            .add(RouteAdapter())
+            .add(KotlinJsonAdapterFactory())
+            .build()
+
+        val adapter: JsonAdapter<RouteOptions> = moshi.adapter(type)
+        return adapter.fromJson(body) ?: RouteOptions(emptyList(), emptyList(), emptyList())
     }
 }

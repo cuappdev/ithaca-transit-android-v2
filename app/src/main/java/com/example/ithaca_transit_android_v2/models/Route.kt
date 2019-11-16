@@ -8,8 +8,8 @@ import java.util.Date
 @JsonClass(generateAdapter = true)
 data class Route (
     val directions: List<Direction>,
-    val startLocation: Coordinate,
-    val endLocation: Coordinate,
+    val startCoords: Coordinate,
+    val endCoords: Coordinate,
     val isWalkingOnly: Boolean,
     val arrival: Date,
     val depart: Date,

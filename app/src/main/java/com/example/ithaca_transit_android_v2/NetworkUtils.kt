@@ -76,7 +76,7 @@ class NetworkUtils {
             .add(KotlinJsonAdapterFactory())
             .build()
 
-        val adapter: JsonAdapter<RouteOptions> = moshi.adapter(type)
+A        val adapter: JsonAdapter<RouteOptions> = moshi.adapter(type)
         return adapter.fromJson(body) ?: RouteOptions(emptyList(), emptyList(), emptyList())
     }
 }

@@ -2,6 +2,7 @@ package com.example.ithaca_transit_android_v2.networking
 
 import com.example.ithaca_transit_android_v2.LocationAdapter
 import com.example.ithaca_transit_android_v2.RouteAdapter
+import com.example.ithaca_transit_android_v2.models.Coordinate
 import com.example.ithaca_transit_android_v2.models.Location
 import com.example.ithaca_transit_android_v2.models.RouteOptions
 import com.squareup.moshi.JsonAdapter
@@ -13,6 +14,7 @@ import okhttp3.OkHttpClient
 import okhttp3.Request
 import okhttp3.RequestBody.Companion.toRequestBody
 import org.json.JSONObject
+import java.util.Date
 
 /*
  * NetworkUtils include all the networking calls needed
@@ -60,9 +62,25 @@ class NetworkUtils {
         return adapter.fromJson(body) ?: emptyList()
     }
 
-    fun getRouteOptions(query: String): RouteOptions {
+    fun getRouteOptions(
+        end: Coordinate,
+        uid: String,
+        // Temporarily a string until we figure out how to pass a date object correctly
+        time: Double,
+        destName : String,
+        start : Coordinate,
+        arriveBy: Boolean,
+        originName: String = "Current Location" ): RouteOptions {
+
+
         val json = JSONObject()
-        json.put("query", query)
+        json.put("end", end.toString())
+        json.put("uid", uid)
+        json.put("time", time)
+        json.put("destinationName", destName)
+        json.put("start", start.toString())
+        json.put("arriveBy", arriveBy)
+        json.put("originName", originName)
         val requestBody = json.toString().toRequestBody(mediaType)
         val request: Request = Request.Builder()
             .url(url + "route")

@@ -4,4 +4,7 @@ package com.example.ithaca_transit_android_v2.models
 data class Coordinate(
     val latitude: Double,
     val longitude: Double
-)
+){
+    override fun toString(): String = "$latitude, $longitude"
+}
+

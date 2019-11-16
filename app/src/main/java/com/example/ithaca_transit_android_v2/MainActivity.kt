@@ -23,16 +23,7 @@ class MainActivity : AppCompatActivity() {
         val start = Coordinate(42.44717985041025, -76.48551732274225)
         val arriveBy = false
 
-        // TODO (lesley): just for testing purposes - replace with rxjava
-
-        runBlocking {
-            val deferred = CoroutineScope(Dispatchers.IO).async {
-                NetworkUtils().getRouteOptions(end, uid, time, destinationName, start, arriveBy)
-            }.await()
-
-            Log.d("testing-final", deferred.toString())
-
         }
 
     }
-}
+

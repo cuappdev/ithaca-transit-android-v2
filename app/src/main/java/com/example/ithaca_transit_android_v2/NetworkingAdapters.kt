@@ -3,7 +3,8 @@ package com.example.ithaca_transit_android_v2
 import com.example.ithaca_transit_android_v2.models.*
 import com.squareup.moshi.*
 import java.text.SimpleDateFormat
-import java.util.*
+import java.util.Calendar
+import java.util.Date
 import java.util.concurrent.TimeUnit
 
 @JsonClass(generateAdapter = true)
@@ -67,9 +68,9 @@ class RouteAdapter {
         @Json(name = "directions")
         val directions: List<JsonDirection>,
         @Json(name = "startCoords")
-        val startLocation: JsonLocation,
+        val startCoords: JsonCoordinate,
         @Json(name = "endCoords")
-        val endLocation: JsonLocation,
+        val endCoords: JsonCoordinate,
         // TODO: need to calculate isWalkingOnly
         @Json(name = "arrivalTime")
         val arrival: String, // e.g. 2019-11-06T17:07:20Z
@@ -81,19 +82,27 @@ class RouteAdapter {
     @JsonClass(generateAdapter = true)
     class JsonDirection(
         @Json(name = "path")
-        val listOfCoordinates: List<Coordinate>,
+        val listOfCoordinates: List<JsonCoordinate>,
         @Json(name = "startTime")
         val startTime: String,
         @Json(name = "endTime")
         val endTime: String,
         @Json(name = "startLocation")
-        val startLocation: JsonLocation,
+        val startCoords: JsonCoordinate,
         @Json(name = "endLocation")
-        val endLocation: JsonLocation,
+        val endCoords: JsonCoordinate,
         @Json(name = "stops")
         val busStops: List<JsonLocation>,
         @Json(name = "routeNumber")
         val busNumber: Int
+    )
+
+    @JsonClass(generateAdapter = true)
+    class JsonCoordinate(
+        @Json(name = "lat")
+        val latitude: Double,
+        @Json(name = "long")
+        val longitude: Double
     )
 
     @JsonClass(generateAdapter = true)
@@ -117,13 +126,17 @@ class RouteAdapter {
                 Coordinate(loc.lat, loc.long), loc.detail)}
         }
 
+        fun processCoord (coord: JsonCoordinate): Coordinate {
+            return Coordinate(coord.latitude, coord.longitude)
+        }
+
         fun processDirections(jsonDirection: List<JsonDirection>): List<Direction> {
             return jsonDirection.map { dir -> Direction(
-                dir.listOfCoordinates.map { c -> Coordinate(c.latitude, c.longitude) },
+                dir.listOfCoordinates.map { c -> processCoord(c) },
                 processStringDate(dir.startTime),
                 processStringDate(dir.endTime),
-                Coordinate(dir.startLocation.lat, dir.startLocation.long),
-                Coordinate(dir.endLocation.lat, dir.endLocation.long),
+                processCoord(dir.startCoords),
+                processCoord(dir.startCoords),
                 processStops(dir.busStops),
                 dir.busNumber
             )}
@@ -137,8 +150,8 @@ class RouteAdapter {
         fun processRoutesBus(jsonRoute: List<JsonRoute>): List<Route> {
             return jsonRoute.map { route -> Route(
                 processDirections(route.directions),
-                Coordinate(route.startLocation.lat, route.startLocation.long),
-                Coordinate(route.endLocation.lat, route.endLocation.long),
+                processCoord(route.startCoords),
+                processCoord(route.endCoords),
                 false,
                 processStringDate(route.arrival),
                 processStringDate(route.depart),
@@ -150,8 +163,8 @@ class RouteAdapter {
         fun processRoutesWalk(jsonRoute: List<JsonRoute>): List<Route> {
             return jsonRoute.map { route -> Route(
                 processDirections(route.directions),
-                Coordinate(route.startLocation.lat, route.startLocation.long),
-                Coordinate(route.endLocation.lat, route.endLocation.long),
+                processCoord(route.startCoords),
+                processCoord(route.endCoords),
                 true,
                 processStringDate(route.arrival),
                 processStringDate(route.depart),

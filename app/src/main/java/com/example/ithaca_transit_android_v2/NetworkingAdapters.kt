@@ -3,8 +3,7 @@ package com.example.ithaca_transit_android_v2
 import com.example.ithaca_transit_android_v2.models.*
 import com.squareup.moshi.*
 import java.text.SimpleDateFormat
-import java.util.Calendar
-import java.util.Date
+import java.util.*
 import java.util.concurrent.TimeUnit
 
 @JsonClass(generateAdapter = true)

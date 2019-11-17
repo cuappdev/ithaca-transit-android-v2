@@ -1,10 +1,7 @@
 package com.example.ithaca_transit_android_v2
 
 import com.example.ithaca_transit_android_v2.models.*
-import com.squareup.moshi.FromJson
-import com.squareup.moshi.Json
-import com.squareup.moshi.JsonClass
-import com.squareup.moshi.ToJson
+import com.squareup.moshi.*
 import java.text.SimpleDateFormat
 import java.util.*
 import java.util.concurrent.TimeUnit
@@ -56,9 +53,13 @@ class RouteAdapter {
 
     @JsonClass(generateAdapter = true)
     class DataRouteOptions(
+        @Json(name = "boardingSoon")
+        val boardingSoon: List<JsonRoute>,
+        @Json(name = "fromStop")
         val fromStop: List<JsonRoute>,
-        val walking: List<JsonRoute>,
-        val boardingSoon: List<JsonRoute>
+        @Json(name = "walking")
+        val walking: List<JsonRoute>
+
     )
 
     @JsonClass(generateAdapter = true)
@@ -107,8 +108,8 @@ class RouteAdapter {
     @FromJson
     private fun fromJson(json: DataRoute) : RouteOptions {
         fun processStringDate(dateString: String): Date {
-            val inputFormatter = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SS'Z'")
-            return inputFormatter.parse(dateString)
+            val dateAdapt = CustomDateAdapter()
+            return dateAdapt.fromJson(dateString)
         }
 
         fun processStops(locs: List<JsonLocation>): List<Location> {
@@ -159,9 +160,10 @@ class RouteAdapter {
         }
 
         return RouteOptions(
+            processRoutesBus(json.data.boardingSoon),
             processRoutesBus(json.data.fromStop),
-            processRoutesWalk(json.data.walking),
-            processRoutesBus(json.data.boardingSoon)
+            processRoutesWalk(json.data.walking)
+
         )
     }
 
@@ -169,5 +171,25 @@ class RouteAdapter {
     private fun toJson (routeOpt: RouteOptions): DataRoute{
         // TODO: this function hasn't been implemented
         return DataRoute(DataRouteOptions(emptyList(), emptyList(), emptyList()))
+    }
+}
+
+class CustomDateAdapter{
+    private val dateFormat = SimpleDateFormat(SERVER_FORMAT, Locale.getDefault())
+
+    @FromJson
+    fun fromJson(date: String): Date {
+        return dateFormat.parse(date)
+    }
+
+    @ToJson
+    fun toJson(writer: JsonWriter, value: Date?) {
+        if (value != null) {
+            writer.value(value.toString())
+        }
+    }
+
+    companion object {
+        const val SERVER_FORMAT = ("yyyy-MM-dd'T'HH:mm:ss'Z'") // define your server format here
     }
 }

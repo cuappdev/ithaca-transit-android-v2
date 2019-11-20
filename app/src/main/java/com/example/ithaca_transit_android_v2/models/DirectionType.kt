@@ -5,7 +5,7 @@ import com.squareup.moshi.Json
 /*
 Represents the type of route that is displayed on the map
  */
-enum class RouteType {
+enum class DirectionType {
     @Json(name = "depart")
     BUS,
     @Json(name = "walk")

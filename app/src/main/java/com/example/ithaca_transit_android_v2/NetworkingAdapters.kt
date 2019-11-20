@@ -2,6 +2,7 @@ package com.example.ithaca_transit_android_v2
 
 import com.example.ithaca_transit_android_v2.models.*
 import com.squareup.moshi.*
+import java.lang.IndexOutOfBoundsException
 import java.text.SimpleDateFormat
 import java.util.*
 import java.util.concurrent.TimeUnit
@@ -45,10 +46,50 @@ class LocationAdapter {
     }
 }
 
-class DirectionAdapter {
+
+
+class RouteAdapter{
+    class JsonRoute(
+        val directions: List<Direction>,
+        val startCoords: Coordinate,
+        val endCoords: Coordinate,
+        @Json(name ="arrivalTime")
+        val arrival: Date,
+        @Json(name ="departureTime")
+        val depart: Date
+
+    )
+
+    @FromJson
+    private fun fromJson(json: JsonRoute): Route {
+        fun computeBoardInMin(firstBusDirection: Direction): Int {
+            val diff = firstBusDirection.startTime.time - Calendar.getInstance().time.time
+            return TimeUnit.MINUTES.convert(diff, TimeUnit.MILLISECONDS).toInt()
+        }
+
+        var firstBus = 0
+        var boardInMins = 0
+        if(json.directions[0].type != DirectionType.BUS){
+            firstBus = 1
+        }
+        if(json.directions.size != 1){
+            boardInMins = computeBoardInMin(json.directions[firstBus])
+        }
+
+        return Route(json.directions, json.startCoords, json.endCoords, json.arrival, json.depart, boardInMins )
+
+
+    }
+
+    @ToJson
+    private fun toJson(route: Route): JsonRoute {
+        return JsonRoute(emptyList(), Coordinate(0.0,0.0),Coordinate(0.0,0.0), Calendar.getInstance().time, Calendar.getInstance().time )
+
+    }
 
 
 }
+
 //
 //@JsonClass(generateAdapter = true)
 //class RouteAdapter {

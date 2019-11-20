@@ -3,6 +3,7 @@ package com.example.ithaca_transit_android_v2.networking
 import android.util.Log
 import com.example.ithaca_transit_android_v2.CustomDateAdapter
 import com.example.ithaca_transit_android_v2.LocationAdapter
+import com.example.ithaca_transit_android_v2.RouteAdapter
 //import com.example.ithaca_transit_android_v2.RouteAdapter
 import com.example.ithaca_transit_android_v2.models.Coordinate
 import com.example.ithaca_transit_android_v2.models.Location
@@ -95,6 +96,7 @@ class NetworkUtils {
         val type = newParameterizedType(RouteOptions::class.java)
         val moshi = Moshi.Builder()
             .add(CustomDateAdapter())
+            .add(RouteAdapter())
             .add(KotlinJsonAdapterFactory())
             .build()
 //

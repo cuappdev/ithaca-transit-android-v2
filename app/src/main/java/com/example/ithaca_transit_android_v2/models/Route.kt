@@ -11,10 +11,9 @@ data class Route (
     val directions: List<Direction>,
     val startCoords: Coordinate,
     val endCoords: Coordinate,
-//    val isWalkingOnly: Boolean,
     @Json(name ="arrivalTime")
     val arrival: Date,
     @Json(name ="departureTime")
-    val depart: Date
-//    val boardInMin: Int
+    val depart: Date,
+    val boardInMin: Int
 )

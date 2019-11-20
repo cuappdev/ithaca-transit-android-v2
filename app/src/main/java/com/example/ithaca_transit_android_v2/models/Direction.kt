@@ -5,6 +5,7 @@ import java.util.Date
 
 @JsonClass(generateAdapter = true)
 data class Direction(
+    val type : DirectionType,
     @Json(name = "path")
     val listOfCoordinates: List<Coordinate>,
     val startTime: Date,

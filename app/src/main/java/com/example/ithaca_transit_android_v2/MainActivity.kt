@@ -18,7 +18,7 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
         val end = Coordinate(42.444971674516864, -76.48098092526197)
 //        val uid = "E4A0256E-5865-4E9F-8A5A-33747CAC7EBF"
-        val time = 1573515642.318114
+        val time = 1574292741.0
         val destinationName = "Bill & Melinda Gates Hall"
         val start = Coordinate(42.44717985041025, -76.48551732274225)
         val arriveBy = false
@@ -29,9 +29,20 @@ class MainActivity : AppCompatActivity() {
             val deferred = CoroutineScope(Dispatchers.IO).async {
                 NetworkUtils().getRouteOptions(start, end, time, arriveBy, destinationName)
             }.await()
-            Log.d("testing-final", deferred.toString())
-        }
 
+
+            val maxLogSize = 1000
+            val stringLength = deferred.toString()?.length
+            if (stringLength != null) {
+                for (i in 0..stringLength / maxLogSize) {
+                    val start = i * maxLogSize
+                    var end = (i + 1) * maxLogSize
+                    end = if (end > deferred.toString().length) deferred.toString().length else end
+                    Log.v("returnBody", deferred.toString().substring(start, end))
+                }
+            }
+
+        }
     }
 }
 

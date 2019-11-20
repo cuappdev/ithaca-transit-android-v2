@@ -3,7 +3,7 @@ package com.example.ithaca_transit_android_v2.networking
 import android.util.Log
 import com.example.ithaca_transit_android_v2.CustomDateAdapter
 import com.example.ithaca_transit_android_v2.LocationAdapter
-import com.example.ithaca_transit_android_v2.RouteAdapter
+//import com.example.ithaca_transit_android_v2.RouteAdapter
 import com.example.ithaca_transit_android_v2.models.Coordinate
 import com.example.ithaca_transit_android_v2.models.Location
 import com.example.ithaca_transit_android_v2.models.RouteOptions
@@ -66,54 +66,41 @@ class NetworkUtils {
     }
 
     fun getRouteOptions(
+        start: Coordinate,
         end: Coordinate,
-        uid: String,
-        // Temporarily a string until we figure out how to pass a date object correctly
         time: Double,
-        destName : String,
-        start : Coordinate,
-        arriveBy: Boolean,
-        originName: String = "Current Location" ): RouteOptions {
-
+        arriveBy: Boolean = true,
+        destName : String
+    ): RouteOptions {
 
         val json = JSONObject()
-        json.put("end", end.toString())
-        json.put("uid", uid)
-        json.put("time", time)
-        json.put("destinationName", destName)
         json.put("start", start.toString())
+        json.put("end", end.toString())
+        json.put("time", time)
         json.put("arriveBy", arriveBy)
-        json.put("originName", originName)
-
+        json.put("destinationName", destName)
 
         val requestBody = json.toString().toRequestBody(mediaType)
-        Log.d("ReqBody", json.toString())
         val request: Request = Request.Builder()
             .url(url + "route")
             .post(requestBody)
             .build()
 
         val body = client.newCall(request).execute().body?.string()
-
-        val maxLogSize = 1000
-        val stringLength = body?.length
-        if (stringLength != null) {
-            for (i in 0..stringLength / maxLogSize) {
-                val start = i * maxLogSize
-                var end = (i + 1) * maxLogSize
-                end = if (end > body.length) body.length else end
-                Log.v("request", body.substring(start, end))
-            }
-        }
+        Log.d("testing", body)
+        val response = JSONObject(body)
+        val arr = response.get("data")
+        Log.d("testing", arr.toString())
 
         val type = newParameterizedType(RouteOptions::class.java)
         val moshi = Moshi.Builder()
-            .add(RouteAdapter())
-            .add(KotlinJsonAdapterFactory())
             .add(CustomDateAdapter())
+            .add(KotlinJsonAdapterFactory())
             .build()
-
+//
         val adapter: JsonAdapter<RouteOptions> = moshi.adapter(type)
-        return adapter.fromJson(body) ?: RouteOptions(emptyList(), emptyList(), emptyList())
+
+        return adapter.fromJson(arr.toString()) ?: RouteOptions(emptyList(), emptyList(), emptyList())
+//        return RouteOptions(emptyList(), emptyList(), emptyList())
     }
 }

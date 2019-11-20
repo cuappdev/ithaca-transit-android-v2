@@ -45,146 +45,134 @@ class LocationAdapter {
     }
 }
 
-@JsonClass(generateAdapter = true)
-class RouteAdapter {
-    class DataRoute(
-        val data: DataRouteOptions
-    )
+class DirectionAdapter {
 
-    @JsonClass(generateAdapter = true)
-    class DataRouteOptions(
-        @Json(name = "boardingSoon")
-        val boardingSoon: List<JsonRoute>,
-        @Json(name = "fromStop")
-        val fromStop: List<JsonRoute>,
-        @Json(name = "walking")
-        val walking: List<JsonRoute>
 
-    )
-
-    @JsonClass(generateAdapter = true)
-    class JsonRoute(
-        @Json(name = "directions")
-        val directions: List<JsonDirection>,
-        @Json(name = "startCoords")
-        val startCoords: JsonCoordinate,
-        @Json(name = "endCoords")
-        val endCoords: JsonCoordinate,
-        // TODO: need to calculate isWalkingOnly
-        @Json(name = "arrivalTime")
-        val arrival: String, // e.g. 2019-11-06T17:07:20Z
-        @Json(name = "departureTime")
-        val depart: String
-        // TODO: need to calculate BoardInMin
-    )
-
-    @JsonClass(generateAdapter = true)
-    class JsonDirection(
-        @Json(name = "path")
-        val listOfCoordinates: List<JsonCoordinate>,
-        @Json(name = "startTime")
-        val startTime: String,
-        @Json(name = "endTime")
-        val endTime: String,
-        @Json(name = "startLocation")
-        val startCoords: JsonCoordinate,
-        @Json(name = "endLocation")
-        val endCoords: JsonCoordinate,
-        @Json(name = "stops")
-        val busStops: List<JsonLocation>,
-        @Json(name = "routeNumber")
-        val busNumber: Int
-    )
-
-    @JsonClass(generateAdapter = true)
-    class JsonCoordinate(
-        @Json(name = "lat")
-        val latitude: Double,
-        @Json(name = "long")
-        val longitude: Double
-    )
-
-    @JsonClass(generateAdapter = true)
-    class JsonLocation(
-        val type: LocationType,
-        val name: String,
-        val lat: Double,
-        val long: Double,
-        val detail: String?
-    )
-
-    @FromJson
-    private fun fromJson(json: DataRoute) : RouteOptions {
-        fun processStringDate(dateString: String): Date {
-            val dateAdapt = CustomDateAdapter()
-            return dateAdapt.fromJson(dateString)
-        }
-
-        fun processStops(locs: List<JsonLocation>): List<Location> {
-            return locs.map{ loc -> Location(LocationType.BUS_STOP, loc.name,
-                Coordinate(loc.lat, loc.long), loc.detail)}
-        }
-
-        fun processCoord (coord: JsonCoordinate): Coordinate {
-            return Coordinate(coord.latitude, coord.longitude)
-        }
-
-        fun processDirections(jsonDirection: List<JsonDirection>): List<Direction> {
-            return jsonDirection.map { dir -> Direction(
-                dir.listOfCoordinates.map { c -> processCoord(c) },
-                processStringDate(dir.startTime),
-                processStringDate(dir.endTime),
-                processCoord(dir.startCoords),
-                processCoord(dir.startCoords),
-                processStops(dir.busStops),
-                dir.busNumber
-            )}
-        }
-
-        fun computeBoardInMin(firstBusDirection: Direction): Int {
-            val diff =  firstBusDirection.startTime.time - Calendar.getInstance().time.time
-            return TimeUnit.MINUTES.convert(diff, TimeUnit.MILLISECONDS).toInt()
-        }
-
-        fun processRoutesBus(jsonRoute: List<JsonRoute>): List<Route> {
-            return jsonRoute.map { route -> Route(
-                processDirections(route.directions),
-                processCoord(route.startCoords),
-                processCoord(route.endCoords),
-                false,
-                processStringDate(route.arrival),
-                processStringDate(route.depart),
-                computeBoardInMin(processDirections(route.directions)[1])
-                // index [1] is accessed because the second direction is the first bus direction
-            ) }
-        }
-
-        fun processRoutesWalk(jsonRoute: List<JsonRoute>): List<Route> {
-            return jsonRoute.map { route -> Route(
-                processDirections(route.directions),
-                processCoord(route.startCoords),
-                processCoord(route.endCoords),
-                true,
-                processStringDate(route.arrival),
-                processStringDate(route.depart),
-                0   // [boardInMin] for a walking route is set to be 0
-            ) }
-        }
-
-        return RouteOptions(
-            processRoutesBus(json.data.boardingSoon),
-            processRoutesBus(json.data.fromStop),
-            processRoutesWalk(json.data.walking)
-
-        )
-    }
-
-    @ToJson
-    private fun toJson (routeOpt: RouteOptions): DataRoute{
-        // TODO: this function hasn't been implemented
-        return DataRoute(DataRouteOptions(emptyList(), emptyList(), emptyList()))
-    }
 }
+//
+//@JsonClass(generateAdapter = true)
+//class RouteAdapter {
+//    class DataRoute(
+//        val data: DataRouteOptions
+//    )
+//
+//    @JsonClass(generateAdapter = true)
+//    class DataRouteOptions(
+//        @Json(name = "boardingSoon")
+//        val boardingSoon: List<JsonRoute>,
+//        @Json(name = "fromStop")
+//        val fromStop: List<JsonRoute>,
+//        @Json(name = "walking")
+//        val walking: List<JsonRoute>
+//
+//    )
+//
+////    @JsonClass(generateAdapter = true)
+////    class JsonRoute(
+////        @Json(name = "directions")
+////        val directions: List<JsonDirection>,
+////        @Json(name = "startCoords")
+////        val startCoords: JsonCoordinate,
+////        @Json(name = "endCoords")
+////        val endCoords: JsonCoordinate,
+////        // TODO: need to calculate isWalkingOnly
+////        @Json(name = "arrivalTime")
+////        val arrival: String, // e.g. 2019-11-06T17:07:20Z
+////        @Json(name = "departureTime")
+////        val depart: String
+////        // TODO: need to calculate BoardInMin
+////    )
+//
+////    @JsonClass(generateAdapter = true)
+////    class JsonDirection(
+////        @Json(name = "path")
+////        val listOfCoordinates: List<JsonCoordinate>,
+////        @Json(name = "startTime")
+////        val startTime: String,
+////        @Json(name = "endTime")
+////        val endTime: String,
+////        @Json(name = "startLocation")
+////        val startCoords: JsonCoordinate,
+////        @Json(name = "endLocation")
+////        val endCoords: JsonCoordinate,
+////        @Json(name = "stops")
+////        val busStops: List<JsonLocation>,
+////        @Json(name = "routeNumber")
+////        val busNumber: Int
+////    )
+//
+//    @FromJson
+//    private fun fromJson(json: DataRoute) : RouteOptions {
+//        fun processStringDate(dateString: String): Date {
+//            val dateAdapt = CustomDateAdapter()
+//            return dateAdapt.fromJson(dateString)
+//        }
+//
+//        fun processStops(locs: List<JsonLocation>): List<Location> {
+//            return locs.map{ loc -> Location(LocationType.BUS_STOP, loc.name,
+//                Coordinate(loc.lat, loc.long), loc.detail)}
+//        }
+//
+//        fun processCoord (coord: JsonCoordinate): Coordinate {
+//            return Coordinate(coord.latitude, coord.longitude)
+//        }
+//
+//        fun processDirections(jsonDirection: List<JsonDirection>): List<Direction> {
+//            return jsonDirection.map { dir -> Direction(
+//                dir.listOfCoordinates.map { c -> processCoord(c) },
+//                processStringDate(dir.startTime),
+//                processStringDate(dir.endTime),
+//                processCoord(dir.startCoords),
+//                processCoord(dir.startCoords),
+//                processStops(dir.busStops),
+//                dir.busNumber
+//            )}
+//        }
+//
+//        fun computeBoardInMin(firstBusDirection: Direction): Int {
+//            val diff =  firstBusDirection.startTime.time - Calendar.getInstance().time.time
+//            return TimeUnit.MINUTES.convert(diff, TimeUnit.MILLISECONDS).toInt()
+//        }
+//
+//        fun processRoutesBus(jsonRoute: List<JsonRoute>): List<Route> {
+//            return jsonRoute.map { route -> Route(
+//                processDirections(route.directions),
+//                processCoord(route.startCoords),
+//                processCoord(route.endCoords),
+//                false,
+//                processStringDate(route.arrival),
+//                processStringDate(route.depart),
+//                computeBoardInMin(processDirections(route.directions)[1])
+//                // index [1] is accessed because the second direction is the first bus direction
+//            ) }
+//        }
+//
+//        fun processRoutesWalk(jsonRoute: List<JsonRoute>): List<Route> {
+//            return jsonRoute.map { route -> Route(
+//                processDirections(route.directions),
+//                processCoord(route.startCoords),
+//                processCoord(route.endCoords),
+//                true,
+//                processStringDate(route.arrival),
+//                processStringDate(route.depart),
+//                0   // [boardInMin] for a walking route is set to be 0
+//            ) }
+//        }
+//
+//        return RouteOptions(
+//            processRoutesBus(json.data.boardingSoon),
+//            processRoutesBus(json.data.fromStop),
+//            processRoutesWalk(json.data.walking)
+//
+//        )
+//    }
+//
+//    @ToJson
+//    private fun toJson (routeOpt: RouteOptions): DataRoute{
+//        // TODO: this function hasn't been implemented
+//        return DataRoute(DataRouteOptions(emptyList(), emptyList(), emptyList()))
+//    }
+//}
 
 class CustomDateAdapter{
     private val dateFormat = SimpleDateFormat(SERVER_FORMAT, Locale.getDefault())

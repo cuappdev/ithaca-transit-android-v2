@@ -1,12 +1,20 @@
 package com.example.ithaca_transit_android_v2.models
-import java.util.*
+import com.squareup.moshi.Json
+import com.squareup.moshi.JsonClass
+import java.util.Date
 
+@JsonClass(generateAdapter = true)
 data class Direction(
+    @Json(name = "path")
     val listOfCoordinates: List<Coordinate>,
     val startTime: Date,
     val endTime: Date,
+    @Json(name = "startLocation")
     val startCoords: Coordinate,
+    @Json(name = "endLocation")
     val endCoords: Coordinate,
-    val busStops: List<Location>,
-    val busNumber: Int
+    @Json(name = "stops")
+    val busStops: List<Any>,
+    @Json(name = "routeNumber")
+    val busNumber: Int?
 )

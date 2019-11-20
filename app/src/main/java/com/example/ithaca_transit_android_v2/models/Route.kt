@@ -1,5 +1,6 @@
 package com.example.ithaca_transit_android_v2.models
 
+import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
 import java.util.Date
 
@@ -10,8 +11,10 @@ data class Route (
     val directions: List<Direction>,
     val startCoords: Coordinate,
     val endCoords: Coordinate,
-    val isWalkingOnly: Boolean,
+//    val isWalkingOnly: Boolean,
+    @Json(name ="arrivalTime")
     val arrival: Date,
-    val depart: Date,
-    val boardInMin: Int
+    @Json(name ="departureTime")
+    val depart: Date
+//    val boardInMin: Int
 )

@@ -17,7 +17,7 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         val end = Coordinate(42.444971674516864, -76.48098092526197)
-        val uid = "E4A0256E-5865-4E9F-8A5A-33747CAC7EBF"
+//        val uid = "E4A0256E-5865-4E9F-8A5A-33747CAC7EBF"
         val time = 1573515642.318114
         val destinationName = "Bill & Melinda Gates Hall"
         val start = Coordinate(42.44717985041025, -76.48551732274225)
@@ -27,7 +27,7 @@ class MainActivity : AppCompatActivity() {
         // TODO (lesley): just for testing purposes - replace with rxjava
         runBlocking {
             val deferred = CoroutineScope(Dispatchers.IO).async {
-                NetworkUtils().getRouteOptions(end, uid, time, destinationName, start, arriveBy)
+                NetworkUtils().getRouteOptions(start, end, time, arriveBy, destinationName)
             }.await()
             Log.d("testing-final", deferred.toString())
         }

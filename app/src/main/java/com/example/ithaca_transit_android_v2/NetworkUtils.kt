@@ -1,24 +1,18 @@
-package com.example.ithaca_transit_android_v2.networking
+package com.example.ithaca_transit_android_v2
 
 import android.util.Log
-import com.example.ithaca_transit_android_v2.CustomDateAdapter
-import com.example.ithaca_transit_android_v2.LocationAdapter
-import com.example.ithaca_transit_android_v2.RouteAdapter
-//import com.example.ithaca_transit_android_v2.RouteAdapter
 import com.example.ithaca_transit_android_v2.models.Coordinate
 import com.example.ithaca_transit_android_v2.models.Location
 import com.example.ithaca_transit_android_v2.models.RouteOptions
 import com.squareup.moshi.JsonAdapter
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.Types.newParameterizedType
-import com.squareup.moshi.adapters.Rfc3339DateJsonAdapter
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import okhttp3.RequestBody.Companion.toRequestBody
 import org.json.JSONObject
-import java.util.Date
 
 /*
  * NetworkUtils include all the networking calls needed
@@ -99,10 +93,9 @@ class NetworkUtils {
             .add(RouteAdapter())
             .add(KotlinJsonAdapterFactory())
             .build()
-//
+
         val adapter: JsonAdapter<RouteOptions> = moshi.adapter(type)
 
         return adapter.fromJson(arr.toString()) ?: RouteOptions(emptyList(), emptyList(), emptyList())
-//        return RouteOptions(emptyList(), emptyList(), emptyList())
     }
 }

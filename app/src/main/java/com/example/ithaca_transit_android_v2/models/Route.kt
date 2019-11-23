@@ -2,7 +2,8 @@ package com.example.ithaca_transit_android_v2.models
 
 import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
-import java.util.Date
+import java.util.*
+import java.util.concurrent.TimeUnit
 
 // [Route] is a collection of [Direction] objects and other essential information
 // to represent a way of getting to the destination
@@ -16,4 +17,11 @@ data class Route (
     @Json(name ="departureTime")
     val depart: Date,
     val boardInMin: Int
-)
+) {
+    companion object {
+        fun computeBoardInMin(firstBusDirection: Direction): Int {
+            val diff = firstBusDirection.startTime.time - Calendar.getInstance().time.time
+            return TimeUnit.MINUTES.convert(diff, TimeUnit.MILLISECONDS).toInt()
+        }
+    }
+}

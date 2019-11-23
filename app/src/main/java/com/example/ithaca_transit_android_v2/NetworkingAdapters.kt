@@ -65,10 +65,6 @@ class RouteAdapter{
 
     @FromJson
     private fun fromJson(json: JsonRoute): Route {
-        fun computeBoardInMin(firstBusDirection: Direction): Int {
-            val diff = firstBusDirection.startTime.time - Calendar.getInstance().time.time
-            return TimeUnit.MINUTES.convert(diff, TimeUnit.MILLISECONDS).toInt()
-        }
 
         var firstBus = 0
         var boardInMins = 0
@@ -76,7 +72,7 @@ class RouteAdapter{
             firstBus = 1
         }
         if(json.directions.size != 1){
-            boardInMins = computeBoardInMin(json.directions[firstBus])
+            boardInMins = Route.computeBoardInMin(json.directions[firstBus])
         }
 
         return Route(json.directions, json.startCoords, json.endCoords, json.arrival, json.depart,
@@ -93,7 +89,8 @@ class RouteAdapter{
 }
 
 class CustomDateAdapter{
-    private val dateFormat = SimpleDateFormat(SERVER_FORMAT, Locale.getDefault())
+    private val serverFormat = ("yyyy-MM-dd'T'HH:mm:ss'Z'")
+    private val dateFormat = SimpleDateFormat(serverFormat, Locale.getDefault())
 
     @FromJson
     fun fromJson(date: String): Date {
@@ -105,9 +102,5 @@ class CustomDateAdapter{
         if (value != null) {
             writer.value(value.toString())
         }
-    }
-
-    companion object {
-        const val SERVER_FORMAT = ("yyyy-MM-dd'T'HH:mm:ss'Z'") // define your server format here
     }
 }

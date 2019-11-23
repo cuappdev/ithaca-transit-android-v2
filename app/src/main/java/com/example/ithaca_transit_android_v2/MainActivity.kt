@@ -29,18 +29,22 @@ class MainActivity : AppCompatActivity() {
                 NetworkUtils().getRouteOptions(start, end, time, arriveBy, destinationName)
             }.await()
 
+            printLongLog(deferred.toString())
 
-            val maxLogSize = 1000
-            val stringLength = deferred.toString()?.length
-            if (stringLength != null) {
-                for (i in 0..stringLength / maxLogSize) {
-                    val start = i * maxLogSize
-                    var end = (i + 1) * maxLogSize
-                    end = if (end > deferred.toString().length) deferred.toString().length else end
-                    Log.v("returnBody", deferred.toString().substring(start, end))
-                }
+
+        }
+    }
+
+    private fun printLongLog (s: String) {
+        val maxLogSize = 1000
+        val stringLength = s.length
+        if (stringLength != null) {
+            for (i in 0..stringLength / maxLogSize) {
+                val start = i * maxLogSize
+                var end = (i + 1) * maxLogSize
+                end = if (end > s.length) s.length else end
+                Log.v("returnBody", s.substring(start, end))
             }
-
         }
     }
 }

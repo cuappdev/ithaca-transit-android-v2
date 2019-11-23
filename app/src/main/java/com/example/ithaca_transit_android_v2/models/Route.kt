@@ -2,7 +2,8 @@ package com.example.ithaca_transit_android_v2.models
 
 import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
-import java.util.*
+import java.util.Date
+import java.util.Calendar
 import java.util.concurrent.TimeUnit
 
 // [Route] is a collection of [Direction] objects and other essential information

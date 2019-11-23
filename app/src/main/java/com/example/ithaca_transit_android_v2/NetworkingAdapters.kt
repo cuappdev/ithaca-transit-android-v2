@@ -17,7 +17,6 @@ class LocationAdapter {
     class DataLocation(
         val data: List<JsonLocation>
     )
-
     @JsonClass(generateAdapter = true)
     class JsonLocation(
         val type: LocationType,
@@ -26,7 +25,6 @@ class LocationAdapter {
         val long: Double,
         val detail: String?
     )
-
     @FromJson
     private fun fromJson(json: DataLocation): List<Location> {
         val finalLoc = json.data.map { loc ->
@@ -34,7 +32,6 @@ class LocationAdapter {
         }
         return finalLoc
     }
-
     @ToJson
     private fun toJson(json: List<Location>): DataLocation {
         val final = json.map { loc ->
@@ -49,9 +46,6 @@ class LocationAdapter {
         return DataLocation(final)
     }
 }
-
-
-
 class RouteAdapter{
     class JsonRoute(
         val directions: List<Direction>,
@@ -62,45 +56,23 @@ class RouteAdapter{
         @Json(name ="departureTime")
         val depart: Date
     )
-
     @FromJson
     private fun fromJson(json: JsonRoute): Route {
-
-        var firstBus = 0
-        var boardInMins = 0
-        if(json.directions[0].type != DirectionType.BUS){
-            firstBus = 1
-        }
-        if(json.directions.size != 1){
-            boardInMins = Route.computeBoardInMin(json.directions[firstBus])
-        }
-
+        var firstBus = if (json.directions[0].type == DirectionType.BUS) 1 else 0
+        var boardInMins: Int = if (json.directions.size != 1) Route.computeBoardInMin(json.directions[firstBus]) else 0
         return Route(json.directions, json.startCoords, json.endCoords, json.arrival, json.depart,
             boardInMins)
     }
-
-    @ToJson
-    private fun toJson(route: Route): JsonRoute {
-        return JsonRoute(emptyList(), Coordinate(0.0,0.0),
-            Coordinate(0.0,0.0), Calendar.getInstance().time,
-            Calendar.getInstance().time)
-    }
-
 }
-
 class CustomDateAdapter{
     private val serverFormat = ("yyyy-MM-dd'T'HH:mm:ss'Z'")
     private val dateFormat = SimpleDateFormat(serverFormat, Locale.getDefault())
-
     @FromJson
     fun fromJson(date: String): Date {
         return dateFormat.parse(date)
     }
-
     @ToJson
     fun toJson(writer: JsonWriter, value: Date?) {
-        if (value != null) {
-            writer.value(value.toString())
-        }
+        value?.let { writer.value(value.toString()) }
     }
 }

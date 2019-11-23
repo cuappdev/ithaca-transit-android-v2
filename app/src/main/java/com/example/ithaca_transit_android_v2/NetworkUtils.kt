@@ -1,6 +1,5 @@
 package com.example.ithaca_transit_android_v2
 
-import android.util.Log
 import com.example.ithaca_transit_android_v2.models.Coordinate
 import com.example.ithaca_transit_android_v2.models.Location
 import com.example.ithaca_transit_android_v2.models.RouteOptions
@@ -82,10 +81,8 @@ class NetworkUtils {
             .build()
 
         val body = client.newCall(request).execute().body?.string()
-        Log.d("testing", body)
         val response = JSONObject(body)
         val arr = response.get("data")
-        Log.d("testing", arr.toString())
 
         val type = newParameterizedType(RouteOptions::class.java)
         val moshi = Moshi.Builder()

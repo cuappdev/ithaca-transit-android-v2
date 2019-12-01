@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">ithaca-transit-android-v2</string>
+    <string name="search_hint">Where to?</string>
 </resources>

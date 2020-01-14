@@ -19,11 +19,16 @@ class EmptyInitClickState : SearchState()
  */
 class InitClickState : SearchState()
 
-// Immediately following InitClickState or EmptyInitClickState when user begins typing.
+// Immediately following InitClickState or EmptyInitClickState when user begins typing
 class InitSearchState(
+    val searchText:String
+) : SearchState()
+
+// Immediately following InitSearchState after network requests are made
+class InitLocationsSearchState(
     val searchText: String,
     // Network call to all locations that match the search text
-    val searchedLocations: List<Location>
+    val searchedLocations: List<Location>?
 ) : SearchState()
 
 // Default start location is Current Location
@@ -49,3 +54,4 @@ class ChangeLocationState(
     searchText: String, // User Input
     searchedLocations: List<Location>
 ) : SearchState()
+

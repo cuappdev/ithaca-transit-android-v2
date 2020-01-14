@@ -1,9 +1,11 @@
 package com.example.ithaca_transit_android_v2
 
+import android.util.Log
 import com.example.ithaca_transit_android_v2.models.Coordinate
 import com.example.ithaca_transit_android_v2.models.Location
 import com.example.ithaca_transit_android_v2.models.RouteOptions
 import com.squareup.moshi.JsonAdapter
+import com.squareup.moshi.JsonReader
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.Types.newParameterizedType
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
@@ -23,24 +25,24 @@ class NetworkUtils {
     val mediaType = ("application/json; charset=utf-8").toMediaType()
 
     // Function that takes in query and returns list of Locations
-    fun getSearchedLocations(query: String): List<Location> {
+    fun getSearchedLocations(query: String): List<Location>? {
         val json = JSONObject()
         json.put("query", query)
         val requestBody = json.toString().toRequestBody(mediaType)
         val request: Request = Request.Builder()
-            .url(url + "search")
+            .url(url + "appleSearch")
             .post(requestBody)
             .build()
 
         val body = client.newCall(request).execute().body?.string()
+
         val type = newParameterizedType(List::class.java, Location::class.java)
         val moshi = Moshi.Builder()
             .add(LocationAdapter())
             .add(KotlinJsonAdapterFactory())
             .build()
-
         val adapter: JsonAdapter<List<Location>> = moshi.adapter(type)
-        return adapter.fromJson(body) ?: emptyList()
+        return adapter.fromJson(body.toString())?: emptyList()
     }
 
     fun getAllBusStops(): List<Location> {

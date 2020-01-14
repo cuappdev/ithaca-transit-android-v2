@@ -1,50 +1,134 @@
 package com.example.ithaca_transit_android_v2
 
+import android.content.Intent
 import android.os.Bundle
+import android.text.Editable
+import android.text.TextWatcher
 import android.util.Log
+import android.view.View
+import android.widget.AdapterView
+import android.widget.EditText
 import androidx.appcompat.app.AppCompatActivity
-import com.example.ithaca_transit_android_v2.models.Coordinate
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.async
-import kotlinx.coroutines.runBlocking
+import com.example.ithaca_transit_android_v2.models.Location
+import com.example.ithaca_transit_android_v2.states.*
+import com.example.ithaca_transit_android_v2.ui_adapters.SearchViewAdapter
+import com.google.android.gms.maps.GoogleMap
+import com.google.android.gms.maps.OnMapReadyCallback
+import com.google.android.gms.maps.SupportMapFragment
+import io.reactivex.Observable
+import io.reactivex.ObservableEmitter
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.disposables.Disposable
+import io.reactivex.schedulers.Schedulers
+import kotlinx.android.synthetic.main.activity_main.*
+import kotlinx.android.synthetic.main.activity_toolbar_search.*
+import kotlinx.android.synthetic.main.item_searchview.*
 
+class MainActivity : AppCompatActivity(), OnMapReadyCallback {
+    private lateinit var disposable: Disposable
+    private var mSearchLocations: List<Location> = ArrayList()
+    private var mSearchAdapter: SearchViewAdapter? = null
 
-class MainActivity : AppCompatActivity() {
+    override fun onMapReady(map: GoogleMap?) {
+        map!!.setOnMapClickListener { point ->
+            Log.i("qwerty","map clicked")
+            search_view.clearFocus() }
+    }
+
+    private fun createSearchObservable(): Observable<SearchState> {
+        val obs = Observable.create { emitter: ObservableEmitter<SearchState> ->
+            val watcher: TextWatcher = object : TextWatcher {
+                override fun afterTextChanged(p0: Editable?) {
+                }
+
+                override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
+                }
+
+                override fun onTextChanged(searchText: CharSequence?, p1: Int, p2: Int, p3: Int) {
+                    if (searchText!!.length == 0) {
+                        emitter.onNext(EmptyInitClickState())
+                    } else {
+                        emitter.onNext(InitSearchState(searchText.toString()))
+                    }
+                }
+            }
+
+            search_input.addTextChangedListener(watcher)
+
+            search_input.setOnFocusChangeListener { view, hasFocus ->
+                if (hasFocus && (view as EditText).text.isEmpty()) {
+                    emitter.onNext(EmptyInitClickState())
+                } else if (hasFocus) {
+                    emitter.onNext(InitSearchState((view as EditText).text.toString()))
+                }
+                else {
+                    emitter.onNext(SearchLaunchState())
+                }
+            }
+
+            emitter.setCancellable {
+                search_input.removeTextChangedListener(watcher)
+                search_input.setOnFocusChangeListener(null)
+            }
+        }
+        return obs.startWith(SearchLaunchState())
+    }
+
+    fun initSearchView() {
+        val observable = createSearchObservable()
+
+        disposable = observable
+            .observeOn(Schedulers.io())
+            .map { state ->
+                if (state is InitSearchState) {
+                    val locations = NetworkUtils().getSearchedLocations(state.searchText)
+                    InitLocationsSearchState(state.searchText, locations)
+
+                } else {
+                    state
+                }
+            }
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe ({ state ->
+                when (state) {
+                    is SearchLaunchState -> {
+                        search_empty_state.visibility = View.GONE
+                        search_locations_state.visibility = View.GONE
+                    }
+                    is EmptyInitClickState -> {
+                        search_locations_state.visibility = View.GONE
+                        search_empty_state.visibility = View.VISIBLE
+                    }
+                    is InitLocationsSearchState -> {
+                        search_empty_state.visibility = View.GONE
+                        search_locations_state.visibility = View.VISIBLE
+                        if(state.searchedLocations!!.size > 0 || search_input.text.isEmpty()) {
+                            mSearchAdapter!!.swapItems(state.searchedLocations)
+                        }
+                    }
+                }
+            }, {error -> Log.e("An Error Occurred", error.toString())})
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        // ======== FOR TESTING ONLY ========
-        val end = Coordinate(42.444971674516864, -76.48098092526197)
-        // val uid = "E4A0256E-5865-4E9F-8A5A-33747CAC7EBF"
-        val time = 1574292741.0
-        val destinationName = "Bill & Melinda Gates Hall"
-        val start = Coordinate(42.44717985041025, -76.48551732274225)
-        val arriveBy = false
-
-        // TODO (lesley): just for testing purposes - replace with rxjava
-        runBlocking {
-            val deferred = CoroutineScope(Dispatchers.IO).async {
-                NetworkUtils().getRouteOptions(start, end, time, arriveBy, destinationName)
-            }.await()
-
-            // Printing out [deferred] in log for testing
-            printLongLog(deferred.toString())
+        mSearchAdapter = SearchViewAdapter(this, mSearchLocations)
+        locations_list.adapter = mSearchAdapter
+        locations_list.setOnItemClickListener{parent, view, position, id ->
+            val destination = parent.getItemAtPosition(position) as Location
+            val intent = Intent(this, RouteOptionsActivity::class.java)
+            startActivity(intent)
         }
+        initSearchView()
+        (map_fragment as SupportMapFragment).getMapAsync(this)
     }
 
-    private fun printLongLog (s: String) {
-        val maxLogSize = 1000
-        val stringLength = s.length
-        if (stringLength != null) {
-            for (i in 0..stringLength / maxLogSize) {
-                val start = i * maxLogSize
-                var end = (i + 1) * maxLogSize
-                end = if (end > s.length) s.length else end
-                Log.v("returnBody", s.substring(start, end))
-            }
+    override fun onStop() {
+        super.onStop()
+        if (!disposable.isDisposed) {
+            disposable.dispose()
         }
     }
 }

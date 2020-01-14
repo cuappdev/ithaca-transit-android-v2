@@ -1,22 +1,28 @@
 package com.example.ithaca_transit_android_v2
 
+import android.util.Log
+import androidx.annotation.Nullable
 import com.example.ithaca_transit_android_v2.models.*
-import com.squareup.moshi.JsonClass
-import com.squareup.moshi.FromJson
-import com.squareup.moshi.ToJson
-import com.squareup.moshi.Json
-import com.squareup.moshi.JsonWriter
+import com.squareup.moshi.*
 import java.text.SimpleDateFormat
-import java.util.Date
-import java.util.Calendar
-import java.util.Locale
-import java.util.concurrent.TimeUnit
+import java.util.*
+import kotlin.collections.ArrayList
+import kotlin.collections.List
+import kotlin.collections.map
 
 @JsonClass(generateAdapter = true)
 class LocationAdapter {
+
     class DataLocation(
-        val data: List<JsonLocation>
+        val success: Boolean,
+        val data: PlacesLocation?
     )
+
+    class PlacesLocation(
+        val applePlaces: List<JsonLocation>?,
+        val busStops: List<JsonLocation>?
+    )
+
     @JsonClass(generateAdapter = true)
     class JsonLocation(
         val type: LocationType,
@@ -25,52 +31,85 @@ class LocationAdapter {
         val long: Double,
         val detail: String?
     )
+
     @FromJson
     private fun fromJson(json: DataLocation): List<Location> {
-        val finalLoc = json.data.map { loc ->
-            Location(loc.type, loc.name, Coordinate(loc.lat, loc.long), loc.detail)
+        if (json.data == null) {
+            return ArrayList()
         }
-        return finalLoc
+        val applePlaces = if(json.data.applePlaces != null) {
+            json.data.applePlaces.map { loc ->
+                Location(loc.type, loc.name, Coordinate(loc.lat, loc.long), loc.detail)
+            }
+        } else {
+            ArrayList()
+        }
+        val busStops = if(json.data.busStops != null) {
+            json.data.busStops.map { loc ->
+                Location(loc.type, loc.name, Coordinate(loc.lat, loc.long), loc.detail)
+            }
+        } else {
+            ArrayList()
+        }
+        val places = ArrayList<Location>()
+        places.addAll(applePlaces)
+        places.addAll(busStops)
+        return places
     }
+
     @ToJson
-    private fun toJson(json: List<Location>): DataLocation {
-        val final = json.map { loc ->
-            JsonLocation(
-                loc.type,
-                loc.name,
-                loc.coordinate.latitude,
-                loc.coordinate.longitude,
-                loc.detail
+    private fun toJson(json: List<Location>): PlacesLocation {
+        val applePlaces = ArrayList<JsonLocation>()
+        val busStops = ArrayList<JsonLocation>()
+        for (place in json) {
+            val jsonPlace = JsonLocation(
+                place.type,
+                place.name,
+                place.coordinate.latitude,
+                place.coordinate.longitude,
+                place.detail
             )
+            if (place.type == LocationType.APPLE_PLACE) {
+                applePlaces.add(jsonPlace)
+            } else {
+                busStops.add(jsonPlace)
+            }
         }
-        return DataLocation(final)
+        return PlacesLocation(applePlaces, busStops)
     }
 }
-class RouteAdapter{
+
+class RouteAdapter {
     class JsonRoute(
         val directions: List<Direction>,
         val startCoords: Coordinate,
         val endCoords: Coordinate,
-        @Json(name ="arrivalTime")
+        @Json(name = "arrivalTime")
         val arrival: Date,
-        @Json(name ="departureTime")
+        @Json(name = "departureTime")
         val depart: Date
     )
+
     @FromJson
     private fun fromJson(json: JsonRoute): Route {
         var firstBus = if (json.directions[0].type == DirectionType.BUS) 1 else 0
-        var boardInMins: Int = if (json.directions.size != 1) Route.computeBoardInMin(json.directions[firstBus]) else 0
-        return Route(json.directions, json.startCoords, json.endCoords, json.arrival, json.depart,
-            boardInMins)
+        var boardInMins: Int =
+            if (json.directions.size != 1) Route.computeBoardInMin(json.directions[firstBus]) else 0
+        return Route(
+            json.directions, json.startCoords, json.endCoords, json.arrival, json.depart,
+            boardInMins
+        )
     }
 }
-class CustomDateAdapter{
+
+class CustomDateAdapter {
     private val serverFormat = ("yyyy-MM-dd'T'HH:mm:ss'Z'")
     private val dateFormat = SimpleDateFormat(serverFormat, Locale.getDefault())
     @FromJson
     fun fromJson(date: String): Date {
         return dateFormat.parse(date)
     }
+
     @ToJson
     fun toJson(writer: JsonWriter, value: Date?) {
         value?.let { writer.value(value.toString()) }

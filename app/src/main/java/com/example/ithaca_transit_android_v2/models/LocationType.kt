@@ -5,6 +5,7 @@ import com.squareup.moshi.Json
 enum class LocationType {
     @Json(name = "busStop")
     BUS_STOP,
-    @Json(name = "googlePlace")
-    GOOGLE_PLACE
+    @Json(name = "applePlace")
+    APPLE_PLACE
+
 }

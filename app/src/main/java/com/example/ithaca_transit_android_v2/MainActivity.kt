@@ -1,12 +1,13 @@
 package com.example.ithaca_transit_android_v2
 
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
 import android.util.Log
 import android.view.View
-import android.widget.AdapterView
+import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 import androidx.appcompat.app.AppCompatActivity
 import com.example.ithaca_transit_android_v2.models.Location
@@ -22,7 +23,6 @@ import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.activity_toolbar_search.*
-import kotlinx.android.synthetic.main.item_searchview.*
 
 class MainActivity : AppCompatActivity(), OnMapReadyCallback {
     private lateinit var disposable: Disposable
@@ -45,7 +45,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
                 }
 
                 override fun onTextChanged(searchText: CharSequence?, p1: Int, p2: Int, p3: Int) {
-                    if (searchText!!.length == 0) {
+                    if (searchText!!.isEmpty()) {
                         emitter.onNext(EmptyInitClickState())
                     } else {
                         emitter.onNext(InitSearchState(searchText.toString()))
@@ -74,7 +74,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
         return obs.startWith(SearchLaunchState())
     }
 
-    fun initSearchView() {
+    private fun initSearchView() {
         val observable = createSearchObservable()
 
         disposable = observable
@@ -118,8 +118,13 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
         locations_list.adapter = mSearchAdapter
         locations_list.setOnItemClickListener{parent, view, position, id ->
             val destination = parent.getItemAtPosition(position) as Location
+
             val intent = Intent(this, RouteOptionsActivity::class.java)
             startActivity(intent)
+            overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left)
+
+
+
         }
         initSearchView()
         (map_fragment as SupportMapFragment).getMapAsync(this)

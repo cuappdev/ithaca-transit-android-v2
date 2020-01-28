@@ -1,20 +1,15 @@
 package com.example.ithaca_transit_android_v2
 
-import android.util.Log
-import androidx.annotation.Nullable
 import com.example.ithaca_transit_android_v2.models.*
 import com.squareup.moshi.*
 import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.collections.ArrayList
-import kotlin.collections.List
-import kotlin.collections.map
 
 @JsonClass(generateAdapter = true)
 class LocationAdapter {
 
     class DataLocation(
-        val success: Boolean,
         val data: PlacesLocation?
     )
 
@@ -37,20 +32,17 @@ class LocationAdapter {
         if (json.data == null) {
             return ArrayList()
         }
-        val applePlaces = if(json.data.applePlaces != null) {
+        val applePlaces = json.data.applePlaces?.let {
             json.data.applePlaces.map { loc ->
                 Location(loc.type, loc.name, Coordinate(loc.lat, loc.long), loc.detail)
             }
-        } else {
-            ArrayList()
-        }
-        val busStops = if(json.data.busStops != null) {
+        } ?: ArrayList()
+
+        val busStops = json.data.busStops?.let {
             json.data.busStops.map { loc ->
                 Location(loc.type, loc.name, Coordinate(loc.lat, loc.long), loc.detail)
             }
-        } else {
-            ArrayList()
-        }
+        } ?: ArrayList()
         val places = ArrayList<Location>()
         places.addAll(applePlaces)
         places.addAll(busStops)
@@ -96,7 +88,11 @@ class RouteAdapter {
         var boardInMins: Int =
             if (json.directions.size != 1) Route.computeBoardInMin(json.directions[firstBus]) else 0
         return Route(
-            json.directions, json.startCoords, json.endCoords, json.arrival, json.depart,
+            json.directions,
+            json.startCoords,
+            json.endCoords,
+            json.arrival,
+            json.depart,
             boardInMins
         )
     }

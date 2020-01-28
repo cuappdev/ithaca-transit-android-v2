@@ -1,13 +1,11 @@
 package com.example.ithaca_transit_android_v2
 
-import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
 import android.util.Log
 import android.view.View
-import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 import androidx.appcompat.app.AppCompatActivity
 import com.example.ithaca_transit_android_v2.models.Location
@@ -31,8 +29,9 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
 
     override fun onMapReady(map: GoogleMap?) {
         map!!.setOnMapClickListener { point ->
-            Log.i("qwerty","map clicked")
-            search_view.clearFocus() }
+            Log.i("qwerty", "map clicked")
+            search_view.clearFocus()
+        }
     }
 
     private fun createSearchObservable(): Observable<SearchState> {
@@ -57,11 +56,13 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
 
             search_input.setOnFocusChangeListener { view, hasFocus ->
                 if (hasFocus && (view as EditText).text.isEmpty()) {
+                    // search input clicked on with no text
                     emitter.onNext(EmptyInitClickState())
                 } else if (hasFocus) {
+                    // search input clicked on with text query
                     emitter.onNext(InitSearchState((view as EditText).text.toString()))
-                }
-                else {
+                } else {
+                    // search input not focused - display the un-expanded version
                     emitter.onNext(SearchLaunchState())
                 }
             }
@@ -83,13 +84,12 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
                 if (state is InitSearchState) {
                     val locations = NetworkUtils().getSearchedLocations(state.searchText)
                     InitLocationsSearchState(state.searchText, locations)
-
                 } else {
                     state
                 }
             }
             .observeOn(AndroidSchedulers.mainThread())
-            .subscribe ({ state ->
+            .subscribe({ state ->
                 when (state) {
                     is SearchLaunchState -> {
                         search_empty_state.visibility = View.GONE
@@ -102,12 +102,12 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
                     is InitLocationsSearchState -> {
                         search_empty_state.visibility = View.GONE
                         search_locations_state.visibility = View.VISIBLE
-                        if(state.searchedLocations!!.size > 0 || search_input.text.isEmpty()) {
+                        if (state.searchedLocations!!.size > 0 || search_input.text.isEmpty()) {
                             mSearchAdapter!!.swapItems(state.searchedLocations)
                         }
                     }
                 }
-            }, {error -> Log.e("An Error Occurred", error.toString())})
+            }, { error -> Log.e("An Error Occurred", error.toString()) })
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -116,13 +116,12 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
 
         mSearchAdapter = SearchViewAdapter(this, mSearchLocations)
         locations_list.adapter = mSearchAdapter
-        locations_list.setOnItemClickListener{parent, view, position, id ->
+        locations_list.setOnItemClickListener { parent, view, position, id ->
             val destination = parent.getItemAtPosition(position) as Location
 
             val intent = Intent(this, RouteOptionsActivity::class.java)
             startActivity(intent)
             overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left)
-
 
 
         }

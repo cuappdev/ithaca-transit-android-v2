@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.coordinatorlayout.widget.CoordinatorLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/tools"
+    android:id="@+id/persistentLayout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    app:ignore="NamespaceTypo">
+
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Click For Half"
+        android:id="@+id/halfButton">
+
+    </Button>
+
+    <RelativeLayout
+        android:id="@+id/relative_layout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior"
+        app:behavior_hideable = "true"
+        app:behavior_peekHeight="60dp">
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/nearby_stops_routes"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/optionsText"
+            android:clipToPadding="false"
+            android:nestedScrollingEnabled="true"
+            android:background="@color/lightGray"
+            android:layout_marginTop="8dp"
+            android:layout_marginLeft="16dp"
+            android:layout_marginRight="16dp"
+
+            />
+
+        <RelativeLayout
+            android:id="@+id/fab"
+            android:layout_width="60dp"
+            android:layout_height="8dp"
+            android:layout_alignParentTop="true"
+            android:layout_centerHorizontal="true"
+            android:layout_marginStart="15dp"
+            android:layout_marginTop="8dp"
+            android:background="@drawable/fab">
+        </RelativeLayout>
+        <TextView
+            android:id="@+id/optionsText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_marginLeft="20dp"
+            android:layout_marginTop="20dp"
+            android:text="Route Options"
+            android:textColor="@color/black"
+            android:textSize="22sp"
+            android:textStyle="bold"
+            />
+        <ImageView
+            android:id="@+id/ic_clock"
+            android:layout_width="26dp"
+            android:layout_height="22dp"
+            android:layout_below="@+id/fab"
+            android:layout_alignLeft="@+id/chooseTime"
+            android:layout_marginLeft="-28dp"
+            android:layout_marginTop="6dp"
+            android:src="@drawable/ic_clock" />
+        <TextView
+            android:id="@+id/chooseTime"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentRight="true"
+            android:layout_marginStart="20dp"
+            android:layout_marginTop="23dp"
+            android:layout_marginEnd="20dp"
+            android:layout_marginRight="20dp"
+            android:layout_marginBottom="20dp" android:text="Leave now"
+            android:textColor="@color/leaveNowGray" android:textSize="16sp"/>
+
+
+    </RelativeLayout>
+
+
+
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

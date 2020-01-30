@@ -53,8 +53,8 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
             }
 
             search_input.addTextChangedListener(watcher)
-
             search_input.setOnFocusChangeListener { view, hasFocus ->
+                Log.i("qwerty", "focus changed "+hasFocus)
                 if (hasFocus && (view as EditText).text.isEmpty()) {
                     // search input clicked on with no text
                     emitter.onNext(EmptyInitClickState())
@@ -62,6 +62,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
                     // search input clicked on with text query
                     emitter.onNext(InitSearchState((view as EditText).text.toString()))
                 } else {
+                    Log.i("qwerty", "cleared")
                     // search input not focused - display the un-expanded version
                     emitter.onNext(SearchLaunchState())
                 }
@@ -92,6 +93,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
             .subscribe({ state ->
                 when (state) {
                     is SearchLaunchState -> {
+                        Log.i("qwerty", "In Search Launch State")
                         search_empty_state.visibility = View.GONE
                         search_locations_state.visibility = View.GONE
                     }

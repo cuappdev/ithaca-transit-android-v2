@@ -38,15 +38,6 @@ class RouteDisplayState(
 ) : SearchState()
 
 /*
- * A clickable bar with Start Location name
- * A clickable bar with Destination name
- */
-class SearchRouteOptionState(
-    startLocation: Location,
-    endLocation: Location
-) : SearchState()
-
-/*
  * In the Direction Options state, when the user clicks either the start or end location,
  * automatically creating a blank typing field for changes
  */

@@ -20,18 +20,21 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.activity_main.*
-import kotlinx.android.synthetic.main.activity_toolbar_search.*
+import kotlinx.android.synthetic.main.search_main.*
+import kotlinx.android.synthetic.main.search_secondary.*
 
 class MainActivity : AppCompatActivity(), OnMapReadyCallback {
     private lateinit var disposable: Disposable
     private var mSearchLocations: List<Location> = ArrayList()
     private var mSearchAdapter: SearchViewAdapter? = null
+    private var mMap: GoogleMap? = null
+    private var mReachedPartTwo = false
+    private var mDestination: Location? = null
 
     override fun onMapReady(map: GoogleMap?) {
-        map!!.setOnMapClickListener { point ->
-            Log.i("qwerty", "map clicked")
-            search_view.clearFocus()
-        }
+        mMap = map!!
+        Log.i("qwerty", mMap.toString())
+        initSearchView()
     }
 
     private fun createSearchObservable(): Observable<SearchState> {
@@ -54,18 +57,36 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
 
             search_input.addTextChangedListener(watcher)
             search_input.setOnFocusChangeListener { view, hasFocus ->
-                Log.i("qwerty", "focus changed "+hasFocus)
                 if (hasFocus && (view as EditText).text.isEmpty()) {
                     // search input clicked on with no text
                     emitter.onNext(EmptyInitClickState())
                 } else if (hasFocus) {
                     // search input clicked on with text query
                     emitter.onNext(InitSearchState((view as EditText).text.toString()))
-                } else {
-                    Log.i("qwerty", "cleared")
-                    // search input not focused - display the un-expanded version
-                    emitter.onNext(SearchLaunchState())
                 }
+            }
+
+            // Person clicks the map
+            mMap!!.setOnMapClickListener { view ->
+                if (!mReachedPartTwo) {
+                    search_view.clearFocus()
+                    emitter.onNext(SearchLaunchState())
+                } else {
+                    emitter.onNext(RouteDisplayState(mDestination!!, mDestination!!));
+                }
+            }
+
+            // Location clicked
+            locations_list.setOnItemClickListener { parent, view, position, id ->
+                this.mReachedPartTwo = true
+                val destination = parent.getItemAtPosition(position) as Location
+                this.mDestination = destination
+                emitter.onNext(RouteDisplayState(destination, destination))
+            }
+
+            // They want to edit Current Location -> Destination
+            display_route.setOnClickListener { view ->
+                emitter.onNext(ChangeLocationState("hi", ArrayList()))
             }
 
             emitter.setCancellable {
@@ -82,6 +103,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
         disposable = observable
             .observeOn(Schedulers.io())
             .map { state ->
+                Log.i("qwerty", state.toString())
                 if (state is InitSearchState) {
                     val locations = NetworkUtils().getSearchedLocations(state.searchText)
                     InitLocationsSearchState(state.searchText, locations)
@@ -93,8 +115,10 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
             .subscribe({ state ->
                 when (state) {
                     is SearchLaunchState -> {
-                        Log.i("qwerty", "In Search Launch State")
+                        search_area.visibility = View.VISIBLE
                         search_empty_state.visibility = View.GONE
+                        display_route.visibility = View.GONE
+                        edit_route.visibility = View.GONE
                         search_locations_state.visibility = View.GONE
                     }
                     is EmptyInitClickState -> {
@@ -107,6 +131,14 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
                         if (state.searchedLocations!!.size > 0 || search_input.text.isEmpty()) {
                             mSearchAdapter!!.swapItems(state.searchedLocations)
                         }
+                    } is RouteDisplayState -> {
+                        search_area.visibility = View.GONE
+                        search_locations_state.visibility = View.GONE
+                        edit_route.visibility = View.GONE
+                        display_route.visibility = View.VISIBLE
+                    } is ChangeLocationState -> {
+                        edit_route.visibility = View.VISIBLE
+                        display_route.visibility = View.GONE
                     }
                 }
             }, { error -> Log.e("An Error Occurred", error.toString()) })
@@ -118,16 +150,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
 
         mSearchAdapter = SearchViewAdapter(this, mSearchLocations)
         locations_list.adapter = mSearchAdapter
-        locations_list.setOnItemClickListener { parent, view, position, id ->
-            val destination = parent.getItemAtPosition(position) as Location
 
-            val intent = Intent(this, RouteOptionsActivity::class.java)
-            startActivity(intent)
-            overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left)
-
-
-        }
-        initSearchView()
         (map_fragment as SupportMapFragment).getMapAsync(this)
     }
 

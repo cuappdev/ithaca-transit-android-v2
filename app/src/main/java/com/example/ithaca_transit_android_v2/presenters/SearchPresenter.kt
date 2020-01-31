@@ -23,6 +23,9 @@ class SearchPresenter(_view: View, _context: Context, _searchAdapter: SearchView
     private var mSearchLocations: List<Location> = ArrayList()
     var mSearchAdapter: SearchViewAdapter = _searchAdapter
 
+    /**
+     * Create search observable object and emit states corresponding to changes in the search bar
+     */
     private fun createSearchObservable(): Observable<SearchState> {
         val obs = Observable.create { emitter: ObservableEmitter<SearchState> ->
             val watcher: TextWatcher = object : TextWatcher {
@@ -64,6 +67,9 @@ class SearchPresenter(_view: View, _context: Context, _searchAdapter: SearchView
         return obs.startWith(SearchLaunchState())
     }
 
+    /**
+     * Ran during onCreate() of the main activity to subscribe onto the state changes for search
+     */
     fun initSearchView(): Disposable {
         val observable = createSearchObservable()
 
@@ -92,6 +98,7 @@ class SearchPresenter(_view: View, _context: Context, _searchAdapter: SearchView
                         view.search_empty_state.visibility = View.GONE
                         view.search_locations_state.visibility = View.VISIBLE
 
+                        // update search results if the networking returns a new results list
                         if (state.searchedLocations!!.isNotEmpty() || view.search_input.text.isEmpty()) {
                             mSearchAdapter.swapItems(state.searchedLocations)
                         }

@@ -12,6 +12,7 @@ import com.example.ithaca_transit_android_v2.states.*
 import com.example.ithaca_transit_android_v2.ui_adapters.SearchViewAdapter
 import io.reactivex.Observable
 import io.reactivex.ObservableEmitter
+import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.activity_toolbar_search.view.*
@@ -32,6 +33,7 @@ class SearchPresenter(_view: View, _context: Context) {
                 }
 
                 override fun onTextChanged(searchText: CharSequence?, p1: Int, p2: Int, p3: Int) {
+                    Log.d("search presenter", "on text changed")
                     if (searchText!!.isEmpty()) {
                         emitter.onNext(EmptyInitClickState())
                     } else {
@@ -45,12 +47,15 @@ class SearchPresenter(_view: View, _context: Context) {
             view.search_input.setOnFocusChangeListener { view, hasFocus ->
                 if (hasFocus && (view as EditText).text.isEmpty()) {
                     // search input clicked on with no text
+                    Log.d("search presenter", "empty init click state")
                     emitter.onNext(EmptyInitClickState())
                 } else if (hasFocus) {
                     // search input clicked on with text query
+                    Log.d("search presenter", "init search state")
                     emitter.onNext(InitSearchState((view as EditText).text.toString()))
                 } else {
                     // search input not focused - display the un-expanded version
+                    Log.d("search presenter", "search launch state")
                     emitter.onNext(SearchLaunchState())
                 }
             }
@@ -68,7 +73,7 @@ class SearchPresenter(_view: View, _context: Context) {
 
         mSearchAdapter = SearchViewAdapter(context, mSearchLocations)
 
-        val disposable = observable
+        return observable
             .observeOn(Schedulers.io())
             .map { state ->
                 if (state is InitSearchState) {
@@ -80,6 +85,7 @@ class SearchPresenter(_view: View, _context: Context) {
             }
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe({ state ->
+                Log.d("search presenter", state.toString())
                 when (state) {
                     is SearchLaunchState -> {
                         view.search_empty_state.visibility = View.GONE
@@ -92,12 +98,11 @@ class SearchPresenter(_view: View, _context: Context) {
                     is InitLocationsSearchState -> {
                         view.search_empty_state.visibility = View.GONE
                         view.search_locations_state.visibility = View.VISIBLE
-                        if (state.searchedLocations!!.size > 0 || view.search_input.text.isEmpty()) {
-                            mSearchAdapter!!.swapItems(state.searchedLocations)
+                        if (state.searchedLocations!!.isNotEmpty() || view.search_input.text.isEmpty()) {
+                            mSearchAdapter.swapItems(state.searchedLocations)
                         }
                     }
                 }
             }, { error -> Log.e("An Error Occurred", error.toString()) })
-        return disposable
     }
 }

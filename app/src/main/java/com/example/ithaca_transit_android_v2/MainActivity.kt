@@ -1,8 +1,8 @@
 package com.example.ithaca_transit_android_v2
 
-import android.content.Intent
 import android.os.Bundle
 import android.util.Log
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.example.ithaca_transit_android_v2.models.Location
 import com.example.ithaca_transit_android_v2.presenters.SearchPresenter
@@ -17,7 +17,7 @@ import kotlinx.android.synthetic.main.activity_toolbar_search.*
 class MainActivity : AppCompatActivity(), OnMapReadyCallback {
     private lateinit var searchDisposable: Disposable
     private var mSearchLocations: List<Location> = ArrayList()
-    private var mSearchAdapter: SearchViewAdapter? = null
+    private lateinit var mSearchAdapter: SearchViewAdapter
     private lateinit var mSearchPresenter: SearchPresenter
 
     override fun onMapReady(map: GoogleMap?) {
@@ -30,19 +30,21 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-
-        mSearchPresenter = SearchPresenter(search_view, this)
         mSearchAdapter = SearchViewAdapter(this, mSearchLocations)
+        mSearchPresenter = SearchPresenter(search_view, this, mSearchAdapter)
+
+        searchDisposable = mSearchPresenter.initSearchView()
+        (map_fragment as SupportMapFragment).getMapAsync(this)
+
+        // set up search adapter
         locations_list.adapter = mSearchAdapter
         locations_list.setOnItemClickListener { parent, view, position, id ->
             val destination = parent.getItemAtPosition(position) as Location
+            // TODO: change map state to reflect destination
 
-            val intent = Intent(this, RouteOptionsActivity::class.java)
-            startActivity(intent)
-            overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left)
+            // for debugging purposes only
+            Toast.makeText(this, destination.name, Toast.LENGTH_SHORT).show()
         }
-        searchDisposable = mSearchPresenter.initSearchView()
-        (map_fragment as SupportMapFragment).getMapAsync(this)
     }
 
     override fun onStop() {

@@ -17,13 +17,13 @@ import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.activity_toolbar_search.view.*
 
-class SearchPresenter(_view: View, _context: Context) {
+class SearchPresenter(_view: View, _context: Context, _searchAdapter: SearchViewAdapter) {
     var view: View = _view
     var context: Context = _context
     private var mSearchLocations: List<Location> = ArrayList()
-    var mSearchAdapter: SearchViewAdapter = SearchViewAdapter(context, mSearchLocations)
+    var mSearchAdapter: SearchViewAdapter = _searchAdapter
 
-    fun createSearchObservable(): Observable<SearchState> {
+    private fun createSearchObservable(): Observable<SearchState> {
         val obs = Observable.create { emitter: ObservableEmitter<SearchState> ->
             val watcher: TextWatcher = object : TextWatcher {
                 override fun afterTextChanged(p0: Editable?) {
@@ -33,7 +33,6 @@ class SearchPresenter(_view: View, _context: Context) {
                 }
 
                 override fun onTextChanged(searchText: CharSequence?, p1: Int, p2: Int, p3: Int) {
-                    Log.d("search presenter", "on text changed")
                     if (searchText!!.isEmpty()) {
                         emitter.onNext(EmptyInitClickState())
                     } else {
@@ -47,15 +46,12 @@ class SearchPresenter(_view: View, _context: Context) {
             view.search_input.setOnFocusChangeListener { view, hasFocus ->
                 if (hasFocus && (view as EditText).text.isEmpty()) {
                     // search input clicked on with no text
-                    Log.d("search presenter", "empty init click state")
                     emitter.onNext(EmptyInitClickState())
                 } else if (hasFocus) {
                     // search input clicked on with text query
-                    Log.d("search presenter", "init search state")
                     emitter.onNext(InitSearchState((view as EditText).text.toString()))
                 } else {
                     // search input not focused - display the un-expanded version
-                    Log.d("search presenter", "search launch state")
                     emitter.onNext(SearchLaunchState())
                 }
             }
@@ -71,21 +67,18 @@ class SearchPresenter(_view: View, _context: Context) {
     fun initSearchView(): Disposable {
         val observable = createSearchObservable()
 
-        mSearchAdapter = SearchViewAdapter(context, mSearchLocations)
-
         return observable
             .observeOn(Schedulers.io())
             .map { state ->
                 if (state is InitSearchState) {
-                    val locations = NetworkUtils().getSearchedLocations(state.searchText)
-                    InitLocationsSearchState(state.searchText, locations)
+                    mSearchLocations = NetworkUtils().getSearchedLocations(state.searchText) ?: ArrayList()
+                    InitLocationsSearchState(state.searchText, mSearchLocations)
                 } else {
                     state
                 }
             }
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe({ state ->
-                Log.d("search presenter", state.toString())
                 when (state) {
                     is SearchLaunchState -> {
                         view.search_empty_state.visibility = View.GONE
@@ -98,6 +91,7 @@ class SearchPresenter(_view: View, _context: Context) {
                     is InitLocationsSearchState -> {
                         view.search_empty_state.visibility = View.GONE
                         view.search_locations_state.visibility = View.VISIBLE
+
                         if (state.searchedLocations!!.isNotEmpty() || view.search_input.text.isEmpty()) {
                             mSearchAdapter.swapItems(state.searchedLocations)
                         }

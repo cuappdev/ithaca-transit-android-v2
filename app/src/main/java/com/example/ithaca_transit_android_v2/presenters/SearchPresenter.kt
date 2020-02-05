@@ -7,10 +7,12 @@ import android.util.Log
 import android.view.View
 import android.widget.EditText
 import com.example.ithaca_transit_android_v2.NetworkUtils
+
 import com.example.ithaca_transit_android_v2.Repository
 import com.example.ithaca_transit_android_v2.models.Coordinate
 import com.example.ithaca_transit_android_v2.models.Location
 import com.example.ithaca_transit_android_v2.models.LocationType
+
 import com.example.ithaca_transit_android_v2.states.*
 import com.example.ithaca_transit_android_v2.ui_adapters.SearchViewAdapter
 import io.reactivex.Observable
@@ -18,8 +20,10 @@ import io.reactivex.ObservableEmitter
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
+
 import kotlinx.android.synthetic.main.search_main.view.*
 import kotlinx.android.synthetic.main.search_secondary.view.*
+
 
 class SearchPresenter(_view: View, _context: Context, _searchAdapter: SearchViewAdapter) {
     var view: View = _view
@@ -52,6 +56,7 @@ class SearchPresenter(_view: View, _context: Context, _searchAdapter: SearchView
             }
 
             view.search_input.addTextChangedListener(watcher)
+
             view.search_input.setOnFocusChangeListener { view, hasFocus ->
                 if (hasFocus && (view as EditText).text.isEmpty()) {
                     // search input clicked on with no text
@@ -59,6 +64,7 @@ class SearchPresenter(_view: View, _context: Context, _searchAdapter: SearchView
                 } else if (hasFocus) {
                     // search input clicked on with text query
                     emitter.onNext(InitSearchState((view as EditText).text.toString()))
+
                 }
             }
 
@@ -130,6 +136,7 @@ class SearchPresenter(_view: View, _context: Context, _searchAdapter: SearchView
                     view.edit_dest_loc.setText(location.name)
                 }
                 emitter.onNext(ChangeRouteState("", true))
+
             }
 
             emitter.setCancellable {
@@ -138,6 +145,7 @@ class SearchPresenter(_view: View, _context: Context, _searchAdapter: SearchView
                 view.search_input.setOnFocusChangeListener(null)
                 view.locations_list.setOnItemClickListener(null)
                 view.display_route.setOnClickListener(null)
+
             }
         }
         return obs.startWith(SearchLaunchState())
@@ -160,6 +168,7 @@ class SearchPresenter(_view: View, _context: Context, _searchAdapter: SearchView
                     mSearchLocations =
                         NetworkUtils().getSearchedLocations(state.searchText) ?: ArrayList()
                     ChangeRouteLocationState(state.searchText, mSearchLocations, state.hideSearchList)
+
                 } else {
                     state
                 }
@@ -174,6 +183,7 @@ class SearchPresenter(_view: View, _context: Context, _searchAdapter: SearchView
                         view.locations_list_2.visibility = View.GONE
 
                         view.search_change_location_holder.visibility = View.GONE
+
                     }
                     is EmptyInitClickState -> {
                         view.search_locations_state.visibility = View.GONE

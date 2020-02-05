@@ -13,16 +13,20 @@ import androidx.appcompat.app.AppCompatActivity
 import com.example.ithaca_transit_android_v2.models.Location
 import com.example.ithaca_transit_android_v2.presenters.SearchPresenter
 import com.example.ithaca_transit_android_v2.ui_adapters.SearchViewAdapter
+
 import com.example.ithaca_transit_android_v2.util.CurrLocationManager
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
+
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
 import io.reactivex.disposables.Disposable
 import kotlinx.android.synthetic.main.activity_main.*
+
 import kotlinx.android.synthetic.main.search_main.*
 import kotlinx.android.synthetic.main.search_secondary.*
+
 
 class MainActivity : AppCompatActivity(), OnMapReadyCallback {
     private lateinit var searchDisposable: Disposable
@@ -68,6 +72,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
             if ((grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED)) {
                 initializeLocationManager()
             }
+
         }
     }
 }

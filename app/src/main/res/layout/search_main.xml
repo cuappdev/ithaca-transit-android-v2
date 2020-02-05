@@ -11,7 +11,7 @@
     app:cardElevation="3dp">
 
     <LinearLayout
-        android:id="@+id/card_holder"
+        android:id="@+id/search_card_holder"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical">

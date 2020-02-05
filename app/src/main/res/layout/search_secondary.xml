@@ -18,6 +18,7 @@
         android:paddingBottom="16dp">
 
         <TextView
+            android:id="@+id/display_start_loc"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Current Location"
@@ -32,6 +33,7 @@
             android:src="@drawable/ic_rightarrow" />
 
         <TextView
+            android:id="@+id/display_dest_loc"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Mews Hall"
@@ -86,6 +88,7 @@
             android:orientation="vertical">
 
             <EditText
+                android:id="@+id/edit_start_loc"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:background="@android:color/transparent"
@@ -97,8 +100,7 @@
                 android:minWidth="150dp"
                 android:paddingTop="15dp"
                 android:paddingBottom="15dp"
-                android:scrollHorizontally="true"
-                android:text="Current Location" />
+                android:scrollHorizontally="true" />
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -106,6 +108,7 @@
                 android:background="#eee" />
 
             <EditText
+                android:id="@+id/edit_dest_loc"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:background="@android:color/transparent"
@@ -117,8 +120,7 @@
                 android:minWidth="150dp"
                 android:paddingTop="15dp"
                 android:paddingBottom="15dp"
-                android:scrollHorizontally="true"
-                android:text="Mews Hall" />
+                android:scrollHorizontally="true" />
         </LinearLayout>
 
         <LinearLayout
@@ -135,5 +137,20 @@
                 android:src="@drawable/ic_switch" />
 
         </LinearLayout>
+    </LinearLayout>
+    <LinearLayout
+        android:id="@+id/search_locations_state_2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:clickable="false"
+        android:orientation="vertical">
+
+        <com.example.ithaca_transit_android_v2.ui.MaxHeightListView
+            android:id="@+id/locations_list_2"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:divider="@drawable/list_divider"
+            android:dividerHeight="1px" />
+
     </LinearLayout>
 </LinearLayout>

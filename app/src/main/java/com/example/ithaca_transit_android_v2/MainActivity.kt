@@ -1,22 +1,16 @@
 package com.example.ithaca_transit_android_v2
 
 import android.content.Context
-import android.content.Intent
 import android.content.pm.PackageManager
 import android.location.LocationManager
 import android.os.Bundle
-import android.text.Editable
-import android.text.TextWatcher
-import android.util.Log
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.example.ithaca_transit_android_v2.models.Location
+import com.example.ithaca_transit_android_v2.presenters.MapPresenter
 import com.example.ithaca_transit_android_v2.presenters.SearchPresenter
 import com.example.ithaca_transit_android_v2.ui_adapters.SearchViewAdapter
 
 import com.example.ithaca_transit_android_v2.util.CurrLocationManager
-import com.google.android.gms.location.FusedLocationProviderClient
-import com.google.android.gms.location.LocationServices
 
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
@@ -36,8 +30,8 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
     private lateinit var mCurrLocationManager: CurrLocationManager
 
     override fun onMapReady(map: GoogleMap?) {
-        map!!.setOnMapClickListener { point ->
-        }
+        val p = MapPresenter()
+        p.initMapView(map!!)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {

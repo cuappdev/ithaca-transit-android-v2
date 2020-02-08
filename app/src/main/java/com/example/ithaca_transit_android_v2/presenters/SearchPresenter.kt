@@ -27,7 +27,6 @@ import kotlinx.android.synthetic.main.search_secondary.view.*
 
 class SearchPresenter(_view: View, _context: Context, _searchAdapter: SearchViewAdapter) {
     var view: View = _view
-    var context: Context = _context
     private var mSearchLocations: List<Location> = ArrayList()
     var mSearchAdapter: SearchViewAdapter = _searchAdapter
 
@@ -128,6 +127,8 @@ class SearchPresenter(_view: View, _context: Context, _searchAdapter: SearchView
 
             view.locations_list_2.setOnItemClickListener { parent, _, position, id ->
                 val location = parent.getItemAtPosition(position) as Location
+                // Depending on whether they were editing the start or destination field, change how
+                // things get updated
                 if (mEditingStart) {
                     Repository.setStartLocation(location)
                     view.edit_start_loc.setText(location.name)

@@ -8,21 +8,23 @@
     android:gravity="bottom"
     tools:context=".MainActivity">
 
-    <fragment
-        android:id="@+id/map_fragment"
-        android:name="com.google.android.gms.maps.SupportMapFragment"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        tools:context=".MainActivity">
-        <LinearLayout
-            android:clickable="false"
-            android:focusable="false"
-            android:layout_marginTop="0dp"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
-            <include layout="@layout/search_main" />
-        </LinearLayout>
 
-    </fragment>
+    <fragment
+        android:name="com.example.ithaca_transit_android_v2.MapFragment"
+        android:id="@+id/fooFragment"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
+    <LinearLayout
+        android:clickable="false"
+        android:focusable="false"
+        android:layout_marginTop="0dp"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+        <include layout="@layout/search_main" />
+    </LinearLayout>
+
+
+
 </RelativeLayout>
 

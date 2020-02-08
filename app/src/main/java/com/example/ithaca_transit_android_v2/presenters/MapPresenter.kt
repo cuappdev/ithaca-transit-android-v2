@@ -1,12 +1,6 @@
 package com.example.ithaca_transit_android_v2.presenters
 
-import android.content.Context
-import android.text.Editable
-import android.text.TextWatcher
 import android.util.Log
-import android.view.View
-import android.widget.EditText
-import com.example.ithaca_transit_android_v2.NetworkUtils
 
 import com.example.ithaca_transit_android_v2.Repository
 import com.example.ithaca_transit_android_v2.models.Coordinate
@@ -27,11 +21,7 @@ import kotlinx.android.synthetic.main.search_secondary.view.*
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.CameraUpdateFactory
 
-
-
-
 class MapPresenter() {
-
 
     /**
      * Create search observable object and emit states corresponding to changes in the search bar

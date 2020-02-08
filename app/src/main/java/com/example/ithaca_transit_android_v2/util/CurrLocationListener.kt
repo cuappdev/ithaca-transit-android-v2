@@ -6,10 +6,11 @@ import android.os.Bundle
 import android.util.Log
 import com.example.ithaca_transit_android_v2.Repository
 
+// Used to keep track of the current location of the user at all times
 class CurrLocationListener: LocationListener {
     override fun onLocationChanged(p0: Location?) {
         if (p0 != null) {
-            Repository.setCurrentLocation(p0)
+            Repository.currentLocation = p0
         }
     }
 

@@ -23,7 +23,6 @@
             android:orientation="vertical">
 
             <include layout="@layout/search_secondary" />
-
         </LinearLayout>
 
         <LinearLayout

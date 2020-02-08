@@ -73,24 +73,23 @@ class SearchPresenter(_view: View, _context: Context, _searchAdapter: SearchView
                 var startLocation = destination
 
                 // Get the location object of the user, transform it into a custom "Current Location" object
-                val myLoc = Repository.getCurrentLocation()
+                val myLoc = Repository.currentLocation
                 if (myLoc != null) {
                     startLocation = Location(
                         LocationType.APPLE_PLACE, "Current Location",
                         Coordinate(myLoc.latitude, myLoc.longitude), ""
                     )
                 }
-                Repository.setStartLocation(startLocation)
-                Repository.setDestinationLocation(destination)
+                Repository.startLocation = startLocation
+                Repository.destinationLocation = destination
                 emitter.onNext(RouteDisplayState(startLocation, destination))
             }
 
             // Move to editing the route start/end location
             view.display_route.setOnClickListener { _ ->
-                val startLoc = Repository.getStartLocation()
-                val destLoc = Repository.getDestinationLocation()
+                val startLoc = Repository.startLocation
+                val destLoc = Repository.destinationLocation
                 if (startLoc != null && destLoc != null) {
-
                     view.edit_start_loc.setText(startLoc.name)
                     view.edit_dest_loc.setText(destLoc.name)
                     emitter.onNext(ChangeRouteState("", true))
@@ -130,10 +129,10 @@ class SearchPresenter(_view: View, _context: Context, _searchAdapter: SearchView
                 // Depending on whether they were editing the start or destination field, change how
                 // things get updated
                 if (mEditingStart) {
-                    Repository.setStartLocation(location)
+                    Repository.startLocation = location
                     view.edit_start_loc.setText(location.name)
                 } else {
-                    Repository.setDestinationLocation(location)
+                    Repository.destinationLocation = location
                     view.edit_dest_loc.setText(location.name)
                 }
                 emitter.onNext(ChangeRouteState("", true))

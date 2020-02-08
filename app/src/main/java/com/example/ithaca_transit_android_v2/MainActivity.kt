@@ -31,7 +31,11 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
 
     override fun onMapReady(map: GoogleMap?) {
         val p = MapPresenter()
-        p.initMapView(map!!)
+        if (map == null) {
+            //TODO: Display error state map failed
+        } else {
+            p.initMapView(map)
+        }
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -43,7 +47,8 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
         searchDisposable = mSearchPresenter.initSearchView()
         (map_fragment as SupportMapFragment).getMapAsync(this)
 
-        // set up search adapter
+        // set up search adapter, location_list refers to listview of locations on launch
+        // location_list_2 refers to the listview of locations when editing their route options
         locations_list.adapter = mSearchAdapter
         locations_list_2.adapter = mSearchAdapter
         initializeLocationManager()
@@ -61,6 +66,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
         }
     }
 
+    /* When user grants privileges to the user, initialize the location manager */
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
         if (requestCode == 888) {
             if ((grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED)) {

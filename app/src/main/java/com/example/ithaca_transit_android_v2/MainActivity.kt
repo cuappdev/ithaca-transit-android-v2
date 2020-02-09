@@ -1,29 +1,40 @@
 package com.example.ithaca_transit_android_v2
 
+import android.content.Context
+import android.content.pm.PackageManager
+import android.location.LocationManager
 import android.os.Bundle
-import android.util.Log
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.example.ithaca_transit_android_v2.models.Location
+import com.example.ithaca_transit_android_v2.presenters.MapPresenter
 import com.example.ithaca_transit_android_v2.presenters.SearchPresenter
 import com.example.ithaca_transit_android_v2.ui_adapters.SearchViewAdapter
+
+import com.example.ithaca_transit_android_v2.util.CurrLocationManager
+
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
 import io.reactivex.disposables.Disposable
 import kotlinx.android.synthetic.main.activity_main.*
-import kotlinx.android.synthetic.main.activity_toolbar_search.*
+
+import kotlinx.android.synthetic.main.search_main.*
+import kotlinx.android.synthetic.main.search_secondary.*
+
 
 class MainActivity : AppCompatActivity(), OnMapReadyCallback {
     private lateinit var searchDisposable: Disposable
     private var mSearchLocations: List<Location> = ArrayList()
     private lateinit var mSearchAdapter: SearchViewAdapter
     private lateinit var mSearchPresenter: SearchPresenter
+    private lateinit var mCurrLocationManager: CurrLocationManager
 
     override fun onMapReady(map: GoogleMap?) {
-        map!!.setOnMapClickListener { point ->
-            Log.i("qwerty", "map clicked")
-            search_view.clearFocus()
+        val p = MapPresenter()
+        if (map == null) {
+            //TODO: Display error state map failed
+        } else {
+            p.initMapView(map)
         }
     }
 
@@ -31,26 +42,37 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         mSearchAdapter = SearchViewAdapter(this, mSearchLocations)
-        mSearchPresenter = SearchPresenter(search_view, this, mSearchAdapter)
+        mSearchPresenter = SearchPresenter(search_card_holder, this, mSearchAdapter)
 
         searchDisposable = mSearchPresenter.initSearchView()
         (map_fragment as SupportMapFragment).getMapAsync(this)
 
-        // set up search adapter
+        // set up search adapter, location_list refers to listview of locations on launch
+        // location_list_2 refers to the listview of locations when editing their route options
         locations_list.adapter = mSearchAdapter
-        locations_list.setOnItemClickListener { parent, view, position, id ->
-            val destination = parent.getItemAtPosition(position) as Location
-            // TODO: change map state to reflect destination
+        locations_list_2.adapter = mSearchAdapter
+        initializeLocationManager()
+    }
 
-            // for debugging purposes only
-            Toast.makeText(this, destination.name, Toast.LENGTH_SHORT).show()
-        }
+    fun initializeLocationManager() {
+        val locationManager: LocationManager = getSystemService(Context.LOCATION_SERVICE) as LocationManager
+        mCurrLocationManager = CurrLocationManager(this, locationManager, this)
     }
 
     override fun onStop() {
         super.onStop()
         if (!searchDisposable.isDisposed) {
             searchDisposable.dispose()
+        }
+    }
+
+    /* When user grants privileges to the user, initialize the location manager */
+    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
+        if (requestCode == 888) {
+            if ((grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED)) {
+                initializeLocationManager()
+            }
+
         }
     }
 }

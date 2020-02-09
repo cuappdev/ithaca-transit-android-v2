@@ -33,25 +33,26 @@ class InitLocationsSearchState(
 
 // Default start location is Current Location
 class RouteDisplayState(
-    startLocation: Location,
-    endLocation: Location
-) : SearchState()
-
-/*
- * A clickable bar with Start Location name
- * A clickable bar with Destination name
- */
-class SearchRouteOptionState(
-    startLocation: Location,
-    endLocation: Location
+    val startLocation: Location,
+    val endLocation: Location
 ) : SearchState()
 
 /*
  * In the Direction Options state, when the user clicks either the start or end location,
  * automatically creating a blank typing field for changes
  */
-class ChangeLocationState(
-    searchText: String, // User Input
-    searchedLocations: List<Location>
+class ChangeRouteState(
+    val searchText: String,
+    val hideSearchList: Boolean
+) : SearchState()
+
+/*
+ * In the Direction Options state, when the user clicks either the start or end location,
+ * and filled in with a searchedLocations network response
+ */
+class ChangeRouteLocationState(
+    val searchText: String,
+    val searchedLocations: List<Location>?,
+    val hideSearchList: Boolean
 ) : SearchState()
 

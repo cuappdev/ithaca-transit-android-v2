@@ -15,6 +15,7 @@ import io.reactivex.subjects.PublishSubject
 
 class RvAdapter(val userList: ArrayList<Route>) : RecyclerView.Adapter<RvAdapter.ViewHolder>() {
 
+    //Creation of the observable object, defining that it will hold a RouteCardState
     private val clickSubject = PublishSubject.create<RouteCardState>()
     val clickEvent: Observable<RouteCardState> = clickSubject
 
@@ -23,9 +24,11 @@ class RvAdapter(val userList: ArrayList<Route>) : RecyclerView.Adapter<RvAdapter
         val v = LayoutInflater.from(p0?.context).inflate(R.layout.routecards, p0, false)
         return ViewHolder(v);
     }
+
     override fun getItemCount(): Int {
         return userList.size
     }
+
     override fun onBindViewHolder(p0: ViewHolder, p1: Int) {
 
         p0.description?.text = userList[p1].arrival.toString()
@@ -37,8 +40,8 @@ class RvAdapter(val userList: ArrayList<Route>) : RecyclerView.Adapter<RvAdapter
         val delay = itemView.findViewById<TextView>(R.id.delay)
 
 
-        init{
-            //itemView.clicks().map{userList[layoutPosition]}
+        init {
+            //Listener for onClicks - creates observable with Route object corresponding to clicked routeCard
             itemView.setOnClickListener {
                 clickSubject.onNext(RouteDetailViewState(userList[layoutPosition]))
             }

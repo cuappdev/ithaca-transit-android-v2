@@ -75,7 +75,6 @@ class NetworkUtils {
 
         val json = JSONObject()
         json.put("end", end.toString())
-        json.put("uid",  "43CE9BE3-F455-411D-9276-83F755A3466E" )
         json.put("time", time)
         json.put("destinationName", destName)
         json.put("start", start.toString())

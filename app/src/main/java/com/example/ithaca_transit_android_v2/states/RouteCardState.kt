@@ -4,13 +4,13 @@ import com.example.ithaca_transit_android_v2.models.Route
 import com.example.ithaca_transit_android_v2.models.RouteOptions
 
 // Parent Class
-sealed class RouteCardState(val routes: RouteOptions? = null)
+sealed class RouteCardState()
 
 /*
  * A default display of a route card in route option view.
  * [route.isWalkingOnly] and number of [route.directions] affects the drawing of transit details.
  */
-class RouteOptionState(searchedRoute : RouteOptions): RouteCardState(routes = searchedRoute)
+class RouteOptionState(searchedRoute : RouteOptions): RouteCardState()
 
 /*
  * A route card from [RouteOptionState] is clicked.

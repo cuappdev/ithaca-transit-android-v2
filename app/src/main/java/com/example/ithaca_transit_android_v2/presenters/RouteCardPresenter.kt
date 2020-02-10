@@ -15,14 +15,13 @@ import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.route_card_compact.view.*
 
 
-class RouteCardPresenter(_view: View, _context: Context){
+class RouteCardPresenter(_view: View, _context: Context) {
 
     var view: View = _view
-    var context: Context = _context
 
-    fun initRouteCardView(routeObservable: Observable<RouteCardState>) : Disposable {
 
-        var stateR : RouteCardState
+    fun initRouteCardView(routeObservable: Observable<RouteCardState>): Disposable {
+
         return routeObservable
             .observeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())

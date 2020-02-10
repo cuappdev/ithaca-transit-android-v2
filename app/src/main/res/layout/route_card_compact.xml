@@ -14,7 +14,7 @@
         android:orientation="vertical"
         xmlns:app="http://schemas.android.com/apk/res-auto"
         app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior"
-        app:behavior_hideable = "true"
+        app:behavior_hideable = "false"
         app:behavior_peekHeight="60dp"
         android:id="@+id/bottomSheet">
 

@@ -27,154 +27,118 @@ import java.time.LocalDateTime
 import java.util.concurrent.locks.ReentrantLock
 import kotlin.collections.ArrayList
 
-class RouteCardCompact : AppCompatActivity(){
+class RouteCardCompact : AppCompatActivity() {
 
-    val c = this
+    val routeCardContext = this
 
     var rvAdapter = RvAdapter(ArrayList())
     private lateinit var searchDisposable: Disposable
 
-    private var subscribe: Disposable? = null
     var dataList = ArrayList<Route>()
 
 
-    val end = Coordinate(42.45352923315714,-76.4802676615646)
+    //Temporary data used for networking calls.
+    val end = Coordinate(42.45352923315714, -76.4802676615646)
     val uid = "E4A0256E-5865-4E9F-8A5A-33747CAC7EBF"
-    val time = 1580887917.0
+    val time = 1581308199.0
     val destinationName = "Bill & Melinda Gates Hall"
-    val start = Coordinate(42.447319055865485,-76.48542509781194)
+    val start = Coordinate(42.447319055865485, -76.48542509781194)
     val arriveBy = false
-
-
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.route_card_compact)
 
-
-
-        val fab = findViewById<RelativeLayout>(R.id.fab)
-        val routeOptionsText = findViewById<TextView>(R.id.optionsText)
-
-
-
         runBlocking {
             val loc1 = CoroutineScope(Dispatchers.IO).async {
-                NetworkUtils().getSearchedLocations("Jameson")
+                NetworkUtils().getSearchedLocations("Balch")
             }.await()
-
-            Log.v("loc1", loc1.toString())
 
 
             val loc2 = CoroutineScope(Dispatchers.IO).async {
-                NetworkUtils().getSearchedLocations("Statler")
+                NetworkUtils().getSearchedLocations("Olin")
             }.await()
 
-
-            Log.v("loc2", loc2.toString())
 
             val deferred = CoroutineScope(Dispatchers.IO).async {
-                NetworkUtils().getRouteOptions(end, start, time, false, "yeet")
+                NetworkUtils().getRouteOptions(
+                    loc1[0].coordinate,
+                    loc2[0].coordinate,
+                    time,
+                    false,
+                    "yeet"
+                )
             }.await()
 
-            // Printing out [deferred] in log for testing
 
             dataList = ArrayList(deferred.boardingSoon)
 
 
             val recyclerView = findViewById<RecyclerView>(R.id.nearby_stops_routes)
-            recyclerView.layoutManager= LinearLayoutManager(c, RecyclerView.VERTICAL, false)
+            recyclerView.layoutManager =
+                LinearLayoutManager(routeCardContext, RecyclerView.VERTICAL, false)
 
 
-            rvAdapter= RvAdapter(dataList)
+            rvAdapter = RvAdapter(dataList)
             recyclerView.adapter = rvAdapter
 
 
-
         }
-
-
 
 
         val bottom_sheet = findViewById<LinearLayout>(R.id.bottomSheet)
         val bottomSheetBehavior = BottomSheetBehavior.from(bottom_sheet)
 
 
-
-        var state = BottomSheetBehavior.STATE_COLLAPSED
-
-        bottomSheetBehavior.setBottomSheetCallback(object : BottomSheetBehavior.BottomSheetCallback() {
+        /*
+        * Logic that handles the where the routecardview will go when user slides
+        */
+        var slideState = BottomSheetBehavior.STATE_COLLAPSED
+        bottomSheetBehavior.setBottomSheetCallback(object :
+            BottomSheetBehavior.BottomSheetCallback() {
             override fun onSlide(p0: View, p1: Float) {
-                //Log.d("qwerty", "true")
 
 
                 val location = IntArray(2)
                 bottom_sheet.getLocationOnScreen(location)
 
-                if(location[1] > 600 && location[1]< 1000){
-                    Log.d("inSlide", state.toString())
+                /*
+                * */
+                if (location[1] > 600 && location[1] < 1000) {
+                    Log.d("inSlide", slideState.toString())
                     bottomSheetBehavior.setState(BottomSheetBehavior.STATE_HALF_EXPANDED)
                 }
-
-                Log.d("qwerty2", location[1].toString())
-
-
-
 
             }
 
             override fun onStateChanged(@NonNull view: View, i: Int) {
                 when (i) {
                     BottomSheetBehavior.STATE_COLLAPSED -> {
-                        state = BottomSheetBehavior.STATE_COLLAPSED
+                        slideState = BottomSheetBehavior.STATE_COLLAPSED
                     }
                     BottomSheetBehavior.STATE_EXPANDED -> {
 
-                        state = BottomSheetBehavior.STATE_EXPANDED
+                        slideState = BottomSheetBehavior.STATE_EXPANDED
                     }
-//                    BottomSheetBehavior.STATE_DRAGGING -> if (state != BottomSheetBehavior.STATE_HALF_EXPANDED) {
-//                        bottomSheetBehavior.setState(BottomSheetBehavior.STATE_HALF_EXPANDED)
-//                    }
-                    BottomSheetBehavior.STATE_HALF_EXPANDED -> state =
+
+                    BottomSheetBehavior.STATE_HALF_EXPANDED -> slideState =
                         BottomSheetBehavior.STATE_HALF_EXPANDED
                 }
             }
 
         })
 
-
-
-        val routePresenter = RouteCardPresenter(bottomSheet, c)
-
-
-//        }
-
+        val routePresenter = RouteCardPresenter(bottomSheet, routeCardContext)
 
         searchDisposable = routePresenter.initRouteCardView(rvAdapter.clickEvent)
-
 
     }
 
 
-//    private fun setupRecyclerView() {
-//
-//        val recyclerView = findViewById<RecyclerView>(R.id.nearby_stops_routes)
-//        recyclerView.layoutManager = LinearLayoutManager(this, RecyclerView.VERTICAL, false)
-//
-//        recyclerView.adapter = rvAdapter
-//
-//    }
-
-
-//    fun setupItemClick() {
-//        routePresenter.initRouteCardView(rvAdapter.clickEvent)
-//    }
-
-
-
+    //Destroy observables when application is closed
     override fun onDestroy() {
         super.onDestroy()
-        subscribe?.dispose()
+        searchDisposable?.dispose()
     }
 }

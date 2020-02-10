@@ -16,7 +16,7 @@ data class Route (
     @Json(name ="arrivalTime")
     val arrival: Date?,
     @Json(name ="departureTime")
-    val depart: Date?,
+    val depart: Date,
     val boardInMin: Int
 ) {
     companion object {

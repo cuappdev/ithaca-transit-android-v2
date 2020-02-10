@@ -9,7 +9,6 @@ import com.example.ithaca_transit_android_v2.R
 import com.example.ithaca_transit_android_v2.models.Route
 import com.example.ithaca_transit_android_v2.states.RouteCardState
 import com.example.ithaca_transit_android_v2.states.RouteDetailViewState
-import com.jakewharton.rxbinding3.view.clicks
 import io.reactivex.Observable
 import io.reactivex.subjects.PublishSubject
 

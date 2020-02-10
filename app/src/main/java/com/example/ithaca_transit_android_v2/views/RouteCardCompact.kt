@@ -2,8 +2,6 @@ package com.example.ithaca_transit_android_v2.views
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.util.DisplayMetrics
-import android.util.Log
 import android.view.View
 import android.widget.*
 import androidx.annotation.NonNull
@@ -14,7 +12,6 @@ import com.example.ithaca_transit_android_v2.R
 import com.example.ithaca_transit_android_v2.models.Coordinate
 import com.example.ithaca_transit_android_v2.models.Route
 import com.example.ithaca_transit_android_v2.presenters.RouteCardPresenter
-import com.example.ithaca_transit_android_v2.states.RouteCardState
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import io.reactivex.disposables.Disposable
 import kotlinx.android.synthetic.main.route_card_compact.*
@@ -22,9 +19,6 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.runBlocking
-import java.time.LocalDate
-import java.time.LocalDateTime
-import java.util.concurrent.locks.ReentrantLock
 import kotlin.collections.ArrayList
 
 class RouteCardCompact : AppCompatActivity() {
@@ -106,7 +100,6 @@ class RouteCardCompact : AppCompatActivity() {
                 /*
                 * */
                 if (location[1] > 600 && location[1] < 1000) {
-                    Log.d("inSlide", slideState.toString())
                     bottomSheetBehavior.setState(BottomSheetBehavior.STATE_HALF_EXPANDED)
                 }
 

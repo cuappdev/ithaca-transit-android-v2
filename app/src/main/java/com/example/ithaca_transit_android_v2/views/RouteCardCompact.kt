@@ -21,6 +21,8 @@ import kotlinx.coroutines.async
 import kotlinx.coroutines.runBlocking
 import kotlin.collections.ArrayList
 
+
+// Class that handles the bottom sliding sheet.
 class RouteCardCompact : AppCompatActivity() {
 
     val routeCardContext = this
@@ -82,7 +84,7 @@ class RouteCardCompact : AppCompatActivity() {
                 bottom_sheet.getLocationOnScreen(location)
 
                 /*
-                *
+                * Tells the slider to snap to the middle when the user lifts their finger near the middle of the screen.
                 * */
                 if (location[1] > 600 && location[1] < 1000) {
                     bottomSheetBehavior.setState(BottomSheetBehavior.STATE_HALF_EXPANDED)

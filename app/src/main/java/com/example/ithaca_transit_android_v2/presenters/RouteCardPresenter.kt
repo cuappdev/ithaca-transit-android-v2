@@ -14,11 +14,9 @@ import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.route_card_compact.view.*
 
-
 class RouteCardPresenter(_view: View, _context: Context) {
 
     var view: View = _view
-
 
     fun initRouteCardView(routeObservable: Observable<RouteCardState>): Disposable {
 

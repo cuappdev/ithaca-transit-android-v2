@@ -14,7 +14,7 @@ data class Route (
     val startCoords: Coordinate,
     val endCoords: Coordinate,
     @Json(name ="arrivalTime")
-    val arrival: Date?,
+    val arrival: Date,
     @Json(name ="departureTime")
     val depart: Date,
     val boardInMin: Int

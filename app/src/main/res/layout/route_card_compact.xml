@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.coordinatorlayout.widget.CoordinatorLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/tools"
     android:id="@+id/RouteCardCoordinate"
     android:layout_width="match_parent"
@@ -8,33 +7,31 @@
     app:ignore="NamespaceTypo">
 
 
-    <LinearLayout
+    <LinearLayout xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/bottomSheet"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
-        xmlns:app="http://schemas.android.com/apk/res-auto"
-        app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior"
-        app:behavior_hideable = "false"
+        app:behavior_hideable="false"
         app:behavior_peekHeight="60dp"
-        android:id="@+id/bottomSheet">
+        app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior">
 
         <RelativeLayout
             android:id="@+id/relative_layout"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-           >
+            android:layout_height="wrap_content">
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/nearby_stops_routes"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_below="@id/optionsText"
+                android:layout_marginLeft="16dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginRight="16dp"
+                android:background="@color/lightGray"
                 android:clipToPadding="false"
                 android:nestedScrollingEnabled="true"
-                android:background="@color/lightGray"
-                android:layout_marginTop="8dp"
-                android:layout_marginLeft="16dp"
-                android:layout_marginRight="16dp"
 
                 />
 
@@ -47,7 +44,9 @@
                 android:layout_marginStart="15dp"
                 android:layout_marginTop="8dp"
                 android:background="@drawable/fab">
+
             </RelativeLayout>
+
             <TextView
                 android:id="@+id/optionsText"
                 android:layout_width="wrap_content"
@@ -58,8 +57,8 @@
                 android:text="Route Options"
                 android:textColor="@color/black"
                 android:textSize="22sp"
-                android:textStyle="bold"
-                />
+                android:textStyle="bold" />
+
             <ImageView
                 android:id="@+id/ic_clock"
                 android:layout_width="26dp"
@@ -69,6 +68,7 @@
                 android:layout_marginLeft="-28dp"
                 android:layout_marginTop="6dp"
                 android:src="@drawable/ic_clock" />
+
             <TextView
                 android:id="@+id/chooseTime"
                 android:layout_width="wrap_content"
@@ -79,23 +79,25 @@
                 android:layout_marginTop="23dp"
                 android:layout_marginEnd="20dp"
                 android:layout_marginRight="20dp"
-                android:layout_marginBottom="20dp" android:text="Leave now"
-                android:textColor="@color/leaveNowGray" android:textSize="16sp"/>
+                android:layout_marginBottom="20dp"
+                android:text="Leave now"
+                android:textColor="@color/leaveNowGray"
+                android:textSize="16sp" />
 
 
         </RelativeLayout>
 
         <LinearLayout
+            android:id="@+id/detailedLinearLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:id="@+id/detailedLinearLayout"
             android:orientation="horizontal">
 
             <LinearLayout
+                android:id="@+id/detailTime"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
-                android:orientation="vertical"
-                android:id="@+id/detailTime">
+                android:orientation="vertical">
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -107,10 +109,10 @@
             </LinearLayout>
 
             <LinearLayout
+                android:id="@+id/detailDots"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
-                android:orientation="vertical"
-                android:id="@+id/detailDots">
+                android:orientation="vertical">
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -120,11 +122,12 @@
                 </TextView>
 
             </LinearLayout>
+
             <LinearLayout
+                android:id="@+id/detailNames"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
-                android:orientation="vertical"
-                android:id="@+id/detailNames">
+                android:orientation="vertical">
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -136,20 +139,10 @@
             </LinearLayout>
 
 
-
-
-
         </LinearLayout>
 
 
-
-
-
-
     </LinearLayout>
-
-
-
 
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

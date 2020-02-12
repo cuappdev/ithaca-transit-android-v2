@@ -21,9 +21,9 @@ import java.util.concurrent.TimeUnit
 class NetworkUtils {
 
     val client = OkHttpClient.Builder()
-        .connectTimeout(2, TimeUnit.MINUTES)
-        .writeTimeout(2, TimeUnit.MINUTES) // write timeout
-        .readTimeout(2, TimeUnit.MINUTES) // read timeout
+        .connectTimeout(15, TimeUnit.SECONDS)
+        .writeTimeout(15, TimeUnit.SECONDS) // write timeout
+        .readTimeout(15, TimeUnit.SECONDS) // read timeout
         .build()
     val url = "https://transit-backend.cornellappdev.com/api/v2/"
     val mediaType = ("application/json; charset=utf-8").toMediaType()
@@ -70,7 +70,7 @@ class NetworkUtils {
         end: Coordinate,
         time: Double,
         arriveBy: Boolean = true,
-        destName : String
+        destName: String
     ): RouteOptions {
 
         val json = JSONObject()
@@ -100,6 +100,10 @@ class NetworkUtils {
 
         val adapter: JsonAdapter<RouteOptions> = moshi.adapter(type)
 
-        return adapter.fromJson(arr.toString()) ?: RouteOptions(emptyList(), emptyList(), emptyList())
+        return adapter.fromJson(arr.toString()) ?: RouteOptions(
+            emptyList(),
+            emptyList(),
+            emptyList()
+        )
     }
 }

@@ -10,14 +10,14 @@ sealed class RouteCardState()
  * A default display of a route card in route option view.
  * [route.isWalkingOnly] and number of [route.directions] affects the drawing of transit details.
  */
-class RouteOptionState(searchedRoute : RouteOptions): RouteCardState()
+class RouteOptionState(searchedRoute: RouteOptions) : RouteCardState()
 
 /*
  * A route card from [RouteOptionState] is clicked.
  * [RouteDetailViewState] displays the selected route in detail.
  * Takes in only one [route] object because only one route is displayed.
  */
-class RouteDetailViewState(route: Route): RouteCardState()
+class RouteDetailViewState(route: Route) : RouteCardState()
 
 /*
  * User clicks on the [Leave Now] button in [RouteOptionState] and a dialog pops up (UI change).

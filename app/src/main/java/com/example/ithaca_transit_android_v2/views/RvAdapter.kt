@@ -12,15 +12,15 @@ import com.example.ithaca_transit_android_v2.states.RouteDetailViewState
 import io.reactivex.Observable
 import io.reactivex.subjects.PublishSubject
 
+// Recycler view adapter that fills each route card with the list of Route objects that is returned by our RouteOptions networking call.
 class RvAdapter(val userList: ArrayList<Route>) : RecyclerView.Adapter<RvAdapter.ViewHolder>() {
 
     //Creation of the observable object, defining that it will hold a RouteCardState
     private val clickSubject = PublishSubject.create<RouteCardState>()
     val clickEvent: Observable<RouteCardState> = clickSubject
 
-
     override fun onCreateViewHolder(p0: ViewGroup, p1: Int): ViewHolder {
-        val v = LayoutInflater.from(p0?.context).inflate(R.layout.routecards, p0, false)
+        val v = LayoutInflater.from(p0.context).inflate(R.layout.routecards, p0, false)
         return ViewHolder(v);
     }
 
@@ -30,6 +30,7 @@ class RvAdapter(val userList: ArrayList<Route>) : RecyclerView.Adapter<RvAdapter
 
     override fun onBindViewHolder(p0: ViewHolder, p1: Int) {
 
+        //Temporary info to fill the routecard so that we can see the difference between cards.
         p0.description?.text = userList[p1].arrival.toString()
         p0.delay?.text = userList[p1].boardInMin.toString()
     }
@@ -37,7 +38,6 @@ class RvAdapter(val userList: ArrayList<Route>) : RecyclerView.Adapter<RvAdapter
     inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val description = itemView.findViewById<TextView>(R.id.route_description)
         val delay = itemView.findViewById<TextView>(R.id.delay)
-
 
         init {
             //Listener for onClicks - creates observable with Route object corresponding to clicked routeCard

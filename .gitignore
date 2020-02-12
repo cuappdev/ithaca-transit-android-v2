@@ -61,6 +61,8 @@ build/
 # Custom
 app/src/main/res/values/google_maps_api.xml
 .DS_Store
+app/.DS_Store
+app/src/.DS_Store
 google-services.json
 
 # API keys

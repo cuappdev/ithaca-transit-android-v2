@@ -15,11 +15,6 @@ import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.OnMapReadyCallback
 
 
-
-
-
-
-
 class MapFragment: Fragment() , OnMapReadyCallback{
     private lateinit var mapView: MapView
     private lateinit var map: GoogleMap

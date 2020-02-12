@@ -14,18 +14,23 @@ import okhttp3.OkHttpClient
 import okhttp3.Request
 import okhttp3.RequestBody.Companion.toRequestBody
 import org.json.JSONObject
+import java.util.concurrent.TimeUnit
 
 /*
  * NetworkUtils include all the networking calls needed
  */
 class NetworkUtils {
 
-    val client = OkHttpClient()
+    val client = OkHttpClient.Builder()
+        .connectTimeout(15, TimeUnit.SECONDS)
+        .writeTimeout(15, TimeUnit.SECONDS) // write timeout
+        .readTimeout(15, TimeUnit.SECONDS) // read timeout
+        .build()
     val url = "https://transit-backend.cornellappdev.com/api/v2/"
     val mediaType = ("application/json; charset=utf-8").toMediaType()
 
     // Function that takes in query and returns list of Locations
-    fun getSearchedLocations(query: String): List<Location>? {
+    fun getSearchedLocations(query: String): List<Location> {
         val json = JSONObject()
         json.put("query", query)
         val requestBody = json.toString().toRequestBody(mediaType)
@@ -35,14 +40,14 @@ class NetworkUtils {
             .build()
 
         val body = client.newCall(request).execute().body?.string()
-
         val type = newParameterizedType(List::class.java, Location::class.java)
         val moshi = Moshi.Builder()
             .add(LocationAdapter())
             .add(KotlinJsonAdapterFactory())
             .build()
+
         val adapter: JsonAdapter<List<Location>> = moshi.adapter(type)
-        return adapter.fromJson(body.toString())?: emptyList()
+        return adapter.fromJson(body) ?: emptyList()
     }
 
     fun getAllBusStops(): List<Location> {
@@ -66,15 +71,16 @@ class NetworkUtils {
         end: Coordinate,
         time: Double,
         arriveBy: Boolean = true,
-        destName : String
+        destName: String
     ): RouteOptions {
 
         val json = JSONObject()
-        json.put("start", start.toString())
         json.put("end", end.toString())
         json.put("time", time)
-        json.put("arriveBy", arriveBy)
         json.put("destinationName", destName)
+        json.put("start", start.toString())
+        json.put("arriveBy", arriveBy)
+        json.put("originName", "Current Location")
 
         val requestBody = json.toString().toRequestBody(mediaType)
         val request: Request = Request.Builder()
@@ -95,6 +101,10 @@ class NetworkUtils {
 
         val adapter: JsonAdapter<RouteOptions> = moshi.adapter(type)
 
-        return adapter.fromJson(arr.toString()) ?: RouteOptions(emptyList(), emptyList(), emptyList())
+        return adapter.fromJson(arr.toString()) ?: RouteOptions(
+            emptyList(),
+            emptyList(),
+            emptyList()
+        )
     }
 }

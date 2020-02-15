@@ -70,44 +70,12 @@ class RouteCardCompact : AppCompatActivity() {
         }
 
         val bottom_sheet = findViewById<LinearLayout>(R.id.bottomSheet)
-        val bottomSheetBehavior = BottomSheetBehavior.from(bottom_sheet)
 
         /*
         * Logic that handles the where the routecardview will go when user slides
         */
         var slideState = BottomSheetBehavior.STATE_COLLAPSED
-        bottomSheetBehavior.setBottomSheetCallback(object :
-            BottomSheetBehavior.BottomSheetCallback() {
-            override fun onSlide(p0: View, p1: Float) {
 
-                val location = IntArray(2)
-                bottom_sheet.getLocationOnScreen(location)
-
-                /*
-                * Tells the slider to snap to the middle when the user lifts their finger near the middle of the screen.
-                * */
-                if (location[1] > 600 && location[1] < 1000) {
-                    bottomSheetBehavior.setState(BottomSheetBehavior.STATE_HALF_EXPANDED)
-                }
-
-            }
-
-            override fun onStateChanged(@NonNull view: View, i: Int) {
-                when (i) {
-                    BottomSheetBehavior.STATE_COLLAPSED -> {
-                        slideState = BottomSheetBehavior.STATE_COLLAPSED
-                    }
-                    BottomSheetBehavior.STATE_EXPANDED -> {
-
-                        slideState = BottomSheetBehavior.STATE_EXPANDED
-                    }
-
-                    BottomSheetBehavior.STATE_HALF_EXPANDED -> slideState =
-                        BottomSheetBehavior.STATE_HALF_EXPANDED
-                }
-            }
-
-        })
 
         val routePresenter = RouteCardPresenter(bottomSheet, routeCardContext)
 

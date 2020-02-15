@@ -7,6 +7,7 @@ import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import com.example.ithaca_transit_android_v2.models.Location
 import com.example.ithaca_transit_android_v2.presenters.MapPresenter
+import com.example.ithaca_transit_android_v2.presenters.RouteCardPresenter
 import com.example.ithaca_transit_android_v2.presenters.SearchPresenter
 import com.example.ithaca_transit_android_v2.ui_adapters.SearchViewAdapter
 
@@ -51,6 +52,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
         locations_list.adapter = mSearchAdapter
         locations_list_2.adapter = mSearchAdapter
         initializeLocationManager()
+        var routeCardPresenter = RouteCardPresenter()
     }
 
     fun initializeLocationManager() {

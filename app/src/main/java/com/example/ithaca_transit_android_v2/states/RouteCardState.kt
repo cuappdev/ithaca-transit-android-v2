@@ -6,6 +6,8 @@ import com.example.ithaca_transit_android_v2.models.RouteOptions
 // Parent Class
 sealed class RouteCardState()
 
+
+class RouteHiddenState() : RouteCardState()
 /*
  * A default display of a route card in route option view.
  * [route.isWalkingOnly] and number of [route.directions] affects the drawing of transit details.

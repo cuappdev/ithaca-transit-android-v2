@@ -10,14 +10,17 @@ import com.example.ithaca_transit_android_v2.presenters.MapPresenter
 import com.example.ithaca_transit_android_v2.presenters.RouteCardPresenter
 import com.example.ithaca_transit_android_v2.presenters.SearchPresenter
 import com.example.ithaca_transit_android_v2.ui_adapters.SearchViewAdapter
+import com.example.ithaca_transit_android_v2.util.CompositeOnItemClickListener
 
 import com.example.ithaca_transit_android_v2.util.CurrLocationManager
 
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
+import com.google.android.material.bottomsheet.BottomSheetBehavior
 import io.reactivex.disposables.Disposable
 import kotlinx.android.synthetic.main.activity_main.*
+import kotlinx.android.synthetic.main.route_card_compact.*
 
 import kotlinx.android.synthetic.main.search_main.*
 import kotlinx.android.synthetic.main.search_secondary.*
@@ -25,9 +28,12 @@ import kotlinx.android.synthetic.main.search_secondary.*
 
 class MainActivity : AppCompatActivity(), OnMapReadyCallback {
     private lateinit var searchDisposable: Disposable
+    private lateinit var routeCardDisposable: Disposable
+
     private var mSearchLocations: List<Location> = ArrayList()
     private lateinit var mSearchAdapter: SearchViewAdapter
     private lateinit var mSearchPresenter: SearchPresenter
+    private lateinit var mRouteCardPresenter: RouteCardPresenter
     private lateinit var mCurrLocationManager: CurrLocationManager
 
     override fun onMapReady(map: GoogleMap?) {
@@ -44,15 +50,21 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
         setContentView(R.layout.activity_main)
         mSearchAdapter = SearchViewAdapter(this, mSearchLocations)
         mSearchPresenter = SearchPresenter(search_card_holder, this, mSearchAdapter)
+        mRouteCardPresenter = RouteCardPresenter(search_card_holder, bottomSheet)
+        mRouteCardPresenter.setBottomSheetCallback(BottomSheetBehavior.from(bottomSheet), bottomSheet);
 
         searchDisposable = mSearchPresenter.initSearchView()
+        routeCardDisposable = mRouteCardPresenter.initRouteCardView();
 
         // set up search adapter, location_list refers to listview of locations on launch
         // location_list_2 refers to the listview of locations when editing their route options
         locations_list.adapter = mSearchAdapter
         locations_list_2.adapter = mSearchAdapter
+
+        Repository.destinationListListeners = CompositeOnItemClickListener()
+        //locations_list.setOnItemClickListener(Repository.destinationListListeners)
         initializeLocationManager()
-        var routeCardPresenter = RouteCardPresenter()
+
     }
 
     fun initializeLocationManager() {
@@ -64,6 +76,9 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
         super.onStop()
         if (!searchDisposable.isDisposed) {
             searchDisposable.dispose()
+        }
+        if (!routeCardDisposable.isDisposed) {
+            routeCardDisposable.dispose()
         }
     }
 

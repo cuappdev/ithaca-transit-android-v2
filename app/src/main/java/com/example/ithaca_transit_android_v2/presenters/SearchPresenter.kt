@@ -5,6 +5,7 @@ import android.text.Editable
 import android.text.TextWatcher
 import android.util.Log
 import android.view.View
+import android.widget.AdapterView
 import android.widget.EditText
 import com.example.ithaca_transit_android_v2.NetworkUtils
 
@@ -55,7 +56,6 @@ class SearchPresenter(_view: View, _context: Context, _searchAdapter: SearchView
             }
 
             view.search_input.addTextChangedListener(watcher)
-
             view.search_input.setOnFocusChangeListener { view, hasFocus ->
                 if (hasFocus && (view as EditText).text.isEmpty()) {
                     // search input clicked on with no text
@@ -63,13 +63,15 @@ class SearchPresenter(_view: View, _context: Context, _searchAdapter: SearchView
                 } else if (hasFocus) {
                     // search input clicked on with text query
                     emitter.onNext(InitSearchState((view as EditText).text.toString()))
-
                 }
             }
 
             // Location clicked, default start location is CurrLocation
-            view.locations_list.setOnItemClickListener { parent, view, position, id ->
-                val destination = parent.getItemAtPosition(position) as Location
+            view.locations_list.setOnItemClickListener(
+                AdapterView.OnItemClickListener{parent, view, position, id ->
+                    Log.i("qweerty", "hello");
+
+                val destination = parent!!.getItemAtPosition(position) as Location
                 var startLocation = destination
 
                 // Get the location object of the user, transform it into a custom "Current Location" object
@@ -83,7 +85,7 @@ class SearchPresenter(_view: View, _context: Context, _searchAdapter: SearchView
                 Repository.startLocation = startLocation
                 Repository.destinationLocation = destination
                 emitter.onNext(RouteDisplayState(startLocation, destination))
-            }
+                })
 
             // Move to editing the route start/end location
             view.display_route.setOnClickListener { _ ->
@@ -175,6 +177,7 @@ class SearchPresenter(_view: View, _context: Context, _searchAdapter: SearchView
             }
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe({ state ->
+                Log.i("qwerty", "qqqqq")
                 when (state) {
                     is SearchLaunchState -> {
                         view.search_area.visibility = View.VISIBLE

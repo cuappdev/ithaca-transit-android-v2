@@ -15,6 +15,7 @@ import com.example.ithaca_transit_android_v2.presenters.RouteCardPresenter
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import io.reactivex.disposables.Disposable
 import kotlinx.android.synthetic.main.route_card_compact.*
+import kotlinx.android.synthetic.main.search_main.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
@@ -77,15 +78,14 @@ class RouteCardCompact : AppCompatActivity() {
         var slideState = BottomSheetBehavior.STATE_COLLAPSED
 
 
-        val routePresenter = RouteCardPresenter(bottomSheet, routeCardContext)
+        //val routePresenter = RouteCardPresenter(search_card_holder, bottomSheet)
 
-        routeDisposable = routePresenter.initRouteCardView(rvAdapter.clickEvent)
+       // routeDisposable = routePresenter.initRouteCardView()
 
     }
 
     //Destroy observables when application is closed
     override fun onDestroy() {
         super.onDestroy()
-        routeDisposable?.dispose()
     }
 }

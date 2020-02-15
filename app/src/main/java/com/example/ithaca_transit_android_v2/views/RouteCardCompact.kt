@@ -27,15 +27,21 @@ class RouteCardCompact : AppCompatActivity() {
 
     val routeCardContext = this
 
-    var rvAdapter = RvAdapter(ArrayList())
+    var rvAdapter = RvAdapter(ArrayList(), routeCardContext)
     private lateinit var routeDisposable: Disposable
 
     var dataList = ArrayList<Route>()
 
     //Temporary data used for networking calls.
-    val time = 1581308199.0
+    val time = 1581791095.0
 
     override fun onCreate(savedInstanceState: Bundle?) {
+
+        // Drawing circles
+        var dots = DrawRouteCard(this, null)
+
+
+
         super.onCreate(savedInstanceState)
         setContentView(R.layout.route_card_compact)
 
@@ -64,7 +70,7 @@ class RouteCardCompact : AppCompatActivity() {
                 LinearLayoutManager(routeCardContext, RecyclerView.VERTICAL, false)
 
 
-            rvAdapter = RvAdapter(dataList)
+            rvAdapter = RvAdapter(dataList, routeCardContext)
             recyclerView.adapter = rvAdapter
 
         }
@@ -114,6 +120,9 @@ class RouteCardCompact : AppCompatActivity() {
         routeDisposable = routePresenter.initRouteCardView(rvAdapter.clickEvent)
 
     }
+
+
+
 
     //Destroy observables when application is closed
     override fun onDestroy() {

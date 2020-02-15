@@ -62,7 +62,6 @@
             android:textStyle="normal" />
 
         <LinearLayout
-            android:orientation="vertical"
             android:id="@+id/icons"
             android:layout_width="57dp"
             android:layout_height="106dp"
@@ -73,54 +72,50 @@
             android:cacheColorHint="@android:color/transparent"
             android:divider="@color/white"
             android:dividerHeight="0dp"
+            android:orientation="vertical"
             android:paddingLeft="2dp">
-
-
-
-
 
         </LinearLayout>
 
         <LinearLayout
-            android:orientation="vertical"
             android:id="@+id/path_dots"
             android:layout_width="50dp"
-            android:layout_height="106dp"
+            android:layout_height="wrap_content"
             android:layout_below="@id/route_description"
             android:layout_marginLeft="80dp"
             android:layout_marginTop="2dp"
             android:background="@android:color/transparent"
             android:cacheColorHint="@android:color/transparent"
             android:divider="@color/white"
-            android:dividerHeight="0dp"
+            android:orientation="vertical"
             android:paddingLeft="0dp">
 
             <com.example.ithaca_transit_android_v2.views.DrawRouteCard
+                android:id="@+id/drawingDots"
                 android:layout_width="18dp"
-                android:layout_height="94dp"
+                android:layout_height="96dp"
                 android:layout_gravity="center"
-                android:layout_marginTop="10dp"
-                >
+                android:layout_marginTop="10dp">
 
             </com.example.ithaca_transit_android_v2.views.DrawRouteCard>
 
         </LinearLayout>
 
 
-
-        <ListView
-            android:orientation="vertical"
+        <LinearLayout
             android:id="@+id/directions"
-            android:layout_width="221dp"
-            android:layout_height="104dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
             android:layout_below="@id/route_description"
-            android:layout_marginLeft="160dp"
-            android:layout_marginTop="0dp"
+            android:layout_gravity="center_vertical"
+            android:layout_marginTop="10dp"
+            android:layout_toRightOf="@+id/path_dots"
             android:background="@android:color/transparent"
             android:cacheColorHint="@android:color/transparent"
             android:divider="@color/white"
             android:dividerHeight="-15dp"
-            android:paddingLeft="2dp"></ListView>
+            android:orientation="vertical"
+            android:paddingLeft="2dp"></LinearLayout>
 
 
     </RelativeLayout>

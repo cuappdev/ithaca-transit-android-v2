@@ -9,6 +9,7 @@ import android.widget.ArrayAdapter
 import android.widget.LinearLayout
 import android.widget.ListView
 import android.widget.TextView
+import androidx.cardview.widget.CardView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.ithaca_transit_android_v2.R
 import com.example.ithaca_transit_android_v2.models.Route
@@ -19,7 +20,8 @@ import io.reactivex.Observable
 import io.reactivex.subjects.PublishSubject
 
 // Recycler view adapter that fills each route card with the list of Route objects that is returned by our RouteOptions networking call.
-class RvAdapter(val userList: ArrayList<Route>, context: Context) : RecyclerView.Adapter<RvAdapter.ViewHolder>() {
+class RvAdapter(val userList: ArrayList<Route>, context: Context) :
+    RecyclerView.Adapter<RvAdapter.ViewHolder>() {
 
     var routeCardContext = context
 
@@ -42,29 +44,61 @@ class RvAdapter(val userList: ArrayList<Route>, context: Context) : RecyclerView
         p0.description?.text = userList[p1].arrival.toString()
         p0.delay?.text = userList[p1].boardInMin.toString()
 
-        var summaryList : ArrayList<String> = ArrayList()
+        var summaryList: ArrayList<String> = ArrayList()
 
-        for(i in 0 until userList[p1].routeSummary!!.size){
+        for (i in 0 until userList[p1].routeSummary!!.size) {
             userList[p1].routeSummary?.get(i)?.stopName?.let { summaryList.add(it) }
         }
-        Log.d("Divider", summaryList.size.toString())
-        if(summaryList.size > 3){
-            Log.d("Divider", summaryList.size.toString())
-            p0.directionList.dividerHeight = -40
+
+
+
+
+        for (i in summaryList) {
+
+            val lDirectionparams = LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT
+            )
+            val linearlayoutparams = p0.directionList.layoutParams
+
+            val dotParams = p0.dotDrawing.layoutParams
+
+            var individualDirection = TextView(routeCardContext)
+            individualDirection.setText(i)
+
+            p0.directionList.addView(individualDirection)
+            lDirectionparams.weight = 1f
+
+            individualDirection.textSize = 15f
+
+            if (summaryList.size > 3) {
+                linearlayoutparams.height = 400
+                dotParams.height = 400
+                p0.dotDrawing.setDimensions(20f, 345f, 325f)
+
+                //Forces the canvas to redraw and update dots
+                p0.dotDrawing.invalidate()
+
+            } else {
+                linearlayoutparams.height = 300
+                p0.dotDrawing.setDimensions(20f, 220f, 180f)
+                //var drawRouteCard=DrawRouteCard(routeCardContext, null, 36f, 222f, 180f )
+
+            }
+
+            individualDirection.layoutParams = lDirectionparams
+            p0.directionList.layoutParams = linearlayoutparams
+
         }
-
-        var directionsAdapter = ArrayAdapter<String>(
-            routeCardContext, android.R.layout.simple_list_item_1, summaryList
-
-        )
-        p0.directionList.adapter = directionsAdapter
 
     }
 
     inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val description = itemView.findViewById<TextView>(R.id.route_description)
         val delay = itemView.findViewById<TextView>(R.id.delay)
-        val directionList = itemView.findViewById<ListView>(R.id.directions)
+        val directionList = itemView.findViewById<LinearLayout>(R.id.directions)
+        val dotDrawing = itemView.findViewById<DrawRouteCard>(R.id.drawingDots)
+        val dotLayout = itemView.findViewById<LinearLayout>(R.id.path_dots)
+        val cardViewDelegate = itemView.findViewById<CardView>(R.id.cardviewdelegate)
 
         init {
             //Listener for onClicks - creates observable with Route object corresponding to clicked routeCard

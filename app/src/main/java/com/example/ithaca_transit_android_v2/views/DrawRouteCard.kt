@@ -17,20 +17,27 @@ class DrawRouteCard(context: Context, attrs: AttributeSet?) : View(context, attr
     var circleR = 20f
 
 
-    var circleX2 = 20f //36
-    var circleY2 = 220f //222
+    var circleX2 = 36f //36
+    var circleY2 = 222f //222
 
 
 
     var left = 15f //30
     var top = 30f //36
     var lineW =10f //10
-    var lineL = 180f //180
+    var lineL = 300f //180
 
     init {
         // create the Paint and set its color
         dotColor.setARGB(255, 0, 173, 255)
 
+
+    }
+
+    fun setDimensions(circlex2: Float, circley2: Float, lineL: Float){
+        circleX2 = circlex2
+        circleY2 = circley2
+        this.lineL = lineL
 
     }
 

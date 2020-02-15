@@ -33,14 +33,9 @@ class RouteCardCompact : AppCompatActivity() {
     var dataList = ArrayList<Route>()
 
     //Temporary data used for networking calls.
-    val time = 1581791095.0
+    val time = 1581793386.0
 
     override fun onCreate(savedInstanceState: Bundle?) {
-
-        // Drawing circles
-        var dots = DrawRouteCard(this, null)
-
-
 
         super.onCreate(savedInstanceState)
         setContentView(R.layout.route_card_compact)
@@ -59,7 +54,7 @@ class RouteCardCompact : AppCompatActivity() {
                     endLoc[0].coordinate,
                     time,
                     false,
-                    "yeet"
+                    "Final Destination"
                 )
             }.await()
 

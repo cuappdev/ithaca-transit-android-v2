@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.pm.PackageManager
 import android.location.LocationManager
 import android.os.Bundle
+import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import com.example.ithaca_transit_android_v2.models.Location
 import com.example.ithaca_transit_android_v2.presenters.MapPresenter
@@ -48,9 +49,12 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+
+        Repository.destinationListListeners = CompositeOnItemClickListener()
+
         mSearchAdapter = SearchViewAdapter(this, mSearchLocations)
         mSearchPresenter = SearchPresenter(search_card_holder, this, mSearchAdapter)
-        mRouteCardPresenter = RouteCardPresenter(search_card_holder, bottomSheet)
+        mRouteCardPresenter = RouteCardPresenter(bottomSheet)
         mRouteCardPresenter.setBottomSheetCallback(BottomSheetBehavior.from(bottomSheet), bottomSheet);
 
         searchDisposable = mSearchPresenter.initSearchView()
@@ -61,8 +65,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
         locations_list.adapter = mSearchAdapter
         locations_list_2.adapter = mSearchAdapter
 
-        Repository.destinationListListeners = CompositeOnItemClickListener()
-        //locations_list.setOnItemClickListener(Repository.destinationListListeners)
+        locations_list.setOnItemClickListener(Repository.destinationListListeners)
         initializeLocationManager()
 
     }

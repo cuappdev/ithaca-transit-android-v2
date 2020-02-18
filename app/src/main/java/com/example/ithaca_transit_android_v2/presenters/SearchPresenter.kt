@@ -67,9 +67,8 @@ class SearchPresenter(_view: View, _context: Context, _searchAdapter: SearchView
             }
 
             // Location clicked, default start location is CurrLocation
-            view.locations_list.setOnItemClickListener(
+            Repository.destinationListListeners!!.addOnItemClickListener(
                 AdapterView.OnItemClickListener{parent, view, position, id ->
-                    Log.i("qweerty", "hello");
 
                 val destination = parent!!.getItemAtPosition(position) as Location
                 var startLocation = destination
@@ -86,7 +85,6 @@ class SearchPresenter(_view: View, _context: Context, _searchAdapter: SearchView
                 Repository.destinationLocation = destination
                 emitter.onNext(RouteDisplayState(startLocation, destination))
                 })
-
             // Move to editing the route start/end location
             view.display_route.setOnClickListener { _ ->
                 val startLoc = Repository.startLocation
@@ -177,7 +175,6 @@ class SearchPresenter(_view: View, _context: Context, _searchAdapter: SearchView
             }
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe({ state ->
-                Log.i("qwerty", "qqqqq")
                 when (state) {
                     is SearchLaunchState -> {
                         view.search_area.visibility = View.VISIBLE

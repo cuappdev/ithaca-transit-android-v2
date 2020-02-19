@@ -62,6 +62,8 @@
             android:textStyle="normal" />
 
         <LinearLayout
+            android:gravity="center"
+            android:layout_gravity="center_vertical"
             android:id="@+id/icons"
             android:layout_width="57dp"
             android:layout_height="106dp"
@@ -78,6 +80,7 @@
         </LinearLayout>
 
         <LinearLayout
+            android:gravity="center_vertical"
             android:id="@+id/path_dots"
             android:layout_width="50dp"
             android:layout_height="wrap_content"
@@ -91,6 +94,7 @@
             android:paddingLeft="0dp">
 
             <com.example.ithaca_transit_android_v2.views.DrawRouteCard
+
                 android:id="@+id/drawingDots"
                 android:layout_width="18dp"
                 android:layout_height="96dp"

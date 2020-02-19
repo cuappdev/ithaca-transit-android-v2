@@ -2,6 +2,7 @@ package com.example.ithaca_transit_android_v2.views
 
 import android.content.Context
 import android.util.Log
+import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -53,10 +54,18 @@ class RvAdapter(val userList: ArrayList<Route>, context: Context) :
             }
 
         }
+        //Add walking image
+
 
         val lDirectionparams = LinearLayout.LayoutParams(
             LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT
         )
+        lDirectionparams.weight = 1f
+
+        val busIconParams = LinearLayout.LayoutParams(
+            LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT
+        )
+
         val linearlayoutparams = p0.directionList.layoutParams
         val busImageLayoutParam = p0.busDrawing.layoutParams
         val dotParams = p0.dotDrawing.layoutParams
@@ -76,6 +85,8 @@ class RvAdapter(val userList: ArrayList<Route>, context: Context) :
 
         }
 
+
+
         p0.directionList.layoutParams = linearlayoutparams
 
         for (i in summaryList) {
@@ -84,7 +95,7 @@ class RvAdapter(val userList: ArrayList<Route>, context: Context) :
             individualDirection.setText(i)
 
             p0.directionList.addView(individualDirection)
-            lDirectionparams.weight = 1f
+
 
             individualDirection.textSize = 15f
 
@@ -98,9 +109,21 @@ class RvAdapter(val userList: ArrayList<Route>, context: Context) :
 
             var busNumberView = busNumberView(routeCardContext, null)
             busNumberView.setBusNumber(i)
+
+
+            busIconParams.weight = 1f
+            busIconParams.gravity = Gravity.CENTER_HORIZONTAL
+            busIconParams.topMargin = 80
+
+            busNumberView.layoutParams = busIconParams
+
             p0.busDrawing.addView(busNumberView)
 
         }
+
+        //Add walking image
+
+
 
     }
 

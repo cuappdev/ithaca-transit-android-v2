@@ -1,11 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.cardview.widget.CardView
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/cardviewdelegate"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    app:cardCornerRadius="4dp"
-    android:id="@+id/cardviewdelegate">
+    app:cardCornerRadius="4dp">
 
     <RelativeLayout
         android:id="@+id/rlayout"
@@ -15,16 +14,15 @@
 
         <TextView
             android:id="@+id/duration"
-            android:layout_height="wrap_content"
             android:layout_width="wrap_content"
-            android:layout_alignParentTop="true"
+            android:layout_height="wrap_content"
             android:layout_alignParentLeft="true"
-            android:text="00:00 - 00:00"
-            android:textSize="16sp"
-            android:layout_marginTop="8dp"
+            android:layout_alignParentTop="true"
             android:layout_marginLeft="8dp"
+            android:layout_marginTop="8dp"
+            android:text="00:00 - 00:00"
             android:textColor="@color/black"
-            />
+            android:textSize="16sp" />
 
         <TextView
             android:id="@+id/moreInfo"
@@ -41,16 +39,15 @@
 
         <TextView
             android:id="@+id/delay"
-            android:layout_below="@id/duration"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_below="@id/duration"
             android:layout_toRightOf="@+id/route_description"
+            android:paddingRight="48dp"
             android:text="Delay"
             android:textColor="@color/green"
             android:textSize="14sp"
-            android:textStyle="bold"
-            android:paddingRight="48dp"
-            />
+            android:textStyle="bold" />
 
         <TextView
             android:id="@+id/route_description"
@@ -60,11 +57,11 @@
             android:layout_marginLeft="8dp"
             android:paddingRight="36dp"
             android:text="Route Description"
+            android:textColor="@color/routeDetails"
             android:textSize="14sp"
-            android:textStyle="normal"
-            android:textColor="@color/routeDetails"/>
+            android:textStyle="normal" />
 
-        <androidx.recyclerview.widget.RecyclerView
+        <LinearLayout
             android:id="@+id/icons"
             android:layout_width="57dp"
             android:layout_height="106dp"
@@ -75,33 +72,50 @@
             android:cacheColorHint="@android:color/transparent"
             android:divider="@color/white"
             android:dividerHeight="0dp"
-            android:paddingLeft="2dp"></androidx.recyclerview.widget.RecyclerView>
+            android:orientation="vertical"
+            android:paddingLeft="2dp">
 
-        <androidx.recyclerview.widget.RecyclerView
+        </LinearLayout>
+
+        <LinearLayout
             android:id="@+id/path_dots"
-            android:layout_width="54dp"
-            android:layout_height="106dp"
+            android:layout_width="50dp"
+            android:layout_height="wrap_content"
             android:layout_below="@id/route_description"
             android:layout_marginLeft="80dp"
             android:layout_marginTop="2dp"
             android:background="@android:color/transparent"
             android:cacheColorHint="@android:color/transparent"
             android:divider="@color/white"
-            android:dividerHeight="0dp"
-            android:paddingLeft="2dp"></androidx.recyclerview.widget.RecyclerView>
+            android:orientation="vertical"
+            android:paddingLeft="0dp">
 
-        <androidx.recyclerview.widget.RecyclerView
+            <com.example.ithaca_transit_android_v2.views.DrawRouteCard
+                android:id="@+id/drawingDots"
+                android:layout_width="18dp"
+                android:layout_height="96dp"
+                android:layout_gravity="center"
+                android:layout_marginTop="10dp">
+
+            </com.example.ithaca_transit_android_v2.views.DrawRouteCard>
+
+        </LinearLayout>
+
+
+        <LinearLayout
             android:id="@+id/directions"
-            android:layout_width="221dp"
-            android:layout_height="104dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
             android:layout_below="@id/route_description"
-            android:layout_marginLeft="160dp"
-            android:layout_marginTop="2dp"
+            android:layout_gravity="center_vertical"
+            android:layout_marginTop="10dp"
+            android:layout_toRightOf="@+id/path_dots"
             android:background="@android:color/transparent"
             android:cacheColorHint="@android:color/transparent"
             android:divider="@color/white"
-            android:dividerHeight="0dp"
-            android:paddingLeft="2dp"></androidx.recyclerview.widget.RecyclerView>
+            android:dividerHeight="-15dp"
+            android:orientation="vertical"
+            android:paddingLeft="2dp"></LinearLayout>
 
 
     </RelativeLayout>

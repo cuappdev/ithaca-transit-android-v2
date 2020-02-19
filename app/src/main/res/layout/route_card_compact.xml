@@ -111,7 +111,8 @@
 
             <LinearLayout
                 android:id="@+id/detailDots"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
+                android:layout_weight="0."
                 android:layout_height="match_parent"
                 android:orientation="vertical">
 
@@ -121,6 +122,10 @@
                     android:text="Detail Dots">
 
                 </TextView>
+
+
+
+
 
             </LinearLayout>
 

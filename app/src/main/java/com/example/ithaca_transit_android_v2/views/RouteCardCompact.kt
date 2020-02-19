@@ -22,21 +22,24 @@ import kotlinx.coroutines.async
 import kotlinx.coroutines.runBlocking
 import kotlin.collections.ArrayList
 
-
 // Class that handles the bottom sliding sheet.
 class RouteCardCompact : AppCompatActivity() {
 
     val routeCardContext = this
 
-    var rvAdapter = RvAdapter(ArrayList())
+    val strtCoord = Coordinate(36.21993566, -118.67966)
+    val endCoord = Coordinate(42.4477803, -76.4841645)
+
+    var rvAdapter = RvAdapter(ArrayList(), routeCardContext)
     private lateinit var routeDisposable: Disposable
 
     var dataList = ArrayList<Route>()
 
     //Temporary data used for networking calls.
-    val time = 1581308199.0
+    val time = 1582150074.0
 
     override fun onCreate(savedInstanceState: Bundle?) {
+
         super.onCreate(savedInstanceState)
         setContentView(R.layout.route_card_compact)
 
@@ -50,11 +53,11 @@ class RouteCardCompact : AppCompatActivity() {
             }.await()
             val deferred = CoroutineScope(Dispatchers.IO).async {
                 NetworkUtils().getRouteOptions(
-                    startLoc[0].coordinate,
+                    startLoc[1].coordinate,
                     endLoc[0].coordinate,
                     time,
                     false,
-                    "yeet"
+                    "Final Destination"
                 )
             }.await()
 
@@ -65,7 +68,7 @@ class RouteCardCompact : AppCompatActivity() {
                 LinearLayoutManager(routeCardContext, RecyclerView.VERTICAL, false)
 
 
-            rvAdapter = RvAdapter(dataList)
+            rvAdapter = RvAdapter(dataList, routeCardContext)
             recyclerView.adapter = rvAdapter
 
         }

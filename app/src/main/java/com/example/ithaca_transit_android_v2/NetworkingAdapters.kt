@@ -79,7 +79,8 @@ class RouteAdapter {
         @Json(name = "arrivalTime")
         val arrival: Date,
         @Json(name = "departureTime")
-        val depart: Date
+        val depart: Date,
+        val routeSummary: List<RouteSummary>
     )
 
     @FromJson
@@ -87,14 +88,32 @@ class RouteAdapter {
         var firstBus = if (json.directions[0].type == DirectionType.BUS) 1 else 0
         var boardInMins: Int =
             if (json.directions.size != 1) Route.computeBoardInMin(json.directions[firstBus]) else 0
-        return Route(
-            json.directions,
-            json.startCoords,
-            json.endCoords,
-            json.arrival,
-            json.depart,
-            boardInMins
-        )
+
+        //Temporary code to deal with routes without a route summary
+        if(!json.routeSummary.isNullOrEmpty()){
+            return Route(
+                json.directions,
+                json.startCoords,
+                json.endCoords,
+                json.arrival,
+                json.depart,
+                json.routeSummary,
+                boardInMins)
+
+        }
+        else{
+            return Route(
+                json.directions,
+                json.startCoords,
+                json.endCoords,
+                json.arrival,
+                json.depart,
+                listOf(RouteSummary(directionSummary(-1,null) ,false,"noSummary")),
+                boardInMins)
+        }
+
+
+
     }
 }
 

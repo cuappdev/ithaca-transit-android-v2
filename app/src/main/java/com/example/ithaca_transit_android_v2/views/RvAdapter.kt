@@ -1,7 +1,6 @@
 package com.example.ithaca_transit_android_v2.views
 
 import android.content.Context
-import android.util.Log
 import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
@@ -11,7 +10,6 @@ import androidx.cardview.widget.CardView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.ithaca_transit_android_v2.R
 import com.example.ithaca_transit_android_v2.models.Route
-import com.example.ithaca_transit_android_v2.models.directionSummary
 import com.example.ithaca_transit_android_v2.states.RouteCardState
 import com.example.ithaca_transit_android_v2.states.RouteDetailViewState
 import io.reactivex.Observable
@@ -107,7 +105,7 @@ class RvAdapter(val userList: ArrayList<Route>, context: Context) :
 
         for (i in busList) {
 
-            var busNumberView = busNumberView(routeCardContext, null)
+            var busNumberView = BusNumberView(routeCardContext, null)
             busNumberView.setBusNumber(i)
 
 

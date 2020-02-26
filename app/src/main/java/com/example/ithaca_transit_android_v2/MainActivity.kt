@@ -9,9 +9,8 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.ithaca_transit_android_v2.models.Location
 import com.example.ithaca_transit_android_v2.models.Route
-import com.example.ithaca_transit_android_v2.models.RouteOptions
 import com.example.ithaca_transit_android_v2.presenters.MapPresenter
-import com.example.ithaca_transit_android_v2.presenters.RouteCardPresenter
+import com.example.ithaca_transit_android_v2.presenters.RouteOptionsPresenter
 import com.example.ithaca_transit_android_v2.presenters.SearchPresenter
 import com.example.ithaca_transit_android_v2.ui_adapters.SearchViewAdapter
 import com.example.ithaca_transit_android_v2.util.CompositeOnItemClickListener
@@ -21,10 +20,8 @@ import com.example.ithaca_transit_android_v2.views.RvAdapter
 
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
-import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import io.reactivex.disposables.Disposable
-import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.route_card_compact.*
 
 import kotlinx.android.synthetic.main.search_main.*
@@ -43,7 +40,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
     private var dataList = ArrayList<Route>()
     private lateinit var mSearchAdapter: SearchViewAdapter
     private lateinit var mSearchPresenter: SearchPresenter
-    private lateinit var mRouteCardPresenter: RouteCardPresenter
+    private lateinit var mRouteOptionsPresenter: RouteOptionsPresenter
     private lateinit var mCurrLocationManager: CurrLocationManager
 
     override fun onMapReady(map: GoogleMap?) {
@@ -63,11 +60,11 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
 
         mSearchAdapter = SearchViewAdapter(this, mSearchLocations)
         mSearchPresenter = SearchPresenter(search_card_holder, this, mSearchAdapter)
-        mRouteCardPresenter = RouteCardPresenter(bottomSheet)
-        mRouteCardPresenter.setBottomSheetCallback(BottomSheetBehavior.from(bottomSheet), bottomSheet);
+        mRouteOptionsPresenter = RouteOptionsPresenter(bottomSheet)
+        mRouteOptionsPresenter.setBottomSheetCallback(BottomSheetBehavior.from(bottomSheet), bottomSheet);
 
         searchDisposable = mSearchPresenter.initSearchView()
-        routeCardDisposable = mRouteCardPresenter.initRouteCardView();
+        routeCardDisposable = mRouteOptionsPresenter.initRouteCardView();
 
         // set up search adapter, location_list refers to listview of locations on launch
         // location_list_2 refers to the listview of locations when editing their route options

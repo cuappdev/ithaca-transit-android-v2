@@ -25,7 +25,6 @@ import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.search_main.view.*
 import kotlinx.android.synthetic.main.search_secondary.view.*
 
-
 class SearchPresenter(_view: View, _context: Context, _searchAdapter: SearchViewAdapter) {
     var view: View = _view
     private var mSearchLocations: List<Location> = ArrayList()
@@ -68,22 +67,24 @@ class SearchPresenter(_view: View, _context: Context, _searchAdapter: SearchView
 
             // Location clicked, default start location is CurrLocation
             Repository.destinationListListeners!!.addOnItemClickListener(
-                AdapterView.OnItemClickListener{parent, view, position, id ->
+                AdapterView.OnItemClickListener { parent, view, position, id ->
 
-                val destination = parent!!.getItemAtPosition(position) as Location
-                var startLocation = destination
+                    val destination = parent!!.getItemAtPosition(position) as Location
+                    // If the user's current location doesn't exist, default to start at startLocation.
+                    // Should probably change this
+                    var startLocation = destination
 
-                // Get the location object of the user, transform it into a custom "Current Location" object
-                val myLoc = Repository.currentLocation
-                if (myLoc != null) {
-                    startLocation = Location(
-                        LocationType.APPLE_PLACE, "Current Location",
-                        Coordinate(myLoc.latitude, myLoc.longitude), ""
-                    )
-                }
-                Repository.startLocation = startLocation
-                Repository.destinationLocation = destination
-                emitter.onNext(RouteDisplayState(startLocation, destination))
+                    // Get the location object of the user, transform it into a custom "Current Location" object
+                    val myLoc = Repository.currentLocation
+                    if (myLoc != null) {
+                        startLocation = Location(
+                            LocationType.APPLE_PLACE, "Current Location",
+                            Coordinate(myLoc.latitude, myLoc.longitude), ""
+                        )
+                    }
+                    Repository.startLocation = startLocation
+                    Repository.destinationLocation = destination
+                    emitter.onNext(RouteDisplayState(startLocation, destination))
                 })
             // Move to editing the route start/end location
             view.display_route.setOnClickListener { _ ->
@@ -111,13 +112,13 @@ class SearchPresenter(_view: View, _context: Context, _searchAdapter: SearchView
             view.edit_start_loc.addTextChangedListener(watcherChangeLoc)
             view.edit_dest_loc.addTextChangedListener(watcherChangeLoc)
 
-            view.edit_start_loc.setOnFocusChangeListener {view, hasFocus ->
+            view.edit_start_loc.setOnFocusChangeListener { view, hasFocus ->
                 if (hasFocus) {
                     mEditingStart = true
                     emitter.onNext(ChangeRouteState("", true))
                 }
             }
-            view.edit_dest_loc.setOnFocusChangeListener{view, hasFocus ->
+            view.edit_dest_loc.setOnFocusChangeListener { view, hasFocus ->
                 if (hasFocus) {
                     mEditingStart = false
                     emitter.onNext(ChangeRouteState("", true))
@@ -161,14 +162,15 @@ class SearchPresenter(_view: View, _context: Context, _searchAdapter: SearchView
             .observeOn(Schedulers.io())
             .map { state ->
                 if (state is InitSearchState) {
-                    mSearchLocations =
-                        NetworkUtils().getSearchedLocations(state.searchText) ?: ArrayList()
+                    mSearchLocations = NetworkUtils().getSearchedLocations(state.searchText)
                     InitLocationsSearchState(state.searchText, mSearchLocations)
                 } else if (state is ChangeRouteState) {
-                    mSearchLocations =
-                        NetworkUtils().getSearchedLocations(state.searchText) ?: ArrayList()
-                    ChangeRouteLocationState(state.searchText, mSearchLocations, state.hideSearchList)
-
+                    mSearchLocations = NetworkUtils().getSearchedLocations(state.searchText)
+                    ChangeRouteLocationState(
+                        state.searchText,
+                        mSearchLocations,
+                        state.hideSearchList
+                    )
                 } else {
                     state
                 }
@@ -209,12 +211,12 @@ class SearchPresenter(_view: View, _context: Context, _searchAdapter: SearchView
                     }
                     is ChangeRouteLocationState -> {
                         view.display_route.visibility = View.GONE
-                        if (state.searchedLocations != null && state.searchedLocations.size > 0) {
+                        if (state.searchedLocations != null && state.searchedLocations.isNotEmpty()) {
                             mSearchAdapter.swapItems(state.searchedLocations)
-                        } else if(state.searchText === "") {
+                        } else if (state.searchText === "") {
                             mSearchAdapter.swapItems(ArrayList())
                         }
-                        if(state.hideSearchList) {
+                        if (state.hideSearchList) {
                             view.locations_list_2.visibility = View.GONE
                         } else {
                             view.locations_list_2.visibility = View.VISIBLE

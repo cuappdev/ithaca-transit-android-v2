@@ -105,7 +105,7 @@ class RvAdapter(val userList: ArrayList<Route>, context: Context) :
 
         for (i in busList) {
 
-            var busNumberView = BusNumberView(routeCardContext, null)
+            var busNumberView = BusNumberComponent(routeCardContext, null)
             busNumberView.setBusNumber(i)
 
 

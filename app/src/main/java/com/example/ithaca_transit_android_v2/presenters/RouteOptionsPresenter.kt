@@ -5,11 +5,14 @@ import android.widget.AdapterView
 import android.widget.LinearLayout
 import androidx.annotation.NonNull
 import com.example.ithaca_transit_android_v2.Repository
+import com.example.ithaca_transit_android_v2.models.Coordinate
+import com.example.ithaca_transit_android_v2.models.Location
+import com.example.ithaca_transit_android_v2.models.LocationType
 import com.example.ithaca_transit_android_v2.models.RouteOptions
 import com.example.ithaca_transit_android_v2.states.RouteCardState
 import com.example.ithaca_transit_android_v2.states.RouteDetailViewState
-import com.example.ithaca_transit_android_v2.states.RouteHiddenState
-import com.example.ithaca_transit_android_v2.states.RouteOptionState
+import com.example.ithaca_transit_android_v2.states.OptionsHiddenState
+import com.example.ithaca_transit_android_v2.states.RouteListState
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import io.reactivex.Observable
 import io.reactivex.ObservableEmitter
@@ -18,7 +21,7 @@ import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.route_card_compact.view.*
 
-class RouteCardPresenter(bottomSheet: View) {
+class RouteOptionsPresenter(bottomSheet: View) {
 
     var routeCardHolder: View = bottomSheet
 
@@ -27,19 +30,23 @@ class RouteCardPresenter(bottomSheet: View) {
 
             Repository.destinationListListeners!!.addOnItemClickListener(
                 AdapterView.OnItemClickListener { parent, view, position, id ->
-
-                    emitter.onNext(
-                        RouteOptionState(
-                            RouteOptions(
-                                ArrayList(),
-                                ArrayList(),
-                                ArrayList()
-                            )
+                    val destination = parent!!.getItemAtPosition(position) as Location
+                    // If the user has no location, default the [startLocation] to the same place
+                    // as the destination
+                    var startLocation = destination
+                    // Get the location object of the user, transform it into a custom "Current Location" object
+                    val myLoc = Repository.currentLocation
+                    if (myLoc != null) {
+                        startLocation = Location(
+                            LocationType.APPLE_PLACE, "Current Location",
+                            Coordinate(myLoc.latitude, myLoc.longitude), ""
                         )
-                    )
+                    }
+
+                    emitter.onNext(RouteListState(startLocation, destination))
                 })
         }
-        return obs.startWith(RouteHiddenState())
+        return obs.startWith(OptionsHiddenState())
     }
 
     fun initRouteCardView(): Disposable {
@@ -51,10 +58,10 @@ class RouteCardPresenter(bottomSheet: View) {
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe { state ->
                 when (state) {
-                    is RouteHiddenState -> {
+                    is OptionsHiddenState -> {
                         routeCardHolder.visibility = View.GONE
                     }
-                    is RouteOptionState -> {
+                    is RouteListState -> {
                         routeCardHolder.visibility = View.VISIBLE
                     }
                     is RouteDetailViewState -> {

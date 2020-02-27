@@ -4,7 +4,9 @@ import android.util.Log
 import android.view.View
 import android.widget.AdapterView
 
-// This class is used to add multiple listeners to the listview for onCliclks
+// This class is used to add multiple listeners to the listview for onClicks
+// We need this because each emitter needs to be listening to certain listeners and waiting
+// to emit different events
 class CompositeOnItemClickListener : AdapterView.OnItemClickListener {
 
     private var listeners: ArrayList<AdapterView.OnItemClickListener>? = null

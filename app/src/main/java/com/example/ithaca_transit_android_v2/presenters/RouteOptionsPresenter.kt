@@ -1,18 +1,20 @@
 package com.example.ithaca_transit_android_v2.presenters
 
+import android.util.Log
 import android.view.View
 import android.widget.AdapterView
 import android.widget.LinearLayout
 import androidx.annotation.NonNull
+import com.example.ithaca_transit_android_v2.NetworkUtils
 import com.example.ithaca_transit_android_v2.Repository
 import com.example.ithaca_transit_android_v2.models.Coordinate
 import com.example.ithaca_transit_android_v2.models.Location
 import com.example.ithaca_transit_android_v2.models.LocationType
-import com.example.ithaca_transit_android_v2.models.RouteOptions
+import com.example.ithaca_transit_android_v2.states.OptionsHiddenState
 import com.example.ithaca_transit_android_v2.states.RouteCardState
 import com.example.ithaca_transit_android_v2.states.RouteDetailViewState
-import com.example.ithaca_transit_android_v2.states.OptionsHiddenState
 import com.example.ithaca_transit_android_v2.states.RouteListState
+import com.example.ithaca_transit_android_v2.ui_adapters.RouteViewAdapter
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import io.reactivex.Observable
 import io.reactivex.ObservableEmitter
@@ -21,8 +23,9 @@ import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.route_card_compact.view.*
 
-class RouteOptionsPresenter(bottomSheet: View) {
+class RouteOptionsPresenter(bottomSheet: View, _routeViewAdapter: RouteViewAdapter) {
 
+    var mRoutesAdapter = _routeViewAdapter
     var routeCardHolder: View = bottomSheet
 
     private fun createRouteCardObservable(): Observable<RouteCardState> {
@@ -43,7 +46,7 @@ class RouteOptionsPresenter(bottomSheet: View) {
                         )
                     }
 
-                    emitter.onNext(RouteListState(startLocation, destination))
+                    emitter.onNext(RouteListState(startLocation, destination, null))
                 })
         }
         return obs.startWith(OptionsHiddenState())
@@ -52,9 +55,23 @@ class RouteOptionsPresenter(bottomSheet: View) {
     fun initRouteCardView(): Disposable {
         val observable = createRouteCardObservable()
 
-
         return observable
             .observeOn(Schedulers.io())
+            .map { state ->
+                if (state is RouteListState) {
+                    val routeOptions = NetworkUtils().getRouteOptions(
+                        state.startLocation.coordinate,
+                        state.destLocation.coordinate,
+                        1582150074.0,
+                        false,
+                        "Final Destination"
+                    )
+                    RouteListState(state.startLocation, state.destLocation, routeOptions)
+                } else {
+                    state
+                }
+
+            }
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe { state ->
                 when (state) {
@@ -62,6 +79,7 @@ class RouteOptionsPresenter(bottomSheet: View) {
                         routeCardHolder.visibility = View.GONE
                     }
                     is RouteListState -> {
+                        mRoutesAdapter.swapItems(ArrayList(state.routeOptions!!.boardingSoon))
                         routeCardHolder.visibility = View.VISIBLE
                     }
                     is RouteDetailViewState -> {

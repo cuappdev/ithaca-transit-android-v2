@@ -1,4 +1,4 @@
-package com.example.ithaca_transit_android_v2.views
+package com.example.ithaca_transit_android_v2.ui_adapters
 
 import android.content.Context
 import android.view.Gravity
@@ -9,21 +9,23 @@ import android.widget.*
 import androidx.cardview.widget.CardView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.ithaca_transit_android_v2.R
+import com.example.ithaca_transit_android_v2.models.Location
 import com.example.ithaca_transit_android_v2.models.Route
 import com.example.ithaca_transit_android_v2.states.RouteCardState
 import com.example.ithaca_transit_android_v2.states.RouteDetailViewState
+import com.example.ithaca_transit_android_v2.views.BusNumberComponent
+import com.example.ithaca_transit_android_v2.views.DrawRouteCard
 import io.reactivex.Observable
 import io.reactivex.subjects.PublishSubject
 
 // Recycler view adapter that fills each route card with the list of Route objects that is returned by our RouteOptions networking call.
-class RvAdapter(val userList: ArrayList<Route>, context: Context) :
-    RecyclerView.Adapter<RvAdapter.ViewHolder>() {
+class RouteViewAdapter(context: Context, var userList: ArrayList<Route>) :
+    RecyclerView.Adapter<RouteViewAdapter.ViewHolder>() {
 
     var routeCardContext = context
 
     //Creation of the observable object, defining that it will hold a RouteCardState
     private val clickSubject = PublishSubject.create<RouteCardState>()
-    val clickEvent: Observable<RouteCardState> = clickSubject
 
     override fun onCreateViewHolder(p0: ViewGroup, p1: Int): ViewHolder {
         val v = LayoutInflater.from(p0.context).inflate(R.layout.routecards, p0, false)
@@ -105,7 +107,10 @@ class RvAdapter(val userList: ArrayList<Route>, context: Context) :
 
         for (i in busList) {
 
-            var busNumberView = BusNumberComponent(routeCardContext, null)
+            var busNumberView = BusNumberComponent(
+                routeCardContext,
+                null
+            )
             busNumberView.setBusNumber(i)
 
 
@@ -141,5 +146,10 @@ class RvAdapter(val userList: ArrayList<Route>, context: Context) :
                 clickSubject.onNext(RouteDetailViewState(userList[layoutPosition]))
             }
         }
+    }
+
+    fun swapItems(updatedInfo: ArrayList<Route>) {
+        this.userList = updatedInfo
+        notifyDataSetChanged()
     }
 }

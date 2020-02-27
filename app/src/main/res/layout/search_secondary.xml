@@ -146,7 +146,7 @@
         android:orientation="vertical">
 
         <com.example.ithaca_transit_android_v2.ui.MaxHeightListView
-            android:id="@+id/locations_list_2"
+            android:id="@+id/change_locations_list"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:divider="@drawable/list_divider"

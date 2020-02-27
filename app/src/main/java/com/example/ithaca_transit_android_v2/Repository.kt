@@ -8,6 +8,7 @@ object Repository {
     }
     var currentLocation: android.location.Location? = null
     var destinationListListeners: CompositeOnItemClickListener? = null
+    var changeRouteListeners: CompositeOnItemClickListener? = null
     var startLocation: Location? = null
     var destinationLocation: Location? = null
 }

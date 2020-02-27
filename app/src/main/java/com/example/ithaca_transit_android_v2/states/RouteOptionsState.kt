@@ -15,7 +15,8 @@ class OptionsHiddenState() : RouteCardState()
  */
 class RouteListState(
     val startLocation: Location,
-    val destLocation: Location
+    val destLocation: Location,
+    val routeOptions: RouteOptions?
 ) : RouteCardState()
 
 /*

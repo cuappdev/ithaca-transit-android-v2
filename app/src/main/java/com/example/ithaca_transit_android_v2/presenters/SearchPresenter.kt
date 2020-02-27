@@ -27,7 +27,7 @@ import kotlinx.android.synthetic.main.search_secondary.view.*
 
 class SearchPresenter(_view: View, _context: Context, _searchAdapter: SearchViewAdapter) {
     var view: View = _view
-    private var mSearchLocations: List<Location> = ArrayList()
+    private var mSearchLocations: MutableList<Location> = ArrayList()
     var mSearchAdapter: SearchViewAdapter = _searchAdapter
 
     // Represents in the ChangeLocation screen whether the start or end location was being edited
@@ -125,20 +125,21 @@ class SearchPresenter(_view: View, _context: Context, _searchAdapter: SearchView
                 }
             }
 
-            view.locations_list_2.setOnItemClickListener { parent, _, position, id ->
-                val location = parent.getItemAtPosition(position) as Location
-                // Depending on whether they were editing the start or destination field, change how
-                // things get updated
-                if (mEditingStart) {
-                    Repository.startLocation = location
-                    view.edit_start_loc.setText(location.name)
-                } else {
-                    Repository.destinationLocation = location
-                    view.edit_dest_loc.setText(location.name)
+            Repository.changeRouteListeners!!.addOnItemClickListener(
+                AdapterView.OnItemClickListener { parent, _, position, id ->
+                    val location = parent.getItemAtPosition(position) as Location
+                    // Depending on whether they were editing the start or destination field, change how
+                    // things get updated
+                    if (mEditingStart) {
+                        Repository.startLocation = location
+                        view.edit_start_loc.setText(location.name)
+                    } else {
+                        Repository.destinationLocation = location
+                        view.edit_dest_loc.setText(location.name)
+                    }
+                    emitter.onNext(ChangeRouteState("", true))
                 }
-                emitter.onNext(ChangeRouteState("", true))
-
-            }
+            )
 
             emitter.setCancellable {
                 view.search_input.removeTextChangedListener(watcher)
@@ -162,14 +163,19 @@ class SearchPresenter(_view: View, _context: Context, _searchAdapter: SearchView
             .observeOn(Schedulers.io())
             .map { state ->
                 if (state is InitSearchState) {
-                    mSearchLocations = NetworkUtils().getSearchedLocations(state.searchText)
+                    mSearchLocations = NetworkUtils().getSearchedLocations(state.searchText).toMutableList()
                     InitLocationsSearchState(state.searchText, mSearchLocations)
                 } else if (state is ChangeRouteState) {
-                    mSearchLocations = NetworkUtils().getSearchedLocations(state.searchText)
+                    var offerCurrentLocationOption = false
+                    if (mEditingStart) {
+                        offerCurrentLocationOption = true
+                    }
+                    mSearchLocations = NetworkUtils().getSearchedLocations(state.searchText).toMutableList()
                     ChangeRouteLocationState(
                         state.searchText,
                         mSearchLocations,
-                        state.hideSearchList
+                        state.hideSearchList,
+                        offerCurrentLocationOption
                     )
                 } else {
                     state
@@ -182,7 +188,7 @@ class SearchPresenter(_view: View, _context: Context, _searchAdapter: SearchView
                         view.search_area.visibility = View.VISIBLE
                         view.search_empty_state.visibility = View.GONE
                         view.search_locations_state.visibility = View.GONE
-                        view.locations_list_2.visibility = View.GONE
+                        view.change_locations_list.visibility = View.GONE
 
                         view.search_change_location_holder.visibility = View.GONE
 
@@ -195,7 +201,7 @@ class SearchPresenter(_view: View, _context: Context, _searchAdapter: SearchView
                         view.search_empty_state.visibility = View.GONE
                         view.search_locations_state.visibility = View.VISIBLE
                         if (state.searchedLocations!!.size > 0 || view.search_input.text.isEmpty()) {
-                            mSearchAdapter.swapItems(state.searchedLocations)
+                            mSearchAdapter.swapItems(state.searchedLocations, false)
                         }
                     }
                     is RouteDisplayState -> {
@@ -212,14 +218,14 @@ class SearchPresenter(_view: View, _context: Context, _searchAdapter: SearchView
                     is ChangeRouteLocationState -> {
                         view.display_route.visibility = View.GONE
                         if (state.searchedLocations != null && state.searchedLocations.isNotEmpty()) {
-                            mSearchAdapter.swapItems(state.searchedLocations)
+                            mSearchAdapter.swapItems(state.searchedLocations, state.offerCurrentLocationOption)
                         } else if (state.searchText === "") {
-                            mSearchAdapter.swapItems(ArrayList())
+                            mSearchAdapter.swapItems(ArrayList(), state.offerCurrentLocationOption)
                         }
                         if (state.hideSearchList) {
-                            view.locations_list_2.visibility = View.GONE
+                            view.change_locations_list.visibility = View.GONE
                         } else {
-                            view.locations_list_2.visibility = View.VISIBLE
+                            view.change_locations_list.visibility = View.VISIBLE
                         }
                         view.edit_route.visibility = View.VISIBLE
                     }

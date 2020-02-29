@@ -1,6 +1,7 @@
 package com.example.ithaca_transit_android_v2.views
 
 import android.content.Context
+import android.graphics.Typeface
 import android.util.Log
 import android.view.Gravity
 import android.view.LayoutInflater
@@ -18,8 +19,7 @@ import com.example.ithaca_transit_android_v2.states.RouteCardState
 import com.example.ithaca_transit_android_v2.states.RouteDetailViewState
 import io.reactivex.Observable
 import io.reactivex.subjects.PublishSubject
-import java.util.concurrent.TimeUnit
-import java.util.concurrent.TimeUnit.MILLISECONDS
+
 
 // Recycler view adapter that fills each route card with the list of Route objects that is returned by our RouteOptions networking call.
 class RvAdapter(val userList: ArrayList<Route>, context: Context) :
@@ -43,8 +43,9 @@ class RvAdapter(val userList: ArrayList<Route>, context: Context) :
     override fun onBindViewHolder(p0: ViewHolder, p1: Int) {
 
         //Temporary info to fill the routecard so that we can see the difference between cards.
-        p0.description?.text = userList[p1].arrival.toString()
-        p0.delay?.text = userList[p1].boardInMin.toString()
+        val boardMins = userList[p1].boardInMin.toString()
+        p0.description?.setText("Board in " +boardMins + " Mins" )
+        p0.delay.setText("On Time")
 
         var summaryList: ArrayList<String> = ArrayList()
         var busList: ArrayList<Int> = ArrayList()
@@ -175,9 +176,28 @@ class RvAdapter(val userList: ArrayList<Route>, context: Context) :
 
         p0.busDrawing.addView(walkingView)
 
+        fun convertMillis(mil: Long): String {
+            val s: Long = mil %60
+            val m: Long = (mil/60)%60
+            var h: Long = (mil/(60*60))%24
+
+            if(h>12){
+                h = h-12
+            }
+
+            return String.format("%d:%02d", h,m)
+        }
         //Set route duration
-        val arrivalTime = userList[p1].arrival
-        val departTime = userList[p1].depart
+        val arrivalTime = convertMillis(userList[p1].arrival.time).toString()
+        val departTime = convertMillis(userList[p1].depart.time).toString()
+
+        p0.routeDuration.setText(departTime + " - " + arrivalTime)
+
+        p0.routeDuration.setTypeface(null, Typeface.BOLD);
+
+
+
+
 
     }
 
@@ -197,7 +217,8 @@ class RvAdapter(val userList: ArrayList<Route>, context: Context) :
             itemView.setOnClickListener {
                 clickSubject.onNext(RouteDetailViewState(userList[layoutPosition]))
 
-                Log.d("arrival", userList[layoutPosition].arrival.time.toString())
+                val millis = userList[layoutPosition].arrival.time
+
             }
         }
     }

@@ -21,6 +21,7 @@ import io.reactivex.ObservableEmitter
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
+import kotlinx.android.synthetic.main.item_searchview.view.*
 
 import kotlinx.android.synthetic.main.search_main.view.*
 import kotlinx.android.synthetic.main.search_secondary.view.*
@@ -66,8 +67,7 @@ class SearchPresenter(_view: View, _context: Context, _searchAdapter: SearchView
             }
 
             // Location clicked, default start location is CurrLocation
-            Repository.destinationListListeners!!.addOnItemClickListener(
-                AdapterView.OnItemClickListener { parent, view, position, id ->
+            view.locations_list.setOnItemClickListener{ parent, view, position, id ->
 
                     val destination = parent!!.getItemAtPosition(position) as Location
                     // If the user's current location doesn't exist, default to start at startLocation.
@@ -84,8 +84,9 @@ class SearchPresenter(_view: View, _context: Context, _searchAdapter: SearchView
                     }
                     Repository.startLocation = startLocation
                     Repository.destinationLocation = destination
+                    Repository._updateRouteOptions()
                     emitter.onNext(RouteDisplayState(startLocation, destination))
-                })
+                }
             // Move to editing the route start/end location
             view.display_route.setOnClickListener { _ ->
                 val startLoc = Repository.startLocation
@@ -125,8 +126,8 @@ class SearchPresenter(_view: View, _context: Context, _searchAdapter: SearchView
                 }
             }
 
-            Repository.changeRouteListeners!!.addOnItemClickListener(
-                AdapterView.OnItemClickListener { parent, _, position, id ->
+            // Clicked on an updated location for the Route
+            view.change_locations_list.setOnItemClickListener{ parent, _, position, id ->
                     val location = parent.getItemAtPosition(position) as Location
                     // Depending on whether they were editing the start or destination field, change how
                     // things get updated
@@ -137,9 +138,23 @@ class SearchPresenter(_view: View, _context: Context, _searchAdapter: SearchView
                         Repository.destinationLocation = location
                         view.edit_dest_loc.setText(location.name)
                     }
+                    Repository._updateRouteOptions()
+                    emitter.onNext(ChangeRouteState("", true))
+            }
+
+            // Switch button on the RHS was pressed
+            view.switch_locations.setOnClickListener {_ ->
+                val location1 = Repository.startLocation
+                val location2 = Repository.destinationLocation
+                Repository.startLocation = location2
+                Repository.destinationLocation = location1
+                Repository._updateRouteOptions()
+                if (location1 != null && location2 != null) {
+                    view.edit_start_loc.setText(location2.name)
+                    view.edit_dest_loc.setText(location1.name)
                     emitter.onNext(ChangeRouteState("", true))
                 }
-            )
+            }
 
             emitter.setCancellable {
                 view.search_input.removeTextChangedListener(watcher)

@@ -30,24 +30,18 @@ class RouteOptionsPresenter(bottomSheet: View, _routeViewAdapter: RouteViewAdapt
 
     private fun createRouteCardObservable(): Observable<RouteCardState> {
         val obs = Observable.create { emitter: ObservableEmitter<RouteCardState> ->
-
-            Repository.destinationListListeners!!.addOnItemClickListener(
-                AdapterView.OnItemClickListener { parent, view, position, id ->
-                    val destination = parent!!.getItemAtPosition(position) as Location
-                    // If the user has no location, default the [startLocation] to the same place
-                    // as the destination
-                    var startLocation = destination
-                    // Get the location object of the user, transform it into a custom "Current Location" object
-                    val myLoc = Repository.currentLocation
-                    if (myLoc != null) {
-                        startLocation = Location(
-                            LocationType.APPLE_PLACE, "Current Location",
-                            Coordinate(myLoc.latitude, myLoc.longitude), ""
+            val callback = fun () {
+                if (Repository.startLocation != null && Repository.destinationLocation != null) {
+                    emitter.onNext(
+                        RouteListState(
+                            Repository.startLocation!!,
+                            Repository.destinationLocation!!, null
                         )
-                    }
+                    )
+                }
+            }
+            Repository._updateRouteOptions = callback
 
-                    emitter.onNext(RouteListState(startLocation, destination, null))
-                })
         }
         return obs.startWith(OptionsHiddenState())
     }

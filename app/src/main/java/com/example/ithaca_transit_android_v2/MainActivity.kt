@@ -13,7 +13,6 @@ import com.example.ithaca_transit_android_v2.presenters.MapPresenter
 import com.example.ithaca_transit_android_v2.presenters.RouteOptionsPresenter
 import com.example.ithaca_transit_android_v2.presenters.SearchPresenter
 import com.example.ithaca_transit_android_v2.ui_adapters.SearchViewAdapter
-import com.example.ithaca_transit_android_v2.util.CompositeOnItemClickListener
 
 import com.example.ithaca_transit_android_v2.util.CurrLocationManager
 import com.example.ithaca_transit_android_v2.ui_adapters.RouteViewAdapter
@@ -56,9 +55,6 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        Repository.destinationListListeners = CompositeOnItemClickListener()
-        Repository.changeRouteListeners = CompositeOnItemClickListener()
-
         mSearchAdapter = SearchViewAdapter(this, mSearchLocations)
         mRouteViewAdapter =
             RouteViewAdapter(this, ArrayList())
@@ -77,9 +73,6 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
         nearby_stops_routes.layoutManager =
             LinearLayoutManager(this, RecyclerView.VERTICAL, false)
         nearby_stops_routes.adapter = mRouteViewAdapter
-
-        locations_list.setOnItemClickListener(Repository.destinationListListeners)
-        change_locations_list.setOnItemClickListener(Repository.changeRouteListeners)
 
         initializeLocationManager()
         fetchRouteData()

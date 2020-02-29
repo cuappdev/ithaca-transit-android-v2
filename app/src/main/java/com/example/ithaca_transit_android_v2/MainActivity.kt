@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.pm.PackageManager
 import android.location.LocationManager
 import android.os.Bundle
+import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -83,20 +84,24 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
     fun fetchRouteData() {
         runBlocking {
             val startLoc = CoroutineScope(Dispatchers.IO).async {
-                NetworkUtils().getSearchedLocations("Balch")
+                NetworkUtils().getSearchedLocations("balch")
+
             }.await()
             val endLoc = CoroutineScope(Dispatchers.IO).async {
-                NetworkUtils().getSearchedLocations("Olin")
+                NetworkUtils().getSearchedLocations("Walmart")
             }.await()
             val deferred = CoroutineScope(Dispatchers.IO).async {
                 NetworkUtils().getRouteOptions(
                     startLoc[1].coordinate,
                     endLoc[0].coordinate,
-                    1582150074.0,
+                    1583010298.0,
                     false,
                     "Final Destination"
                 )
             }.await()
+
+            Log.d("qwerty", ""+ startLoc[1].coordinate);
+            Log.d("qwerty", ""+ endLoc[1].coordinate);
 
             dataList = ArrayList(deferred.boardingSoon)
 

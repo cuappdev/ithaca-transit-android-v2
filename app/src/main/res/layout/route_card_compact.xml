@@ -14,7 +14,7 @@
         android:orientation="vertical"
         android:background="@color/white"
         app:behavior_hideable="false"
-        app:behavior_peekHeight="60dp"
+        app:behavior_peekHeight="55dp"
         app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior">
 
         <RelativeLayout

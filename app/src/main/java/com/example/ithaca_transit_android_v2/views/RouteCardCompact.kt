@@ -27,8 +27,8 @@ class RouteCardCompact : AppCompatActivity() {
 
     val routeCardContext = this
 
-    val strtCoord = Coordinate(36.21993566, -118.67966)
-    val endCoord = Coordinate(42.4477803, -76.4841645)
+    val strtCoord = Coordinate(42.45352923315714, -76.4802676615646)
+    val endCoord = Coordinate(42.4557, -76.4782)
 
     var rvAdapter = RvAdapter(ArrayList(), routeCardContext)
     private lateinit var routeDisposable: Disposable
@@ -36,7 +36,7 @@ class RouteCardCompact : AppCompatActivity() {
     var dataList = ArrayList<Route>()
 
     //Temporary data used for networking calls.
-    val time = 1582150074.0
+    val time = 1582754826.0
 
     override fun onCreate(savedInstanceState: Bundle?) {
 
@@ -46,15 +46,15 @@ class RouteCardCompact : AppCompatActivity() {
         // Temporary networking calls that is used to get start and end locations.
         runBlocking {
             val startLoc = CoroutineScope(Dispatchers.IO).async {
-                NetworkUtils().getSearchedLocations("Balch")
+                NetworkUtils().getSearchedLocations("Jameson")
             }.await()
             val endLoc = CoroutineScope(Dispatchers.IO).async {
-                NetworkUtils().getSearchedLocations("Olin")
+                NetworkUtils().getSearchedLocations("Statler")
             }.await()
             val deferred = CoroutineScope(Dispatchers.IO).async {
                 NetworkUtils().getRouteOptions(
-                    startLoc[1].coordinate,
-                    endLoc[0].coordinate,
+                    strtCoord,
+                    endCoord,
                     time,
                     false,
                     "Final Destination"

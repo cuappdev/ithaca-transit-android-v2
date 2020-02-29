@@ -7,8 +7,7 @@ import android.widget.ImageView
 import android.widget.TextView
 import com.example.ithaca_transit_android_v2.R
 
-
-class busNumberView(context: Context, attrs: AttributeSet?): FrameLayout(context, attrs){
+class busNumberView(context: Context, attrs: AttributeSet?) : FrameLayout(context, attrs) {
 
     lateinit var busImg: ImageView
     lateinit var busNumb: TextView
@@ -19,14 +18,10 @@ class busNumberView(context: Context, attrs: AttributeSet?): FrameLayout(context
         busImg = findViewById<ImageView>(R.id.bus_image)
         busNumb = findViewById<TextView>(R.id.bus_number)
 
-
-
-
     }
 
-    fun setBusNumber(number: Int){
+    fun setBusNumber(number: Int) {
         busNumb.setText(number.toString())
     }
-
 
 }

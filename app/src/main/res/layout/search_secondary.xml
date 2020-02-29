@@ -130,8 +130,10 @@
             android:gravity="center">
 
             <ImageView
+                android:id="@+id/switch_locations"
                 android:layout_width="20dp"
                 android:layout_height="match_parent"
+                android:focusableInTouchMode="true"
                 android:clickable="true"
                 android:focusable="true"
                 android:src="@drawable/ic_switch" />
@@ -146,7 +148,7 @@
         android:orientation="vertical">
 
         <com.example.ithaca_transit_android_v2.ui.MaxHeightListView
-            android:id="@+id/locations_list_2"
+            android:id="@+id/change_locations_list"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:divider="@drawable/list_divider"

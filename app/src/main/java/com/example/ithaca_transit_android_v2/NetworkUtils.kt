@@ -1,6 +1,4 @@
 package com.example.ithaca_transit_android_v2
-
-import android.util.Log
 import com.example.ithaca_transit_android_v2.models.Coordinate
 import com.example.ithaca_transit_android_v2.models.Location
 import com.example.ithaca_transit_android_v2.models.RouteOptions

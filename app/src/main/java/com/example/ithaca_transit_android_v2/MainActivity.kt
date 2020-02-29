@@ -10,22 +10,18 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.ithaca_transit_android_v2.models.Location
 import com.example.ithaca_transit_android_v2.models.Route
-import com.example.ithaca_transit_android_v2.models.RouteOptions
 import com.example.ithaca_transit_android_v2.presenters.MapPresenter
-import com.example.ithaca_transit_android_v2.presenters.RouteCardPresenter
+import com.example.ithaca_transit_android_v2.presenters.RouteOptionsPresenter
 import com.example.ithaca_transit_android_v2.presenters.SearchPresenter
 import com.example.ithaca_transit_android_v2.ui_adapters.SearchViewAdapter
-import com.example.ithaca_transit_android_v2.util.CompositeOnItemClickListener
 
 import com.example.ithaca_transit_android_v2.util.CurrLocationManager
-import com.example.ithaca_transit_android_v2.views.RvAdapter
+import com.example.ithaca_transit_android_v2.ui_adapters.RouteViewAdapter
 
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
-import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import io.reactivex.disposables.Disposable
-import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.route_card_compact.*
 
 import kotlinx.android.synthetic.main.search_main.*
@@ -40,11 +36,11 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
     private lateinit var routeCardDisposable: Disposable
 
     private var mSearchLocations: List<Location> = ArrayList()
-    private var rvAdapter = RvAdapter(ArrayList(), this)
     private var dataList = ArrayList<Route>()
     private lateinit var mSearchAdapter: SearchViewAdapter
+    private lateinit var mRouteViewAdapter: RouteViewAdapter
     private lateinit var mSearchPresenter: SearchPresenter
-    private lateinit var mRouteCardPresenter: RouteCardPresenter
+    private lateinit var mRouteOptionsPresenter: RouteOptionsPresenter
     private lateinit var mCurrLocationManager: CurrLocationManager
 
     override fun onMapReady(map: GoogleMap?) {
@@ -60,22 +56,25 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        Repository.destinationListListeners = CompositeOnItemClickListener()
-
         mSearchAdapter = SearchViewAdapter(this, mSearchLocations)
+        mRouteViewAdapter =
+            RouteViewAdapter(this, ArrayList())
         mSearchPresenter = SearchPresenter(search_card_holder, this, mSearchAdapter)
-        mRouteCardPresenter = RouteCardPresenter(bottomSheet)
-        mRouteCardPresenter.setBottomSheetCallback(BottomSheetBehavior.from(bottomSheet), bottomSheet);
+        mRouteOptionsPresenter = RouteOptionsPresenter(bottomSheet, mRouteViewAdapter)
+        mRouteOptionsPresenter.setBottomSheetCallback(BottomSheetBehavior.from(bottomSheet), bottomSheet);
 
         searchDisposable = mSearchPresenter.initSearchView()
-        routeCardDisposable = mRouteCardPresenter.initRouteCardView();
+        routeCardDisposable = mRouteOptionsPresenter.initRouteCardView();
 
         // set up search adapter, location_list refers to listview of locations on launch
         // location_list_2 refers to the listview of locations when editing their route options
         locations_list.adapter = mSearchAdapter
-        locations_list_2.adapter = mSearchAdapter
+        change_locations_list.adapter = mSearchAdapter
 
-        locations_list.setOnItemClickListener(Repository.destinationListListeners)
+        nearby_stops_routes.layoutManager =
+            LinearLayoutManager(this, RecyclerView.VERTICAL, false)
+        nearby_stops_routes.adapter = mRouteViewAdapter
+
         initializeLocationManager()
         fetchRouteData()
 
@@ -105,18 +104,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
 
             dataList = ArrayList(deferred.boardingSoon)
 
-            setRouteCardHolderAdapter(dataList);
-
         }
-    }
-
-    fun setRouteCardHolderAdapter(routeList: ArrayList<Route>) {
-        val recyclerView = findViewById<RecyclerView>(R.id.nearby_stops_routes)
-        recyclerView.layoutManager =
-            LinearLayoutManager(this, RecyclerView.VERTICAL, false)
-
-        rvAdapter = RvAdapter(routeList, this)
-        recyclerView.adapter = rvAdapter
     }
 
     fun initializeLocationManager() {

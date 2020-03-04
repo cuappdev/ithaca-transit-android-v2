@@ -42,10 +42,11 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         mSearchAdapter = SearchViewAdapter(this, mSearchLocations)
+
         mSearchPresenter = SearchPresenter(search_card_holder, this, mSearchAdapter)
 
         searchDisposable = mSearchPresenter.initSearchView()
-        (map_fragment as SupportMapFragment).getMapAsync(this)
+//        (map_fragment as SupportMapFragment).getMapAsync(this)
 
         // set up search adapter, location_list refers to listview of locations on launch
         // location_list_2 refers to the listview of locations when editing their route options

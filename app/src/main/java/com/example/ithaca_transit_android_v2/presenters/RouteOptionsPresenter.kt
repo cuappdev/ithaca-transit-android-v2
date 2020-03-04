@@ -56,7 +56,7 @@ class RouteOptionsPresenter(bottomSheet: View, _routeViewAdapter: RouteViewAdapt
                     val routeOptions = NetworkUtils().getRouteOptions(
                         state.startLocation.coordinate,
                         state.destLocation.coordinate,
-                        1582150074.0,
+                        1583364280.0,
                         false,
                         "Final Destination"
                     )
@@ -73,7 +73,20 @@ class RouteOptionsPresenter(bottomSheet: View, _routeViewAdapter: RouteViewAdapt
                         routeCardHolder.visibility = View.GONE
                     }
                     is RouteListState -> {
+                        Log.d("state", "RouteLIstStateRn")
+
+
+                        routeCardHolder.nearby_stops_routes.invalidate()
+                        routeCardHolder.nearby_stops_routes.removeAllViews()
                         mRoutesAdapter.swapItems(ArrayList(state.routeOptions!!.boardingSoon))
+
+                        val count = routeCardHolder.nearby_stops_routes.childCount
+                        for(i in 1..count-1){
+
+                            routeCardHolder.nearby_stops_routes.getChildAt(i).invalidate()
+
+                        }
+
                         routeCardHolder.visibility = View.VISIBLE
                     }
                     is RouteDetailViewState -> {

@@ -22,7 +22,6 @@ import com.example.ithaca_transit_android_v2.views.DrawRouteCard
 import io.reactivex.Observable
 import io.reactivex.subjects.PublishSubject
 
-
 // Recycler view adapter that fills each route card with the list of Route objects that is returned by our RouteOptions networking call.
 class RouteViewAdapter(context: Context, var userList: ArrayList<Route>) :
     RecyclerView.Adapter<RouteViewAdapter.ViewHolder>() {
@@ -34,6 +33,8 @@ class RouteViewAdapter(context: Context, var userList: ArrayList<Route>) :
 
     override fun onCreateViewHolder(p0: ViewGroup, p1: Int): ViewHolder {
         val v = LayoutInflater.from(p0.context).inflate(R.layout.routecards, p0, false)
+        v.invalidate()
+
         return ViewHolder(v);
     }
 
@@ -42,16 +43,20 @@ class RouteViewAdapter(context: Context, var userList: ArrayList<Route>) :
     }
 
     override fun onBindViewHolder(p0: ViewHolder, p1: Int) {
+        p0.directionList.removeAllViews()
+        p0.busDrawing.removeAllViews()
+
 
         //Temporary info to fill the routecard so that we can see the difference between cards.
         val boardMins = userList[p1].boardInMin.toString()
-        p0.description?.setText("Board in " +boardMins + " Mins" )
+        p0.description?.setText("Board in " + boardMins + " Mins")
         p0.delay.setText("On Time")
 
         var summaryList: ArrayList<String> = ArrayList()
         var busList: ArrayList<Int> = ArrayList()
 
         for (i in 0 until userList[p1].routeSummary!!.size) {
+
             userList[p1].routeSummary?.get(i)?.stopName?.let { summaryList.add(it) }
 
             //Check if bus number is null, if not add it to the list
@@ -78,6 +83,7 @@ class RouteViewAdapter(context: Context, var userList: ArrayList<Route>) :
         val busImageLayoutParam = p0.busDrawing.layoutParams
         val dotParams = p0.dotDrawing.layoutParams
 
+        Log.d("SummaryListSize", "" + summaryList.size)
         if (summaryList.size > 3) {
             linearlayoutparams.height = 400
             dotParams.height = 400
@@ -101,14 +107,19 @@ class RouteViewAdapter(context: Context, var userList: ArrayList<Route>) :
 
         } else {
             linearlayoutparams.height = 300
+            dotParams.height = 300
             p0.dotDrawing.setBlueDimensions(20f, 115f, 95f)
             p0.dotDrawing.setGrayDimensions(20f, 160f, 220f, 22f)
             //var drawRouteCard=DrawRouteCard(routeCardContext, null, 36f, 222f, 180f )
 
+
         }
 
-        //Create list of directions
-        p0.directionList.layoutParams = linearlayoutparams
+
+
+
+
+
 
         for (i in summaryList) {
 
@@ -154,6 +165,7 @@ class RouteViewAdapter(context: Context, var userList: ArrayList<Route>) :
 
         }
 
+        p0.directionList.invalidate()
         //Add walking image
         val walkingView = ImageView(routeCardContext)
 
@@ -178,18 +190,20 @@ class RouteViewAdapter(context: Context, var userList: ArrayList<Route>) :
         walkingView.layoutParams = walkingIconParams
 
 
+
+
         p0.busDrawing.addView(walkingView)
 
         fun convertMillis(mil: Long): String {
-            val s: Long = mil %60
-            val m: Long = (mil/60)%60
-            var h: Long = (mil/(60*60))%24
+            val s: Long = mil % 60
+            val m: Long = (mil / 60) % 60
+            var h: Long = (mil / (60 * 60)) % 24
 
-            if(h>12){
-                h = h-12
+            if (h > 12) {
+                h = h - 12
             }
 
-            return String.format("%d:%02d", h,m)
+            return String.format("%d:%02d", h, m)
         }
         //Set route duration
         val arrivalTime = convertMillis(userList[p1].arrival.time).toString()
@@ -199,9 +213,15 @@ class RouteViewAdapter(context: Context, var userList: ArrayList<Route>) :
 
         p0.routeDuration.setTypeface(null, Typeface.BOLD);
 
-
-
-
+        //Create list of directions
+        Log.d("SummaryListSize", "im here")
+        p0.directionList.layoutParams = linearlayoutparams
+        Log.d("SummaryListSizeD", ""+p0.directionList.layoutParams.height)
+        Log.d("SummaryListSizeBus", ""+p0.busDrawing.layoutParams.height)
+        Log.d("SummaryListSizeDot", ""+p0.dotDrawing.layoutParams.height)
+        p0.directionList.invalidate()
+        p0.busDrawing.invalidate()
+        p0.dotDrawing.invalidate()
 
     }
 
@@ -221,6 +241,7 @@ class RouteViewAdapter(context: Context, var userList: ArrayList<Route>) :
             itemView.setOnClickListener {
                 clickSubject.onNext(RouteDetailViewState(userList[layoutPosition]))
 
+
                 val millis = userList[layoutPosition].arrival.time
 
             }
@@ -228,6 +249,8 @@ class RouteViewAdapter(context: Context, var userList: ArrayList<Route>) :
     }
 
     fun swapItems(updatedInfo: ArrayList<Route>) {
+
+
         this.userList = updatedInfo
         notifyDataSetChanged()
     }

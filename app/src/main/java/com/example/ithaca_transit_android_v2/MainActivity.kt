@@ -71,6 +71,8 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
         locations_list.adapter = mSearchAdapter
         change_locations_list.adapter = mSearchAdapter
 
+
+
         nearby_stops_routes.layoutManager =
             LinearLayoutManager(this, RecyclerView.VERTICAL, false)
         nearby_stops_routes.adapter = mRouteViewAdapter
@@ -81,6 +83,9 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
     }
 
     fun fetchRouteData() {
+        val time = System.currentTimeMillis().toDouble()
+        Log.d("currentTime", "" + time)
+
         runBlocking {
             val startLoc = CoroutineScope(Dispatchers.IO).async {
                 NetworkUtils().getSearchedLocations("balch")
@@ -93,7 +98,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
                 NetworkUtils().getRouteOptions(
                     startLoc[1].coordinate,
                     endLoc[0].coordinate,
-                    1583010298.0,
+                    1583089310.0,
                     false,
                     "Final Destination"
                 )

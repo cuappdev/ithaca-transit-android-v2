@@ -78,7 +78,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
         nearby_stops_routes.adapter = mRouteViewAdapter
 
         initializeLocationManager()
-        fetchRouteData()
+        //fetchRouteData()
 
     }
 
@@ -88,17 +88,17 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
 
         runBlocking {
             val startLoc = CoroutineScope(Dispatchers.IO).async {
-                NetworkUtils().getSearchedLocations("balch")
+                NetworkUtils().getSearchedLocations("Jameson")
 
             }.await()
             val endLoc = CoroutineScope(Dispatchers.IO).async {
-                NetworkUtils().getSearchedLocations("Walmart")
+                NetworkUtils().getSearchedLocations("Statler")
             }.await()
             val deferred = CoroutineScope(Dispatchers.IO).async {
                 NetworkUtils().getRouteOptions(
                     startLoc[1].coordinate,
                     endLoc[0].coordinate,
-                    1583089310.0,
+                    1583612896.0,
                     false,
                     "Final Destination"
                 )

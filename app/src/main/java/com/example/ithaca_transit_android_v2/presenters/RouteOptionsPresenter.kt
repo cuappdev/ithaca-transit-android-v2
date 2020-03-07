@@ -56,7 +56,7 @@ class RouteOptionsPresenter(bottomSheet: View, _routeViewAdapter: RouteViewAdapt
                     val routeOptions = NetworkUtils().getRouteOptions(
                         state.startLocation.coordinate,
                         state.destLocation.coordinate,
-                        1583364280.0,
+                        1583612896.0,
                         false,
                         "Final Destination"
                     )

@@ -195,19 +195,29 @@ class RouteViewAdapter(context: Context, var userList: ArrayList<Route>) :
         p0.busDrawing.addView(walkingView)
 
         fun convertMillis(mil: Long): String {
-            val s: Long = mil % 60
-            val m: Long = (mil / 60) % 60
-            var h: Long = (mil / (60 * 60)) % 24
+            var s: Long = mil / 1000
+            s = (s%(3600*24))
+            val m: Long = s/60
+            var h: Int = (m/60).toInt()
+            var mins: Long = m%60
+
 
             if (h > 12) {
                 h = h - 12
             }
 
-            return String.format("%d:%02d", h, m)
+            return String.format("%d:%02d", h, mins)
         }
         //Set route duration
+
         val arrivalTime = convertMillis(userList[p1].arrival.time).toString()
+        Log.d("timesAConvert", ""+userList[p1].arrival.time)
+        Log.d("timesAConvert", ""+userList[p1].arrival)
+        Log.d("timesAConvertConvert", arrivalTime)
         val departTime = convertMillis(userList[p1].depart.time).toString()
+        Log.d("timesDConvert", departTime)
+        Log.d("timesD", ""+userList[p1].depart)
+
 
         p0.routeDuration.setText(departTime + " - " + arrivalTime)
 

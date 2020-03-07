@@ -1,5 +1,6 @@
 package com.example.ithaca_transit_android_v2
 
+import android.util.Log
 import com.example.ithaca_transit_android_v2.models.*
 import com.squareup.moshi.*
 import java.text.SimpleDateFormat
@@ -90,7 +91,7 @@ class RouteAdapter {
             if (json.directions.size != 1) Route.computeBoardInMin(json.directions[firstBus]) else 0
 
         //Temporary code to deal with routes without a route summary
-        if(!json.routeSummary.isNullOrEmpty()){
+        if (!json.routeSummary.isNullOrEmpty()) {
             return Route(
                 json.directions,
                 json.startCoords,
@@ -98,30 +99,32 @@ class RouteAdapter {
                 json.arrival,
                 json.depart,
                 json.routeSummary,
-                boardInMins)
+                boardInMins
+            )
 
-        }
-        else{
+        } else {
             return Route(
                 json.directions,
                 json.startCoords,
                 json.endCoords,
                 json.arrival,
                 json.depart,
-                listOf(RouteSummary(directionSummary(-1,null) ,false,"noSummary")),
-                boardInMins)
+                listOf(RouteSummary(directionSummary(-1, null), false, "noSummary")),
+                boardInMins
+            )
         }
-
-
 
     }
 }
 
 class CustomDateAdapter {
-    private val serverFormat = ("yyyy-MM-dd'T'HH:mm:ss'Z'")
+    private val serverFormat = ("yyyy-MM-dd'T'HH:mm:ss")
     private val dateFormat = SimpleDateFormat(serverFormat, Locale.getDefault())
+
     @FromJson
     fun fromJson(date: String): Date {
+        dateFormat.timeZone = TimeZone.getTimeZone("America/New_York")
+        Log.d("TimeZone", ""+dateFormat.timeZone)
         return dateFormat.parse(date)
     }
 

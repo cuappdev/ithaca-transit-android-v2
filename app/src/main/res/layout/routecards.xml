@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    app:cardCornerRadius="4dp"
+    android:id="@+id/cardviewdelegate">
+
+    <RelativeLayout
+        android:id="@+id/rlayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+
+        <TextView
+            android:id="@+id/duration"
+            android:layout_height="wrap_content"
+            android:layout_width="wrap_content"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentLeft="true"
+            android:text="00:00 - 00:00"
+            android:textSize="16sp"
+            android:layout_marginTop="8dp"
+            android:layout_marginLeft="8dp"
+            android:textColor="@color/black"
+            />
+
+        <TextView
+            android:id="@+id/moreInfo"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentRight="true"
+            android:layout_marginLeft="8dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginRight="10dp"
+            android:text=">"
+            android:textColor="@color/black"
+            android:textSize="16sp" />
+
+        <TextView
+            android:id="@+id/delay"
+            android:layout_below="@id/duration"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toRightOf="@+id/route_description"
+            android:text="Delay"
+            android:textColor="@color/green"
+            android:textSize="14sp"
+            android:textStyle="bold"
+            android:paddingRight="48dp"
+            />
+
+        <TextView
+            android:id="@+id/route_description"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/duration"
+            android:layout_marginLeft="8dp"
+            android:paddingRight="36dp"
+            android:text="Route Description"
+            android:textSize="14sp"
+            android:textStyle="normal"
+            android:textColor="@color/routeDetails"/>
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/icons"
+            android:layout_width="57dp"
+            android:layout_height="106dp"
+            android:layout_below="@id/route_description"
+            android:layout_marginLeft="16dp"
+            android:layout_marginTop="2dp"
+            android:background="@android:color/transparent"
+            android:cacheColorHint="@android:color/transparent"
+            android:divider="@color/white"
+            android:dividerHeight="0dp"
+            android:paddingLeft="2dp"></androidx.recyclerview.widget.RecyclerView>
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/path_dots"
+            android:layout_width="54dp"
+            android:layout_height="106dp"
+            android:layout_below="@id/route_description"
+            android:layout_marginLeft="80dp"
+            android:layout_marginTop="2dp"
+            android:background="@android:color/transparent"
+            android:cacheColorHint="@android:color/transparent"
+            android:divider="@color/white"
+            android:dividerHeight="0dp"
+            android:paddingLeft="2dp"></androidx.recyclerview.widget.RecyclerView>
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/directions"
+            android:layout_width="221dp"
+            android:layout_height="104dp"
+            android:layout_below="@id/route_description"
+            android:layout_marginLeft="160dp"
+            android:layout_marginTop="2dp"
+            android:background="@android:color/transparent"
+            android:cacheColorHint="@android:color/transparent"
+            android:divider="@color/white"
+            android:dividerHeight="0dp"
+            android:paddingLeft="2dp"></androidx.recyclerview.widget.RecyclerView>
+
+
+    </RelativeLayout>
+
+</androidx.cardview.widget.CardView>

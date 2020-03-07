@@ -29,9 +29,6 @@ class MapFragment: Fragment() , OnMapReadyCallback, GoogleMap.OnPolylineClickLis
     private val MAPVIEW_BUNDLE_KEY = "MapViewBundleKey"
 
 
-
-
-
     override fun onCreateView(inflater: LayoutInflater,
                               container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
@@ -49,9 +46,6 @@ class MapFragment: Fragment() , OnMapReadyCallback, GoogleMap.OnPolylineClickLis
 
         return v
     }
-
-
-
     override fun onResume() {
         mapView.onResume()
         super.onResume()
@@ -79,12 +73,11 @@ class MapFragment: Fragment() , OnMapReadyCallback, GoogleMap.OnPolylineClickLis
          mapView.onSaveInstanceState(mapViewBundle)
 
     }
-
     override fun onLowMemory() {
         super.onLowMemory()
         mapView.onLowMemory()
     }
-
+    
     override fun onMapReady(googleMap: GoogleMap) {
         map = googleMap
         map.uiSettings.isMyLocationButtonEnabled = false

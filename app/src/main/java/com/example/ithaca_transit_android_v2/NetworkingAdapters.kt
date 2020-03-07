@@ -119,7 +119,7 @@ class RouteAdapter {
 
 class CustomDateAdapter {
     private val serverFormat = ("yyyy-MM-dd'T'HH:mm:ss")
-    private val dateFormat = SimpleDateFormat(serverFormat, Locale.getDefault())
+    private val dateFormat = SimpleDateFormat(serverFormat)
 
     @FromJson
     fun fromJson(date: String): Date {

@@ -21,6 +21,9 @@ import com.example.ithaca_transit_android_v2.views.BusNumberComponent
 import com.example.ithaca_transit_android_v2.views.DrawRouteCard
 import io.reactivex.Observable
 import io.reactivex.subjects.PublishSubject
+import java.text.SimpleDateFormat
+import java.util.*
+import kotlin.collections.ArrayList
 
 // Recycler view adapter that fills each route card with the list of Route objects that is returned by our RouteOptions networking call.
 class RouteViewAdapter(context: Context, var userList: ArrayList<Route>) :
@@ -45,7 +48,6 @@ class RouteViewAdapter(context: Context, var userList: ArrayList<Route>) :
     override fun onBindViewHolder(p0: ViewHolder, p1: Int) {
         p0.directionList.removeAllViews()
         p0.busDrawing.removeAllViews()
-
 
         //Temporary info to fill the routecard so that we can see the difference between cards.
         val boardMins = userList[p1].boardInMin.toString()
@@ -111,7 +113,6 @@ class RouteViewAdapter(context: Context, var userList: ArrayList<Route>) :
             p0.dotDrawing.setBlueDimensions(20f, 115f, 95f)
             p0.dotDrawing.setGrayDimensions(20f, 160f, 220f, 22f)
             //var drawRouteCard=DrawRouteCard(routeCardContext, null, 36f, 222f, 180f )
-
 
         }
 
@@ -194,41 +195,28 @@ class RouteViewAdapter(context: Context, var userList: ArrayList<Route>) :
 
         p0.busDrawing.addView(walkingView)
 
-        fun convertMillis(mil: Long): String {
-            var s: Long = mil / 1000
-            s = (s%(3600*24))
-            val m: Long = s/60
-            var h: Int = (m/60).toInt()
-            var mins: Long = m%60
+        fun convertDate(date: Date) : String {
+            val sdf = SimpleDateFormat("h:mm")
+            sdf.timeZone = TimeZone.getTimeZone("ET")
+            val newDate = sdf.format(date)
 
+            return newDate
 
-            if (h > 12) {
-                h = h - 12
-            }
-
-            return String.format("%d:%02d", h, mins)
         }
-        //Set route duration
 
-        val arrivalTime = convertMillis(userList[p1].arrival.time).toString()
-        Log.d("timesAConvert", ""+userList[p1].arrival.time)
-        Log.d("timesAConvert", ""+userList[p1].arrival)
-        Log.d("timesAConvertConvert", arrivalTime)
-        val departTime = convertMillis(userList[p1].depart.time).toString()
-        Log.d("timesDConvert", departTime)
-        Log.d("timesD", ""+userList[p1].depart)
+        Log.d("currentMillis", ""+System.currentTimeMillis())
 
-
-        p0.routeDuration.setText(departTime + " - " + arrivalTime)
+        //set route duration
+        p0.routeDuration.setText(""+convertDate(userList[p1].depart) + " - " + convertDate(userList[p1].arrival))
 
         p0.routeDuration.setTypeface(null, Typeface.BOLD);
 
         //Create list of directions
         Log.d("SummaryListSize", "im here")
         p0.directionList.layoutParams = linearlayoutparams
-        Log.d("SummaryListSizeD", ""+p0.directionList.layoutParams.height)
-        Log.d("SummaryListSizeBus", ""+p0.busDrawing.layoutParams.height)
-        Log.d("SummaryListSizeDot", ""+p0.dotDrawing.layoutParams.height)
+        Log.d("SummaryListSizeD", "" + p0.directionList.layoutParams.height)
+        Log.d("SummaryListSizeBus", "" + p0.busDrawing.layoutParams.height)
+        Log.d("SummaryListSizeDot", "" + p0.dotDrawing.layoutParams.height)
         p0.directionList.invalidate()
         p0.busDrawing.invalidate()
         p0.dotDrawing.invalidate()
@@ -251,7 +239,6 @@ class RouteViewAdapter(context: Context, var userList: ArrayList<Route>) :
             itemView.setOnClickListener {
                 clickSubject.onNext(RouteDetailViewState(userList[layoutPosition]))
 
-
                 val millis = userList[layoutPosition].arrival.time
 
             }
@@ -259,7 +246,6 @@ class RouteViewAdapter(context: Context, var userList: ArrayList<Route>) :
     }
 
     fun swapItems(updatedInfo: ArrayList<Route>) {
-
 
         this.userList = updatedInfo
         notifyDataSetChanged()

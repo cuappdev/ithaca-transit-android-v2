@@ -77,7 +77,7 @@ class MapFragment: Fragment() , OnMapReadyCallback, GoogleMap.OnPolylineClickLis
         super.onLowMemory()
         mapView.onLowMemory()
     }
-    
+
     override fun onMapReady(googleMap: GoogleMap) {
         map = googleMap
         map.uiSettings.isMyLocationButtonEnabled = false

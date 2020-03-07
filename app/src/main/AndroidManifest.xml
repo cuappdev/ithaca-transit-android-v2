@@ -6,11 +6,6 @@
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
-<<<<<<< HEAD
-
-=======
-    
->>>>>>> master
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
@@ -19,8 +14,6 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true">
-<<<<<<< HEAD
-=======
 
         <activity android:name=".views.RouteCardCompact">
 
@@ -41,8 +34,7 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.example.ithaca_transit_android_v2.MainActivity" />
         </activity>
-        
->>>>>>> master
+
         <!-- google_maps_key loaded in build.gradle -->
         <meta-data
             android:name="com.google.android.geo.API_KEY"

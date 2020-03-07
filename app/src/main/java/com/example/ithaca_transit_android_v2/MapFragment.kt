@@ -7,7 +7,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import com.example.ithaca_transit_android_v2.R.id.map_fragment
 import com.example.ithaca_transit_android_v2.R.id.start
 import com.example.ithaca_transit_android_v2.models.*
 import com.google.android.gms.common.GooglePlayServicesRepairableException
@@ -19,11 +18,6 @@ import com.google.android.gms.maps.model.*
 import java.util.*
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
-
-
-
-
-
 
 class MapFragment: Fragment() , OnMapReadyCallback, GoogleMap.OnPolylineClickListener{
     override fun onPolylineClick(p0: Polyline?) {

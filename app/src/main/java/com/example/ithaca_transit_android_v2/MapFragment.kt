@@ -29,7 +29,6 @@ class MapFragment: Fragment() , OnMapReadyCallback, GoogleMap.OnPolylineClickLis
     }
 
     private lateinit var mapView: MapView
-    private lateinit var map: GoogleMap
     private val MAPVIEW_BUNDLE_KEY = "MapViewBundleKey"
     private lateinit var mMapPresenter: MapPresenter
     private lateinit var mapDisposable: Disposable
@@ -87,45 +86,7 @@ class MapFragment: Fragment() , OnMapReadyCallback, GoogleMap.OnPolylineClickLis
 
     override fun onMapReady(googleMap: GoogleMap) {
         mapDisposable = mMapPresenter.initMapView(googleMap)
-        map = googleMap
-        map.uiSettings.isMyLocationButtonEnabled = false
-        val coordinates = listOf(Coordinate(42.442144, -76.485274), Coordinate(42.445, -76.482885))
-        val startTime = Date()
-        val endTime = Date()
-        val startCoor = Coordinate(42.442144, -76.485274)
-        val endCoor = Coordinate(42.445, -76.482885)
-        val busStops = listOf(Stop("testing",42.442144, -76.485274 ))
-        val busNumber = 2
-        val d1 = Direction(DirectionType.BUS, coordinates, startTime, endTime, startCoor, endCoor, busStops, busNumber)
-        map.isMyLocationEnabled = true
-        map!!.moveCamera(CameraUpdateFactory.newLatLngZoom(LatLng(startCoor.latitude, startCoor.longitude),14.0f))
-        val startCoor2 = Coordinate(42.66, -76.485274)
-        val endCoor2 = Coordinate(42.77, -76.482885)
-        val d2 = Direction(DirectionType.BUS, coordinates, startTime, endTime, startCoor2, endCoor2, busStops, busNumber)
-        val route = Route(listOf(d1, d2), startCoor, endCoor, endTime, startTime, 2)
-        drawRoute(route)
-    }
-
-    public fun drawRoute(route: Route) {
-        for(direction in route.directions){
-            val options = PolylineOptions()
-            if (direction.type == DirectionType.BUS) {
-                options.color(Color.BLUE)
-                options.width(5f)
-                for (coordinate in direction.listOfCoordinates){
-                    val latLng = LatLng(coordinate.latitude, coordinate.longitude)
-                    options.add(latLng)
-                }
-            }
-            if(direction.type == DirectionType.WALK) {
-                options.color(Color.GRAY)
-                options.width(5f)
-                for (coordinate in direction.listOfCoordinates){
-                    val latLng = LatLng(coordinate.latitude, coordinate.longitude)
-                    options.add(latLng)
-                }
-            }
-            map.addPolyline(options)
-        }
+        googleMap.uiSettings.isMyLocationButtonEnabled = false
+        googleMap.isMyLocationEnabled = true
     }
 }

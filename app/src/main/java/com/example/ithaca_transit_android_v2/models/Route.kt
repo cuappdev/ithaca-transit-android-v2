@@ -17,12 +17,22 @@ data class Route (
     val arrival: Date,
     @Json(name ="departureTime")
     val depart: Date,
+    @Json(name = "routeSummary")
+    val routeSummary: List<RouteSummary>?,
     val boardInMin: Int
+
 ) {
     companion object {
+        fun millisToMins(millis : Long) : Int{
+            var millisS = millis/1000
+            val sToMins = (millisS/60).toInt()
+            return sToMins
+        }
         fun computeBoardInMin(firstBusDirection: Direction): Int {
-            val diff = firstBusDirection.startTime.time - Calendar.getInstance().time.time
-            return TimeUnit.MINUTES.convert(diff, TimeUnit.MILLISECONDS).toInt()
+            val diff = firstBusDirection.startTime.time - System.currentTimeMillis()
+
+            //return TimeUnit.MINUTES.convert(diff, TimeUnit.MILLISECONDS).toInt()
+            return millisToMins(diff)
         }
     }
 }

@@ -82,36 +82,6 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
 
     }
 
-    fun fetchRouteData() {
-        val time = System.currentTimeMillis().toDouble()
-        Log.d("currentTime", "" + time)
-
-        runBlocking {
-            val startLoc = CoroutineScope(Dispatchers.IO).async {
-                NetworkUtils().getSearchedLocations("Jameson")
-
-            }.await()
-            val endLoc = CoroutineScope(Dispatchers.IO).async {
-                NetworkUtils().getSearchedLocations("Statler")
-            }.await()
-            val deferred = CoroutineScope(Dispatchers.IO).async {
-                NetworkUtils().getRouteOptions(
-                    startLoc[1].coordinate,
-                    endLoc[0].coordinate,
-                    1583612896.0,
-                    false,
-                    "Final Destination"
-                )
-            }.await()
-
-            Log.d("qwerty", ""+ startLoc[1].coordinate);
-            Log.d("qwerty", ""+ endLoc[1].coordinate);
-
-            dataList = ArrayList(deferred.boardingSoon)
-
-        }
-    }
-
     fun initializeLocationManager() {
         val locationManager: LocationManager = getSystemService(Context.LOCATION_SERVICE) as LocationManager
         mCurrLocationManager = CurrLocationManager(this, locationManager, this)

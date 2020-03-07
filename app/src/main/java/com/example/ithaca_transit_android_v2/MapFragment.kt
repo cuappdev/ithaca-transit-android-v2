@@ -9,6 +9,8 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import com.example.ithaca_transit_android_v2.R.id.start
 import com.example.ithaca_transit_android_v2.models.*
+import com.example.ithaca_transit_android_v2.presenters.MapPresenter
+import com.example.ithaca_transit_android_v2.presenters.SearchPresenter
 import com.google.android.gms.common.GooglePlayServicesRepairableException
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.MapView
@@ -18,6 +20,8 @@ import com.google.android.gms.maps.model.*
 import java.util.*
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
+import io.reactivex.disposables.Disposable
+import kotlinx.android.synthetic.main.search_main.*
 
 class MapFragment: Fragment() , OnMapReadyCallback, GoogleMap.OnPolylineClickListener{
     override fun onPolylineClick(p0: Polyline?) {
@@ -27,6 +31,8 @@ class MapFragment: Fragment() , OnMapReadyCallback, GoogleMap.OnPolylineClickLis
     private lateinit var mapView: MapView
     private lateinit var map: GoogleMap
     private val MAPVIEW_BUNDLE_KEY = "MapViewBundleKey"
+    private lateinit var mMapPresenter: MapPresenter
+    private lateinit var mapDisposable: Disposable
 
 
     override fun onCreateView(inflater: LayoutInflater,
@@ -39,11 +45,12 @@ class MapFragment: Fragment() , OnMapReadyCallback, GoogleMap.OnPolylineClickLis
         if (savedInstanceState != null) {
             mapViewBundle = savedInstanceState.getBundle(MAPVIEW_BUNDLE_KEY)
         }
+
         mapView.onCreate(mapViewBundle)
+        mMapPresenter = MapPresenter()
 
         //mapView.getMapAsync() { this }
         mapView.getMapAsync(this)
-
         return v
     }
     override fun onResume() {
@@ -79,6 +86,7 @@ class MapFragment: Fragment() , OnMapReadyCallback, GoogleMap.OnPolylineClickLis
     }
 
     override fun onMapReady(googleMap: GoogleMap) {
+        mapDisposable = mMapPresenter.initMapView(googleMap)
         map = googleMap
         map.uiSettings.isMyLocationButtonEnabled = false
         val coordinates = listOf(Coordinate(42.442144, -76.485274), Coordinate(42.445, -76.482885))

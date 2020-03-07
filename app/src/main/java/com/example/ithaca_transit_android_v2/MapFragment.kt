@@ -8,10 +8,8 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import com.example.ithaca_transit_android_v2.R.id.map_fragment
-import com.example.ithaca_transit_android_v2.models.Coordinate
-import com.example.ithaca_transit_android_v2.models.Direction
-import com.example.ithaca_transit_android_v2.models.DirectionType
-import com.example.ithaca_transit_android_v2.models.Stop
+import com.example.ithaca_transit_android_v2.R.id.start
+import com.example.ithaca_transit_android_v2.models.*
 import com.google.android.gms.common.GooglePlayServicesRepairableException
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.MapView
@@ -94,13 +92,7 @@ class MapFragment: Fragment() , OnMapReadyCallback, GoogleMap.OnPolylineClickLis
     }
 
     override fun onMapReady(googleMap: GoogleMap) {
-        Log.d("map12", "why isnt the map drawing things")
         map = googleMap
-        map.addMarker(
-            MarkerOptions()
-                .position(LatLng(10.0, 10.0))
-                .title("Hello world")
-        )
         map.uiSettings.isMyLocationButtonEnabled = false
         val coordinates = listOf(Coordinate(42.442144, -76.485274), Coordinate(42.445, -76.482885))
         val startTime = Date()
@@ -109,25 +101,36 @@ class MapFragment: Fragment() , OnMapReadyCallback, GoogleMap.OnPolylineClickLis
         val endCoor = Coordinate(42.445, -76.482885)
         val busStops = listOf(Stop("testing",42.442144, -76.485274 ))
         val busNumber = 2
-        val direction = Direction(DirectionType.BUS, coordinates, startTime, endTime, startCoor, endCoor, busStops, busNumber)
+        val d1 = Direction(DirectionType.BUS, coordinates, startTime, endTime, startCoor, endCoor, busStops, busNumber)
         map.isMyLocationEnabled = true
         map!!.moveCamera(CameraUpdateFactory.newLatLngZoom(LatLng(startCoor.latitude, startCoor.longitude),14.0f))
-
-        val sydney = LatLng(-34.0, 151.0)
-        map!!.addMarker(MarkerOptions().position(sydney).title("Marker in Sydney"))
-
-        val options = PolylineOptions()
-        options.color(Color.RED)
-        options.width(5f)
-        //make lat and longs
-        for (coordinate in direction.listOfCoordinates) {
-            val latLng = LatLng(coordinate.latitude, coordinate.longitude)
-            options.add(latLng)
-        }
-
-        map.addPolyline(options)
-
-        //mapView.onResume()
+        val startCoor2 = Coordinate(42.66, -76.485274)
+        val endCoor2 = Coordinate(42.77, -76.482885)
+        val d2 = Direction(DirectionType.BUS, coordinates, startTime, endTime, startCoor2, endCoor2, busStops, busNumber)
+        val route = Route(listOf(d1, d2), startCoor, endCoor, endTime, startTime, 2)
+        drawRoute(route)
     }
 
+    public fun drawRoute(route: Route) {
+        for(direction in route.directions){
+            val options = PolylineOptions()
+            if (direction.type == DirectionType.BUS) {
+                options.color(Color.BLUE)
+                options.width(5f)
+                for (coordinate in direction.listOfCoordinates){
+                    val latLng = LatLng(coordinate.latitude, coordinate.longitude)
+                    options.add(latLng)
+                }
+            }
+            if(direction.type == DirectionType.WALK) {
+                options.color(Color.GRAY)
+                options.width(5f)
+                for (coordinate in direction.listOfCoordinates){
+                    val latLng = LatLng(coordinate.latitude, coordinate.longitude)
+                    options.add(latLng)
+                }
+            }
+            map.addPolyline(options)
+        }
+    }
 }

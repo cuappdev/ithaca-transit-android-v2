@@ -86,7 +86,7 @@ class RouteAdapter {
 
     @FromJson
     private fun fromJson(json: JsonRoute): Route {
-        var firstBus = if (json.directions[0].type == DirectionType.BUS) 1 else 0
+        var firstBus = if (json.directions[0].type == DirectionType.BUS) 0 else 1
         var boardInMins: Int =
             if (json.directions.size != 1) Route.computeBoardInMin(json.directions[firstBus]) else 0
 
@@ -123,9 +123,12 @@ class CustomDateAdapter {
 
     @FromJson
     fun fromJson(date: String): Date {
-        dateFormat.timeZone = TimeZone.getTimeZone("America/New_York")
-        Log.d("TimeZone", ""+dateFormat.timeZone)
-        return dateFormat.parse(date)
+
+        val formatter = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'", Locale.getDefault())
+        formatter.timeZone = TimeZone.getTimeZone("UTC")
+        val result = formatter.parse(date)
+
+        return result
     }
 
     @ToJson

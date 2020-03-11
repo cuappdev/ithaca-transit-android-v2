@@ -178,14 +178,16 @@ class SearchPresenter(_view: View, _context: Context, _searchAdapter: SearchView
             .observeOn(Schedulers.io())
             .map { state ->
                 if (state is InitSearchState) {
-                    mSearchLocations = NetworkUtils().getSearchedLocations(state.searchText).toMutableList()
+                    mSearchLocations =
+                        NetworkUtils().getSearchedLocations(state.searchText).toMutableList()
                     InitLocationsSearchState(state.searchText, mSearchLocations)
                 } else if (state is ChangeRouteState) {
                     var offerCurrentLocationOption = false
                     if (mEditingStart) {
                         offerCurrentLocationOption = true
                     }
-                    mSearchLocations = NetworkUtils().getSearchedLocations(state.searchText).toMutableList()
+                    mSearchLocations =
+                        NetworkUtils().getSearchedLocations(state.searchText).toMutableList()
                     ChangeRouteLocationState(
                         state.searchText,
                         mSearchLocations,
@@ -233,7 +235,10 @@ class SearchPresenter(_view: View, _context: Context, _searchAdapter: SearchView
                     is ChangeRouteLocationState -> {
                         view.display_route.visibility = View.GONE
                         if (state.searchedLocations != null && state.searchedLocations.isNotEmpty()) {
-                            mSearchAdapter.swapItems(state.searchedLocations, state.offerCurrentLocationOption)
+                            mSearchAdapter.swapItems(
+                                state.searchedLocations,
+                                state.offerCurrentLocationOption
+                            )
                         } else if (state.searchText === "") {
                             mSearchAdapter.swapItems(ArrayList(), state.offerCurrentLocationOption)
                         }

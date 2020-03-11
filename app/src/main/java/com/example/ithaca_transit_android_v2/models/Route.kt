@@ -1,9 +1,10 @@
 package com.example.ithaca_transit_android_v2.models
 
+import android.util.Log
 import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
-import java.util.Date
-import java.util.Calendar
+import java.text.SimpleDateFormat
+import java.util.*
 import java.util.concurrent.TimeUnit
 
 // [Route] is a collection of [Direction] objects and other essential information
@@ -23,16 +24,19 @@ data class Route (
 
 ) {
     companion object {
-        fun millisToMins(millis : Long) : Int{
-            var millisS = millis/1000
-            val sToMins = (millisS/60).toInt()
-            return sToMins
-        }
         fun computeBoardInMin(firstBusDirection: Direction): Int {
-            val diff = firstBusDirection.startTime.time - System.currentTimeMillis()
 
-            //return TimeUnit.MINUTES.convert(diff, TimeUnit.MILLISECONDS).toInt()
-            return millisToMins(diff)
+            fun convertDate(date: Date) : Date {
+                val sdf = SimpleDateFormat("h:mm")
+                sdf.timeZone = TimeZone.getTimeZone("GMT-8:00")
+                val newDate = sdf.format(date)
+
+                return sdf.parse(newDate)
+
+            }
+            val diff = firstBusDirection.startTime.time - System.currentTimeMillis()
+            return TimeUnit.MINUTES.convert(diff, TimeUnit.MILLISECONDS).toInt()
+            //return millisToMins(diff)
         }
     }
 }

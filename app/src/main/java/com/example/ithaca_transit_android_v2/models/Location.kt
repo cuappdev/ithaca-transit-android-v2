@@ -6,7 +6,7 @@ import kotlinx.android.parcel.Parcelize
 
 //Location. - Represents either a bus stop or a google place.
 @JsonClass(generateAdapter = true)
-data class Location (
+data class Location(
     val type: LocationType,
     val name: String,
     val coordinate: Coordinate,

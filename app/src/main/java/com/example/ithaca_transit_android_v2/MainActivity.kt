@@ -61,9 +61,13 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
             RouteViewAdapter(this, ArrayList())
         mSearchPresenter = SearchPresenter(search_card_holder, this, mSearchAdapter)
         mRouteOptionsPresenter = RouteOptionsPresenter(bottomSheet, mRouteViewAdapter)
-        mRouteOptionsPresenter.setBottomSheetCallback(BottomSheetBehavior.from(bottomSheet), bottomSheet);
+        mRouteOptionsPresenter.setBottomSheetCallback(
+            BottomSheetBehavior.from(bottomSheet),
+            bottomSheet
+        );
 
         searchDisposable = mSearchPresenter.initSearchView()
+        routeCardDisposable = mRouteOptionsPresenter.initRouteCardView();
 
         routeCardDisposable = mRouteOptionsPresenter.initRouteCardView();
 
@@ -84,7 +88,8 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
     }
 
     fun initializeLocationManager() {
-        val locationManager: LocationManager = getSystemService(Context.LOCATION_SERVICE) as LocationManager
+        val locationManager: LocationManager =
+            getSystemService(Context.LOCATION_SERVICE) as LocationManager
         mCurrLocationManager = CurrLocationManager(this, locationManager, this)
     }
 
@@ -99,7 +104,11 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
     }
 
     /* When user grants privileges to the user, initialize the location manager */
-    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<String>,
+        grantResults: IntArray
+    ) {
         if (requestCode == 888) {
             if ((grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED)) {
                 initializeLocationManager()

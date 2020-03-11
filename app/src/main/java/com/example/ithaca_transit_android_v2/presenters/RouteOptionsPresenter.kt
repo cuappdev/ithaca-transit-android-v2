@@ -56,9 +56,10 @@ class RouteOptionsPresenter(bottomSheet: View, _routeViewAdapter: RouteViewAdapt
                     val routeOptions = NetworkUtils().getRouteOptions(
                         state.startLocation.coordinate,
                         state.destLocation.coordinate,
-                        System.currentTimeMillis()/1000.0,
+
+                        System.currentTimeMillis() / 1000.0,
                         false,
-                        "Final Destination"
+                        state.destLocation.name
                     )
                     RouteListState(state.startLocation, state.destLocation, routeOptions)
                 } else {
@@ -73,10 +74,9 @@ class RouteOptionsPresenter(bottomSheet: View, _routeViewAdapter: RouteViewAdapt
                         routeCardHolder.visibility = View.GONE
                     }
                     is RouteListState -> {
-                        Log.d("qwerty", "RouteLIstStateRn")
-
                         // Display the first routeOptions route on the map
                         Repository._updateMapView(state.routeOptions!!.boardingSoon[0])
+
 
 
                         routeCardHolder.nearby_stops_routes.invalidate()
@@ -84,8 +84,7 @@ class RouteOptionsPresenter(bottomSheet: View, _routeViewAdapter: RouteViewAdapt
                         mRoutesAdapter.swapItems(ArrayList(state.routeOptions!!.boardingSoon))
 
                         val count = routeCardHolder.nearby_stops_routes.childCount
-                        for(i in 1..count-1){
-
+                        for (i in 1..count - 1) {
                             routeCardHolder.nearby_stops_routes.getChildAt(i).invalidate()
 
                         }

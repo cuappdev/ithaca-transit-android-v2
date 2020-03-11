@@ -53,6 +53,7 @@ class ChangeRouteState(
 class ChangeRouteLocationState(
     val searchText: String,
     val searchedLocations: List<Location>?,
-    val hideSearchList: Boolean
+    val hideSearchList: Boolean,
+    val offerCurrentLocationOption: Boolean
 ) : SearchState()
 

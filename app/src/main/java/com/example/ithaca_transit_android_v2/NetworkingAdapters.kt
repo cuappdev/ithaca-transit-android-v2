@@ -1,5 +1,6 @@
 package com.example.ithaca_transit_android_v2
 
+import android.util.Log
 import com.example.ithaca_transit_android_v2.models.*
 import com.squareup.moshi.*
 import java.text.SimpleDateFormat
@@ -79,31 +80,54 @@ class RouteAdapter {
         @Json(name = "arrivalTime")
         val arrival: Date,
         @Json(name = "departureTime")
-        val depart: Date
+        val depart: Date,
+        val routeSummary: List<RouteSummary>
     )
 
     @FromJson
     private fun fromJson(json: JsonRoute): Route {
-        var firstBus = if (json.directions[0].type == DirectionType.BUS) 1 else 0
+        var firstBus = if (json.directions[0].type == DirectionType.BUS) 0 else 1
         var boardInMins: Int =
             if (json.directions.size != 1) Route.computeBoardInMin(json.directions[firstBus]) else 0
-        return Route(
-            json.directions,
-            json.startCoords,
-            json.endCoords,
-            json.arrival,
-            json.depart,
-            boardInMins
-        )
+
+        //Temporary code to deal with routes without a route summary
+        if (!json.routeSummary.isNullOrEmpty()) {
+            return Route(
+                json.directions,
+                json.startCoords,
+                json.endCoords,
+                json.arrival,
+                json.depart,
+                json.routeSummary,
+                boardInMins
+            )
+
+        } else {
+            return Route(
+                json.directions,
+                json.startCoords,
+                json.endCoords,
+                json.arrival,
+                json.depart,
+                listOf(RouteSummary(directionSummary(-1, null), false, "noSummary")),
+                boardInMins
+            )
+        }
+
     }
 }
 
 class CustomDateAdapter {
-    private val serverFormat = ("yyyy-MM-dd'T'HH:mm:ss'Z'")
-    private val dateFormat = SimpleDateFormat(serverFormat, Locale.getDefault())
+    private val serverFormat = ("yyyy-MM-dd'T'HH:mm:ss")
+    private val dateFormat = SimpleDateFormat(serverFormat)
+
     @FromJson
     fun fromJson(date: String): Date {
-        return dateFormat.parse(date)
+        val formatter = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'", Locale.getDefault())
+        formatter.timeZone = TimeZone.getTimeZone("UTC")
+        val result = formatter.parse(date)
+
+        return result
     }
 
     @ToJson

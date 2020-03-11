@@ -1,16 +1,23 @@
 package com.example.ithaca_transit_android_v2.states
 
+import com.example.ithaca_transit_android_v2.models.Location
 import com.example.ithaca_transit_android_v2.models.Route
 import com.example.ithaca_transit_android_v2.models.RouteOptions
 
 // Parent Class
 sealed class RouteCardState()
 
+
+class OptionsHiddenState() : RouteCardState()
 /*
- * A default display of a route card in route option view.
- * [route.isWalkingOnly] and number of [route.directions] affects the drawing of transit details.
+ * A display of the route cards after a start and end destination were set, displaying all possible
+ * methods of getting from location A to location B
  */
-class RouteOptionState(searchedRoute: RouteOptions) : RouteCardState()
+class RouteListState(
+    val startLocation: Location,
+    val destLocation: Location,
+    val routeOptions: RouteOptions?
+) : RouteCardState()
 
 /*
  * A route card from [RouteOptionState] is clicked.

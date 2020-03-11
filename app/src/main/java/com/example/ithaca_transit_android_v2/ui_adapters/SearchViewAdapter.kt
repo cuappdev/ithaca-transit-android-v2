@@ -1,7 +1,9 @@
 package com.example.ithaca_transit_android_v2.ui_adapters
 
 import android.content.Context
+import android.graphics.Typeface
 import android.util.Log
+import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -11,6 +13,8 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.annotation.LayoutRes
 import com.example.ithaca_transit_android_v2.R
+import com.example.ithaca_transit_android_v2.Repository
+import com.example.ithaca_transit_android_v2.models.Coordinate
 import com.example.ithaca_transit_android_v2.models.Location
 import com.example.ithaca_transit_android_v2.models.LocationType
 
@@ -47,12 +51,20 @@ class SearchViewAdapter(context: Context, private var locations: List<Location> 
         val place = locations[position]
         viewHolder.placeNameTextView?.text = place.name
 
-        if (place.type == LocationType.BUS_STOP) {
+        if (place.name === "Current Location") {
+            viewHolder.placeIcon?.setBackgroundResource(R.drawable.ic_location_blue)
+            viewHolder.placeLocTextView?.visibility = View.GONE
+            viewHolder.placeNameTextView?.setTextSize(TypedValue.COMPLEX_UNIT_SP, 17f)
+        } else if (place.type == LocationType.BUS_STOP) {
             viewHolder.placeIcon?.setBackgroundResource(R.drawable.ic_bus_stop)
+            viewHolder.placeLocTextView?.visibility = View.VISIBLE
             viewHolder.placeLocTextView?.text = "Bus Stop"
+            viewHolder.placeNameTextView?.setTextSize(TypedValue.COMPLEX_UNIT_SP, 15f)
         } else {
             viewHolder.placeIcon?.setBackgroundResource(R.drawable.ic_location)
+            viewHolder.placeLocTextView?.visibility = View.VISIBLE
             viewHolder.placeLocTextView?.text = place.detail
+            viewHolder.placeNameTextView?.setTextSize(TypedValue.COMPLEX_UNIT_SP, 15f)
         }
         return view
     }
@@ -69,8 +81,20 @@ class SearchViewAdapter(context: Context, private var locations: List<Location> 
         return locations.size
     }
 
-    fun swapItems(locations: List<Location>) {
-        this.locations = locations
+    fun swapItems(locations: List<Location>, offerCurrentLocation: Boolean) {
+        var mutableList = locations
+        if (offerCurrentLocation) {
+            mutableList = mutableList.toMutableList()
+            val myLoc = Repository.currentLocation
+            if (myLoc != null) {
+                mutableList.add(0, Location(
+                        LocationType.APPLE_PLACE, "Current Location",
+                        Coordinate(myLoc.latitude, myLoc.longitude), ""
+                    )
+                )
+            }
+        }
+        this.locations = mutableList
         notifyDataSetChanged()
     }
 }

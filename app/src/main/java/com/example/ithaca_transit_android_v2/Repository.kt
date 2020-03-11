@@ -8,4 +8,8 @@ object Repository {
     var currentLocation: android.location.Location? = null
     var startLocation: Location? = null
     var destinationLocation: Location? = null
+
+    // Called from the SearchView everytime the RouteOptionsView should change
+    var _updateRouteOptions = fun() {}
+
 }

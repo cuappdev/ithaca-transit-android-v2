@@ -198,8 +198,6 @@ class RouteViewAdapter(context: Context, var userList: ArrayList<Route>) :
 
         }
 
-        Log.d("currentMillis", "" + System.currentTimeMillis())
-
         //set route duration
         p0.routeDuration.setText(
             "" + convertDate(userList[p1].depart) + " - " + convertDate(
@@ -224,16 +222,11 @@ class RouteViewAdapter(context: Context, var userList: ArrayList<Route>) :
         val dotDrawing = itemView.findViewById<DrawRouteCard>(R.id.drawingDots)
         val busDrawing = itemView.findViewById<LinearLayout>(R.id.icons)
         val routeDuration = itemView.findViewById<TextView>(R.id.duration)
-        //val customBusView = itemView.findViewById<FrameLayout>(R.id.busFrameLayout)
-        val dotLayout = itemView.findViewById<LinearLayout>(R.id.path_dots)
-        val cardViewDelegate = itemView.findViewById<CardView>(R.id.cardviewdelegate)
 
         init {
             //Listener for onClicks - creates observable with Route object corresponding to clicked routeCard
             itemView.setOnClickListener {
                 clickSubject.onNext(RouteDetailViewState(userList[layoutPosition]))
-
-                val millis = userList[layoutPosition].arrival.time
 
             }
         }

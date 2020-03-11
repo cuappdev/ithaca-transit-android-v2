@@ -30,7 +30,7 @@ class RouteOptionsPresenter(bottomSheet: View, _routeViewAdapter: RouteViewAdapt
 
     private fun createRouteCardObservable(): Observable<RouteCardState> {
         val obs = Observable.create { emitter: ObservableEmitter<RouteCardState> ->
-            val callback = fun () {
+            val callback = fun() {
                 if (Repository.startLocation != null && Repository.destinationLocation != null) {
                     emitter.onNext(
                         RouteListState(
@@ -56,7 +56,7 @@ class RouteOptionsPresenter(bottomSheet: View, _routeViewAdapter: RouteViewAdapt
                     val routeOptions = NetworkUtils().getRouteOptions(
                         state.startLocation.coordinate,
                         state.destLocation.coordinate,
-                        System.currentTimeMillis()/1000.0,
+                        System.currentTimeMillis() / 1000.0,
                         false,
                         state.destLocation.name
                     )
@@ -81,7 +81,7 @@ class RouteOptionsPresenter(bottomSheet: View, _routeViewAdapter: RouteViewAdapt
                         mRoutesAdapter.swapItems(ArrayList(state.routeOptions!!.boardingSoon))
 
                         val count = routeCardHolder.nearby_stops_routes.childCount
-                        for(i in 1..count-1){
+                        for (i in 1..count - 1) {
 
                             routeCardHolder.nearby_stops_routes.getChildAt(i).invalidate()
 

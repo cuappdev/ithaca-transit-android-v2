@@ -58,7 +58,7 @@ class RouteOptionsPresenter(bottomSheet: View, _routeViewAdapter: RouteViewAdapt
                         state.destLocation.coordinate,
                         System.currentTimeMillis()/1000.0,
                         false,
-                        "Final Destination"
+                        state.destLocation.name
                     )
                     RouteListState(state.startLocation, state.destLocation, routeOptions)
                 } else {

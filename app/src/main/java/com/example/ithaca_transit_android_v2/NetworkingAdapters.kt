@@ -86,7 +86,7 @@ class RouteAdapter {
 
     @FromJson
     private fun fromJson(json: JsonRoute): Route {
-        var firstBus = if (json.directions[0].type == DirectionType.BUS) 1 else 0
+        var firstBus = if (json.directions[0].type == DirectionType.BUS) 0 else 1
         var boardInMins: Int =
             if (json.directions.size != 1) Route.computeBoardInMin(json.directions[firstBus]) else 0
 

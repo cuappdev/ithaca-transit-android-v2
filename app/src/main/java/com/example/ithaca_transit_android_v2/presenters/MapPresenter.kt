@@ -35,27 +35,25 @@ class MapPresenter() {
                 )
             }
             Repository._updateMapView = callback
-            Log.i("qwerty", "hiyamooga")
 
         }
         return obs.startWith(MapLaunchState())
     }
 
     fun drawRoute(map: GoogleMap, route: Route) {
-        Log.i("qwerty", route.directions.size.toString())
         for(direction in route.directions){
             val options = PolylineOptions()
             if (direction.type == DirectionType.BUS) {
-                options.color(Color.BLUE)
-                options.width(5f)
+                options.color(Color.rgb(0,173,255))
+                options.width(10f)
                 for (coordinate in direction.listOfCoordinates){
                     val latLng = LatLng(coordinate.latitude, coordinate.longitude)
                     options.add(latLng)
                 }
             }
             if(direction.type == DirectionType.WALK) {
-                options.color(Color.GRAY)
-                options.width(5f)
+                options.color(Color.rgb(160,160,160))
+                options.width(10f)
                 for (coordinate in direction.listOfCoordinates){
                     val latLng = LatLng(coordinate.latitude, coordinate.longitude)
                     options.add(latLng)

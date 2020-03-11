@@ -123,7 +123,8 @@ class CustomDateAdapter {
 
     @FromJson
     fun fromJson(date: String): Date {
-        dateFormat.timeZone = TimeZone.getTimeZone("America/New_York")
+
+        dateFormat.timeZone = TimeZone.getTimeZone("GMT-8")
         Log.d("TimeZone", ""+dateFormat.timeZone)
         return dateFormat.parse(date)
     }

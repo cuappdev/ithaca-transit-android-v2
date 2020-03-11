@@ -116,12 +116,6 @@ class RouteViewAdapter(context: Context, var userList: ArrayList<Route>) :
 
         }
 
-
-
-
-
-
-
         for (i in summaryList) {
 
             var individualDirection = TextView(routeCardContext)
@@ -195,28 +189,28 @@ class RouteViewAdapter(context: Context, var userList: ArrayList<Route>) :
 
         p0.busDrawing.addView(walkingView)
 
-        fun convertDate(date: Date) : String {
+        fun convertDate(date: Date): String {
             val sdf = SimpleDateFormat("h:mm")
-            sdf.timeZone = TimeZone.getTimeZone("ET")
+
             val newDate = sdf.format(date)
 
             return newDate
 
         }
 
-        Log.d("currentMillis", ""+System.currentTimeMillis())
+        Log.d("currentMillis", "" + System.currentTimeMillis())
 
         //set route duration
-        p0.routeDuration.setText(""+convertDate(userList[p1].depart) + " - " + convertDate(userList[p1].arrival))
+        p0.routeDuration.setText(
+            "" + convertDate(userList[p1].depart) + " - " + convertDate(
+                userList[p1].arrival
+            )
+        )
 
         p0.routeDuration.setTypeface(null, Typeface.BOLD);
 
         //Create list of directions
-        Log.d("SummaryListSize", "im here")
         p0.directionList.layoutParams = linearlayoutparams
-        Log.d("SummaryListSizeD", "" + p0.directionList.layoutParams.height)
-        Log.d("SummaryListSizeBus", "" + p0.busDrawing.layoutParams.height)
-        Log.d("SummaryListSizeDot", "" + p0.dotDrawing.layoutParams.height)
         p0.directionList.invalidate()
         p0.busDrawing.invalidate()
         p0.dotDrawing.invalidate()

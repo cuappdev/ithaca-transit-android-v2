@@ -123,6 +123,7 @@ class CustomDateAdapter {
 
     @FromJson
     fun fromJson(date: String): Date {
+
         val formatter = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'", Locale.getDefault())
         formatter.timeZone = TimeZone.getTimeZone("UTC")
         val result = formatter.parse(date)

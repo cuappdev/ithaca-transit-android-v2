@@ -11,17 +11,17 @@ class MapLaunchState(): MapState(emptyList())
 
 //State that represents the map with all bus stops marked and marks the user's current location.
 class LaunchStateFilled(
-    busStops: List<Location>,
-    currentLocation: Coordinate
+    val busStops: List<Location>,
+    val currentLocation: Coordinate
 ) : MapState(emptyList())
 
 //state that shows the first trip option and the walking trip.
 class TripOptions(
-    firstBusRoute: Route,
-    walkingRoute: Route
+    val firstBusRoute: Route,
+    val walkingRoute: Route
 ): MapState(listOf(firstBusRoute, walkingRoute))
 
 //state that shows just selected path
 class SelectedTrip(
-    selectedRoute: Route
+    val selectedRoute: Route
 ): MapState(listOf(selectedRoute))

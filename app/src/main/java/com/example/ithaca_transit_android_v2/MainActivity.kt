@@ -69,6 +69,8 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
         searchDisposable = mSearchPresenter.initSearchView()
         routeCardDisposable = mRouteOptionsPresenter.initRouteCardView();
 
+        routeCardDisposable = mRouteOptionsPresenter.initRouteCardView();
+
         // set up search adapter, location_list refers to listview of locations on launch
         // location_list_2 refers to the listview of locations when editing their route options
         locations_list.adapter = mSearchAdapter

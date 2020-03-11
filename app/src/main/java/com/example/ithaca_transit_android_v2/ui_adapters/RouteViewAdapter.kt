@@ -208,6 +208,7 @@ class RouteViewAdapter(context: Context, var userList: ArrayList<Route>) :
         p0.routeDuration.setTypeface(null, Typeface.BOLD);
 
         //Create list of directions
+
         p0.directionList.layoutParams = linearlayoutparams
         p0.directionList.invalidate()
         p0.busDrawing.invalidate()
@@ -227,7 +228,6 @@ class RouteViewAdapter(context: Context, var userList: ArrayList<Route>) :
             //Listener for onClicks - creates observable with Route object corresponding to clicked routeCard
             itemView.setOnClickListener {
                 clickSubject.onNext(RouteDetailViewState(userList[layoutPosition]))
-
             }
         }
     }

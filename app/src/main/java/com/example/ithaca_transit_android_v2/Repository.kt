@@ -1,6 +1,7 @@
 package com.example.ithaca_transit_android_v2
 
 import com.example.ithaca_transit_android_v2.models.Location
+import com.example.ithaca_transit_android_v2.models.Route
 
 object Repository {
     init {
@@ -12,4 +13,6 @@ object Repository {
     // Called from the SearchView everytime the RouteOptionsView should change
     var _updateRouteOptions = fun() {}
 
+    // Called from the SearchView everytime the MapView should change
+    var _updateMapView = fun(a:Route) {}
 }

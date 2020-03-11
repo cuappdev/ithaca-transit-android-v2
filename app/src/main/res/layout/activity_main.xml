@@ -11,7 +11,7 @@
 
     <fragment
         android:name="com.example.ithaca_transit_android_v2.MapFragment"
-        android:id="@+id/map_fragment"
+        android:id="@+id/fooFragment"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 

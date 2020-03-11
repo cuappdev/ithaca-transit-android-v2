@@ -67,26 +67,26 @@ class SearchPresenter(_view: View, _context: Context, _searchAdapter: SearchView
             }
 
             // Location clicked, default start location is CurrLocation
-            view.locations_list.setOnItemClickListener { parent, view, position, id ->
+            view.locations_list.setOnItemClickListener{ parent, view, position, id ->
 
-                val destination = parent!!.getItemAtPosition(position) as Location
-                // If the user's current location doesn't exist, default to start at startLocation.
-                // Should probably change this
-                var startLocation = destination
+                    val destination = parent!!.getItemAtPosition(position) as Location
+                    // If the user's current location doesn't exist, default to start at startLocation.
+                    // Should probably change this
+                    var startLocation = destination
 
-                // Get the location object of the user, transform it into a custom "Current Location" object
-                val myLoc = Repository.currentLocation
-                if (myLoc != null) {
-                    startLocation = Location(
-                        LocationType.APPLE_PLACE, "Current Location",
-                        Coordinate(myLoc.latitude, myLoc.longitude), ""
-                    )
+                    // Get the location object of the user, transform it into a custom "Current Location" object
+                    val myLoc = Repository.currentLocation
+                    if (myLoc != null) {
+                        startLocation = Location(
+                            LocationType.APPLE_PLACE, "Current Location",
+                            Coordinate(myLoc.latitude, myLoc.longitude), ""
+                        )
+                    }
+                    Repository.startLocation = startLocation
+                    Repository.destinationLocation = destination
+                    Repository._updateRouteOptions()
+                    emitter.onNext(RouteDisplayState(startLocation, destination))
                 }
-                Repository.startLocation = startLocation
-                Repository.destinationLocation = destination
-                Repository._updateRouteOptions()
-                emitter.onNext(RouteDisplayState(startLocation, destination))
-            }
             // Move to editing the route start/end location
             view.display_route.setOnClickListener { _ ->
                 val startLoc = Repository.startLocation
@@ -127,23 +127,23 @@ class SearchPresenter(_view: View, _context: Context, _searchAdapter: SearchView
             }
 
             // Clicked on an updated location for the Route
-            view.change_locations_list.setOnItemClickListener { parent, _, position, id ->
-                val location = parent.getItemAtPosition(position) as Location
-                // Depending on whether they were editing the start or destination field, change how
-                // things get updated
-                if (mEditingStart) {
-                    Repository.startLocation = location
-                    view.edit_start_loc.setText(location.name)
-                } else {
-                    Repository.destinationLocation = location
-                    view.edit_dest_loc.setText(location.name)
-                }
-                Repository._updateRouteOptions()
-                emitter.onNext(ChangeRouteState("", true))
+            view.change_locations_list.setOnItemClickListener{ parent, _, position, id ->
+                    val location = parent.getItemAtPosition(position) as Location
+                    // Depending on whether they were editing the start or destination field, change how
+                    // things get updated
+                    if (mEditingStart) {
+                        Repository.startLocation = location
+                        view.edit_start_loc.setText(location.name)
+                    } else {
+                        Repository.destinationLocation = location
+                        view.edit_dest_loc.setText(location.name)
+                    }
+                    Repository._updateRouteOptions()
+                    emitter.onNext(ChangeRouteState("", true))
             }
 
             // Switch button on the RHS was pressed
-            view.switch_locations.setOnClickListener { _ ->
+            view.switch_locations.setOnClickListener {_ ->
                 val location1 = Repository.startLocation
                 val location2 = Repository.destinationLocation
                 Repository.startLocation = location2

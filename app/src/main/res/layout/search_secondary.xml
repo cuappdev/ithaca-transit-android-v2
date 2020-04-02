@@ -21,9 +21,11 @@
 
         <TextView
             android:id="@+id/display_start_loc"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:text="Current Location"
+            android:gravity="right"
+            android:layout_weight="1"
             android:textColor="#000"
             android:textSize="16sp" />
 
@@ -36,9 +38,10 @@
 
         <TextView
             android:id="@+id/display_dest_loc"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:text="Mews Hall"
+            android:layout_weight="1.2"
             android:textColor="#000"
             android:textSize="16sp"
             android:textStyle="bold" />

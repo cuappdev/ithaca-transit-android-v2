@@ -42,7 +42,6 @@ class MapFragment: Fragment() , OnMapReadyCallback{
         super.onResume()
     }
 
-
     override fun onPause() {
         super.onPause()
         mapView.onPause()
@@ -56,5 +55,9 @@ class MapFragment: Fragment() , OnMapReadyCallback{
     override fun onLowMemory() {
         super.onLowMemory()
         mapView.onLowMemory()
+    }
+
+    fun getMapView():MapView {
+        return mapView
     }
 }

@@ -22,6 +22,8 @@ import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import io.reactivex.disposables.Disposable
+import kotlinx.android.synthetic.main.activity_main.*
+import kotlinx.android.synthetic.main.fragment_map.*
 import kotlinx.android.synthetic.main.route_card_compact.*
 
 import kotlinx.android.synthetic.main.search_main.*
@@ -59,7 +61,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
         mSearchAdapter = SearchViewAdapter(this, mSearchLocations)
         mRouteViewAdapter =
             RouteViewAdapter(this, ArrayList())
-        mSearchPresenter = SearchPresenter(search_card_holder, this, mSearchAdapter)
+        mSearchPresenter = SearchPresenter(search_card_holder, map_fragment as MapFragment,this, mSearchAdapter)
         mRouteOptionsPresenter = RouteOptionsPresenter(bottomSheet, mRouteViewAdapter)
         mRouteOptionsPresenter.setBottomSheetCallback(
             BottomSheetBehavior.from(bottomSheet),

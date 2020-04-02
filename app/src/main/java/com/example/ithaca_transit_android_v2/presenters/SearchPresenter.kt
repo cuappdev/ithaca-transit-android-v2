@@ -36,7 +36,7 @@ class SearchPresenter(
     var mSearchAdapter: SearchViewAdapter = _searchAdapter
 
     // Needed for closing the keyboard
-    private var mMainActivity:Activity = _activity
+    private var mMainActivity: Activity = _activity
 
     // Represents in the ChangeLocation screen whether the start or end location was being edited
     private var mEditingStart = true
@@ -109,6 +109,7 @@ class SearchPresenter(
                         Coordinate(myLoc.latitude, myLoc.longitude), ""
                     )
                 }
+
                 Repository.startLocation = startLocation
                 Repository.destinationLocation = destination
                 Repository._updateRouteOptions(false)
@@ -298,7 +299,11 @@ class SearchPresenter(
                                 state.searchedLocations,
                                 state.offerCurrentLocationOption
                             )
-                        } else if ("Current Location".contains(state.searchText, ignoreCase = true)) {
+                        } else if ("Current Location".contains(
+                                state.searchText,
+                                ignoreCase = true
+                            )
+                        ) {
                             mSearchAdapter.swapItems(ArrayList(), state.offerCurrentLocationOption)
                         }
                         view.edit_route.visibility = View.VISIBLE

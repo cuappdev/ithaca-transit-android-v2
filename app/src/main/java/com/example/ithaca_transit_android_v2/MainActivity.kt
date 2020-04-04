@@ -77,10 +77,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
         boarding_soon_routes.layoutManager =
             LinearLayoutManager(this, RecyclerView.VERTICAL, false)
         boarding_soon_routes.adapter = mRouteViewAdapter
-
-        from_stop_routes.layoutManager =
-            LinearLayoutManager(this, RecyclerView.VERTICAL, false)
-        from_stop_routes.adapter = mRouteViewAdapter
+        
 
 
         initializeLocationManager()

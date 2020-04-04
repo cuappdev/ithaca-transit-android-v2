@@ -80,20 +80,6 @@
 
         </RelativeLayout>
 
-        <TextView
-            android:id="@+id/boardingSoon"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Boarding Soon from Nearby Stops"
-            android:layout_marginTop="5dp"
-            android:textSize="12dp"
-            android:textStyle="bold"
-            android:textColor="@color/gray"
-            android:layout_marginLeft="20dp"
-            android:visibility="gone">
-
-        </TextView>
-
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/boarding_soon_routes"
             android:layout_width="match_parent"
@@ -107,59 +93,6 @@
 
         </androidx.recyclerview.widget.RecyclerView>
 
-        <TextView
-            android:id="@+id/fromStop"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="From Stop"
-            android:layout_marginTop="5dp"
-            android:textSize="12dp"
-            android:textStyle="bold"
-            android:textColor="@color/gray"
-            android:layout_marginLeft="20dp"
-            android:visibility="visible">
-
-        </TextView>
-
-
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/from_stop_routes"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="16dp"
-            android:layout_marginTop="8dp"
-            android:layout_marginRight="16dp"
-            android:background="@color/lightGray"
-            android:clipToPadding="false"
-            android:nestedScrollingEnabled="true">
-        </androidx.recyclerview.widget.RecyclerView>
-
-        <TextView
-            android:id="@+id/walking"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Walking"
-            android:layout_marginTop="5dp"
-            android:textSize="12dp"
-            android:textStyle="bold"
-            android:textColor="@color/gray"
-            android:layout_marginLeft="20dp"
-            android:visibility="visible">
-
-        </TextView>
-
-
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/walkingRoutes"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="16dp"
-            android:layout_marginTop="8dp"
-            android:layout_marginRight="16dp"
-            android:background="@color/lightGray"
-            android:clipToPadding="false"
-            android:nestedScrollingEnabled="true">
-        </androidx.recyclerview.widget.RecyclerView>
 
     </LinearLayout>
 

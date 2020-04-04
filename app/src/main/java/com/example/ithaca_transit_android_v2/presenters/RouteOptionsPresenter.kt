@@ -9,6 +9,7 @@ import com.example.ithaca_transit_android_v2.states.OptionsHiddenState
 import com.example.ithaca_transit_android_v2.states.RouteCardState
 import com.example.ithaca_transit_android_v2.states.RouteDetailViewState
 import com.example.ithaca_transit_android_v2.states.RouteListState
+import com.example.ithaca_transit_android_v2.ui_adapters.RouteAdapterObject
 import com.example.ithaca_transit_android_v2.ui_adapters.RouteViewAdapter
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import io.reactivex.Observable
@@ -79,22 +80,25 @@ class RouteOptionsPresenter(bottomSheet: View, _routeViewAdapter: RouteViewAdapt
                         routeCardHolder.boarding_soon_routes.invalidate()
                         routeCardHolder.boarding_soon_routes.removeAllViews()
 
-                        mRoutesAdapter.swapItems(ArrayList(state.routeOptions!!.boardingSoon))
+                        val allRoutes : ArrayList<RouteAdapterObject> = ArrayList<RouteAdapterObject>()
+
+                        allRoutes.add(RouteAdapterObject("routeLabel", "Boarding from Nearby Stops"))
+
+                        //Add all route objects and texts
+                        for(r in state.routeOptions!!.boardingSoon){
+                            val boardObj : RouteAdapterObject = RouteAdapterObject("route", r)
+                            allRoutes.add(boardObj)
+                        }
+
+
+
+                        mRoutesAdapter.swapItems(allRoutes)
 
                         val count = routeCardHolder.boarding_soon_routes.childCount
                         for (i in 1..count - 1) {
                             routeCardHolder.boarding_soon_routes.getChildAt(i).invalidate()
 
                         }
-
-                        routeCardHolder.from_stop_routes.invalidate()
-                        routeCardHolder.from_stop_routes.removeAllViews()
-
-                        mRoutesAdapter.swapItems(ArrayList(state.routeOptions!!.boardingSoon))
-
-
-
-
 
                         routeCardHolder.visibility = View.VISIBLE
                     }

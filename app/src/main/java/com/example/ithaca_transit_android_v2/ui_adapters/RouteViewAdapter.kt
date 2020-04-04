@@ -26,7 +26,7 @@ import java.util.*
 import kotlin.collections.ArrayList
 
 // Recycler view adapter that fills each route card with the list of Route objects that is returned by our RouteOptions networking call.
-class RouteViewAdapter(context: Context, var userList: ArrayList<Route>) :
+class RouteViewAdapter(context: Context, var userList: ArrayList<RouteAdapterObject>) :
     RecyclerView.Adapter<RouteViewAdapter.ViewHolder>() {
 
     var routeCardContext = context
@@ -34,8 +34,15 @@ class RouteViewAdapter(context: Context, var userList: ArrayList<Route>) :
     //Creation of the observable object, defining that it will hold a RouteCardState
     private val clickSubject = PublishSubject.create<RouteCardState>()
 
-    override fun onCreateViewHolder(p0: ViewGroup, p1: Int): ViewHolder {
-        val v = LayoutInflater.from(p0.context).inflate(R.layout.routecards, p0, false)
+    override fun getItemViewType(position: Int): Int {
+        if (userList[position].type.equals("routeLabel")) {
+            return R.layout.route_label
+        } else return R.layout.routecards
+
+    }
+
+    override fun onCreateViewHolder(p0: ViewGroup, viewType: Int): ViewHolder {
+        val v = LayoutInflater.from(p0.context).inflate(viewType, p0, false)
         v.invalidate()
 
         return ViewHolder(v);
@@ -46,173 +53,183 @@ class RouteViewAdapter(context: Context, var userList: ArrayList<Route>) :
     }
 
     override fun onBindViewHolder(p0: ViewHolder, p1: Int) {
-        p0.directionList.removeAllViews()
-        p0.busDrawing.removeAllViews()
 
-        //Temporary info to fill the routecard so that we can see the difference between cards.
-        val boardMins = userList[p1].boardInMin.toString()
-        p0.description?.setText("Board in " + boardMins + " Mins")
-        p0.delay.setText("On Time")
+        if (getItemViewType(p1) == R.layout.routecards) {
+            p0.directionList.removeAllViews()
+            p0.busDrawing.removeAllViews()
 
-        var summaryList: ArrayList<String> = ArrayList()
-        var busList: ArrayList<Int> = ArrayList()
+            val routeObj: Route = userList[p1].data as Route
 
-        for (i in 0 until userList[p1].routeSummary!!.size) {
+            //Temporary info to fill the routecard so that we can see the difference between cards.
+            val boardMins = routeObj.boardInMin.toString()
+            p0.description?.setText("Board in " + boardMins + " Mins")
+            p0.delay.setText("On Time")
 
-            userList[p1].routeSummary?.get(i)?.stopName?.let { summaryList.add(it) }
+            var summaryList: ArrayList<String> = ArrayList()
+            var busList: ArrayList<Int> = ArrayList()
 
-            //Check if bus number is null, if not add it to the list
-            if (userList[p1].routeSummary?.get(i)?.direction?.busNumber != null) {
-                userList[p1].routeSummary?.get(i)?.direction?.busNumber?.let { busList.add(it) }
+            for (i in 0 until routeObj.routeSummary!!.size) {
+
+                routeObj.routeSummary?.get(i)?.stopName?.let { summaryList.add(it) }
+
+                //Check if bus number is null, if not add it to the list
+                if (routeObj.routeSummary?.get(i)?.direction?.busNumber != null) {
+                    routeObj.routeSummary?.get(i)?.direction?.busNumber?.let { busList.add(it) }
+                }
+
             }
 
-        }
+            val lDirectionparams = LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT
+            )
+            lDirectionparams.weight = 1f
 
-        val lDirectionparams = LinearLayout.LayoutParams(
-            LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT
-        )
-        lDirectionparams.weight = 1f
+            val busIconParams = LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT
+            )
 
-        val busIconParams = LinearLayout.LayoutParams(
-            LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT
-        )
+            val walkingIconParams = LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT
+            )
 
-        val walkingIconParams = LinearLayout.LayoutParams(
-            LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT
-        )
+            val linearlayoutparams = p0.directionList.layoutParams
+            val busImageLayoutParam = p0.busDrawing.layoutParams
+            val dotParams = p0.dotDrawing.layoutParams
 
-        val linearlayoutparams = p0.directionList.layoutParams
-        val busImageLayoutParam = p0.busDrawing.layoutParams
-        val dotParams = p0.dotDrawing.layoutParams
-
-        Log.d("SummaryListSize", "" + summaryList.size)
-        if (summaryList.size > 3) {
-            linearlayoutparams.height = 400
-            dotParams.height = 400
+            Log.d("SummaryListSize", "" + summaryList.size)
+            if (summaryList.size > 3) {
+                linearlayoutparams.height = 400
+                dotParams.height = 400
 
 
-            if (summaryList.size == 4) {
-                p0.dotDrawing.setBlueDimensions(20f, 215f, 195f)
-                p0.dotDrawing.setGrayDimensions(20f, 255f, 325f, 30f)
+                if (summaryList.size == 4) {
+                    p0.dotDrawing.setBlueDimensions(20f, 215f, 195f)
+                    p0.dotDrawing.setGrayDimensions(20f, 255f, 325f, 30f)
 
-            } else if (summaryList.size == 5) {
-                p0.dotDrawing.setBlueDimensions(20f, 255f, 235f)
-                p0.dotDrawing.setGrayDimensions(20f, 302f, 345f, 0f)
+                } else if (summaryList.size == 5) {
+                    p0.dotDrawing.setBlueDimensions(20f, 255f, 235f)
+                    p0.dotDrawing.setGrayDimensions(20f, 302f, 345f, 0f)
+
+                } else {
+                    p0.dotDrawing.setBlueDimensions(20f, 255f, 235f)
+                    p0.dotDrawing.setGrayDimensions(20f, 260f, 310f, 22f)
+                }
+
+                //Forces the canvas to redraw and update dots
+                p0.dotDrawing.invalidate()
 
             } else {
-                p0.dotDrawing.setBlueDimensions(20f, 255f, 235f)
-                p0.dotDrawing.setGrayDimensions(20f, 260f, 310f, 22f)
+                linearlayoutparams.height = 300
+                dotParams.height = 300
+                p0.dotDrawing.setBlueDimensions(20f, 115f, 95f)
+                p0.dotDrawing.setGrayDimensions(20f, 160f, 220f, 22f)
+                //var drawRouteCard=DrawRouteCard(routeCardContext, null, 36f, 222f, 180f )
+
             }
 
-            //Forces the canvas to redraw and update dots
-            p0.dotDrawing.invalidate()
+            for (i in summaryList) {
 
-        } else {
-            linearlayoutparams.height = 300
-            dotParams.height = 300
-            p0.dotDrawing.setBlueDimensions(20f, 115f, 95f)
-            p0.dotDrawing.setGrayDimensions(20f, 160f, 220f, 22f)
-            //var drawRouteCard=DrawRouteCard(routeCardContext, null, 36f, 222f, 180f )
+                var individualDirection = TextView(routeCardContext)
+                individualDirection.setText(i)
 
-        }
+                p0.directionList.addView(individualDirection)
 
-        for (i in summaryList) {
+                individualDirection.textSize = 15f
 
-            var individualDirection = TextView(routeCardContext)
-            individualDirection.setText(i)
+                individualDirection.layoutParams = lDirectionparams
 
-            p0.directionList.addView(individualDirection)
+            }
 
-            individualDirection.textSize = 15f
+            //Create bus number images
+            for (i in busList) {
 
-            individualDirection.layoutParams = lDirectionparams
+                var busNumberView = BusNumberComponent(
+                    routeCardContext,
+                    null
+                )
+                busNumberView.setBusNumber(i)
 
-        }
+                busIconParams.weight = 1f
+                busIconParams.gravity = Gravity.CENTER
 
-        //Create bus number images
-        for (i in busList) {
+                //Changing margins based on how many buses
+                if (busList.size >= 3) {
 
-            var busNumberView = BusNumberComponent(
-                routeCardContext,
-                null
+                    busIconParams.bottomMargin = 25
+                } else if (busList.size == 2) {
+                    busIconParams.topMargin = 10
+                    busIconParams.bottomMargin = 35
+                } else {
+                    busIconParams.topMargin = 10
+                    busIconParams.bottomMargin = 20
+                }
+
+                //Set the busParams
+                busNumberView.layoutParams = busIconParams
+
+                p0.busDrawing.addView(busNumberView)
+
+            }
+
+            p0.directionList.invalidate()
+            //Add walking image
+            val walkingView = ImageView(routeCardContext)
+
+            // Set an image for ImageView
+            walkingView.setImageDrawable(
+                ContextCompat.getDrawable(
+                    routeCardContext, // Context
+                    R.drawable.walking_vector // Drawable
+                )
             )
-            busNumberView.setBusNumber(i)
-
-            busIconParams.weight = 1f
-            busIconParams.gravity = Gravity.CENTER
 
             //Changing margins based on how many buses
-            if (busList.size >= 3) {
-
-                busIconParams.bottomMargin = 25
-            } else if (busList.size == 2) {
-                busIconParams.topMargin = 10
-                busIconParams.bottomMargin = 35
+            if (busList.size == 2) {
+                walkingIconParams.topMargin = 30
+            } else if (busList.size >= 3) {
+                walkingIconParams.topMargin = 15
             } else {
-                busIconParams.topMargin = 10
-                busIconParams.bottomMargin = 20
+                walkingIconParams.topMargin = 30
+            }
+            walkingIconParams.weight = 1f
+
+            walkingView.layoutParams = walkingIconParams
+
+
+
+
+            p0.busDrawing.addView(walkingView)
+
+            fun convertDate(date: Date): String {
+                val sdf = SimpleDateFormat("h:mm")
+
+                val newDate = sdf.format(date)
+
+                return newDate
+
             }
 
-            //Set the busParams
-            busNumberView.layoutParams = busIconParams
-
-            p0.busDrawing.addView(busNumberView)
-
-        }
-
-        p0.directionList.invalidate()
-        //Add walking image
-        val walkingView = ImageView(routeCardContext)
-
-        // Set an image for ImageView
-        walkingView.setImageDrawable(
-            ContextCompat.getDrawable(
-                routeCardContext, // Context
-                R.drawable.walking_vector // Drawable
+            //set route duration
+            p0.routeDuration.setText(
+                "" + convertDate(routeObj.depart) + " - " + convertDate(
+                    routeObj.arrival
+                )
             )
-        )
 
-        //Changing margins based on how many buses
-        if (busList.size == 2) {
-            walkingIconParams.topMargin = 30
-        } else if (busList.size >= 3) {
-            walkingIconParams.topMargin = 15
-        } else {
-            walkingIconParams.topMargin = 30
-        }
-        walkingIconParams.weight = 1f
+            p0.routeDuration.setTypeface(null, Typeface.BOLD);
 
-        walkingView.layoutParams = walkingIconParams
+            //Create list of directions
 
-
-
-
-        p0.busDrawing.addView(walkingView)
-
-        fun convertDate(date: Date): String {
-            val sdf = SimpleDateFormat("h:mm")
-
-            val newDate = sdf.format(date)
-
-            return newDate
+            p0.directionList.layoutParams = linearlayoutparams
+            p0.directionList.invalidate()
+            p0.busDrawing.invalidate()
+            p0.dotDrawing.invalidate()
 
         }
-
-        //set route duration
-        p0.routeDuration.setText(
-            "" + convertDate(userList[p1].depart) + " - " + convertDate(
-                userList[p1].arrival
-            )
-        )
-
-        p0.routeDuration.setTypeface(null, Typeface.BOLD);
-
-        //Create list of directions
-
-        p0.directionList.layoutParams = linearlayoutparams
-        p0.directionList.invalidate()
-        p0.busDrawing.invalidate()
-        p0.dotDrawing.invalidate()
+        else{
+            val label = userList[p1].data as String
+            p0.routeLabel.setText(label)
+        }
 
     }
 
@@ -224,15 +241,17 @@ class RouteViewAdapter(context: Context, var userList: ArrayList<Route>) :
         val busDrawing = itemView.findViewById<LinearLayout>(R.id.icons)
         val routeDuration = itemView.findViewById<TextView>(R.id.duration)
 
-        init {
-            //Listener for onClicks - creates observable with Route object corresponding to clicked routeCard
-            itemView.setOnClickListener {
-                clickSubject.onNext(RouteDetailViewState(userList[layoutPosition]))
-            }
-        }
+        val routeLabel = itemView.findViewById<TextView>(R.id.routeLabel)
+
+//        init {
+//            //Listener for onClicks - creates observable with Route object corresponding to clicked routeCard
+//            itemView.setOnClickListener {
+//                clickSubject.onNext(RouteDetailViewState(userList[layoutPosition]))
+//            }
+//        }
     }
 
-    fun swapItems(updatedInfo: ArrayList<Route>) {
+    fun swapItems(updatedInfo: ArrayList<RouteAdapterObject>) {
         this.userList = updatedInfo
         notifyDataSetChanged()
     }

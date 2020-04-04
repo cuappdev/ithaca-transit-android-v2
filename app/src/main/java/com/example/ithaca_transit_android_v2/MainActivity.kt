@@ -4,7 +4,6 @@ import android.content.Context
 import android.content.pm.PackageManager
 import android.location.LocationManager
 import android.os.Bundle
-import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -23,15 +22,10 @@ import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import io.reactivex.disposables.Disposable
 import kotlinx.android.synthetic.main.activity_main.*
-import kotlinx.android.synthetic.main.fragment_map.*
 import kotlinx.android.synthetic.main.route_card_compact.*
 
 import kotlinx.android.synthetic.main.search_main.*
 import kotlinx.android.synthetic.main.search_secondary.*
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.async
-import kotlinx.coroutines.runBlocking
 
 class MainActivity : AppCompatActivity(), OnMapReadyCallback {
     private lateinit var searchDisposable: Disposable
@@ -80,9 +74,14 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
 
 
 
-        nearby_stops_routes.layoutManager =
+        boarding_soon_routes.layoutManager =
             LinearLayoutManager(this, RecyclerView.VERTICAL, false)
-        nearby_stops_routes.adapter = mRouteViewAdapter
+        boarding_soon_routes.adapter = mRouteViewAdapter
+
+        from_stop_routes.layoutManager =
+            LinearLayoutManager(this, RecyclerView.VERTICAL, false)
+        from_stop_routes.adapter = mRouteViewAdapter
+
 
         initializeLocationManager()
         //fetchRouteData()

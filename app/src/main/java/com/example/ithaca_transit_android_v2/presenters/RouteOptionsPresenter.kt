@@ -1,15 +1,10 @@
 package com.example.ithaca_transit_android_v2.presenters
 
-import android.util.Log
 import android.view.View
-import android.widget.AdapterView
 import android.widget.LinearLayout
 import androidx.annotation.NonNull
 import com.example.ithaca_transit_android_v2.NetworkUtils
 import com.example.ithaca_transit_android_v2.Repository
-import com.example.ithaca_transit_android_v2.models.Coordinate
-import com.example.ithaca_transit_android_v2.models.Location
-import com.example.ithaca_transit_android_v2.models.LocationType
 import com.example.ithaca_transit_android_v2.states.OptionsHiddenState
 import com.example.ithaca_transit_android_v2.states.RouteCardState
 import com.example.ithaca_transit_android_v2.states.RouteDetailViewState
@@ -80,22 +75,31 @@ class RouteOptionsPresenter(bottomSheet: View, _routeViewAdapter: RouteViewAdapt
                         // Display the first routeOptions route on the map
                         Repository._updateMapView(state.routeOptions!!.boardingSoon[0])
 
+                        // Refresh Views
+                        routeCardHolder.boarding_soon_routes.invalidate()
+                        routeCardHolder.boarding_soon_routes.removeAllViews()
 
-
-                        routeCardHolder.nearby_stops_routes.invalidate()
-                        routeCardHolder.nearby_stops_routes.removeAllViews()
                         mRoutesAdapter.swapItems(ArrayList(state.routeOptions!!.boardingSoon))
 
-                        val count = routeCardHolder.nearby_stops_routes.childCount
+                        val count = routeCardHolder.boarding_soon_routes.childCount
                         for (i in 1..count - 1) {
-                            routeCardHolder.nearby_stops_routes.getChildAt(i).invalidate()
+                            routeCardHolder.boarding_soon_routes.getChildAt(i).invalidate()
 
                         }
+
+                        routeCardHolder.from_stop_routes.invalidate()
+                        routeCardHolder.from_stop_routes.removeAllViews()
+
+                        mRoutesAdapter.swapItems(ArrayList(state.routeOptions!!.boardingSoon))
+
+
+
+
 
                         routeCardHolder.visibility = View.VISIBLE
                     }
                     is RouteDetailViewState -> {
-                        routeCardHolder.nearby_stops_routes.visibility = View.GONE
+                        routeCardHolder.boarding_soon_routes.visibility = View.GONE
 
                     }
 

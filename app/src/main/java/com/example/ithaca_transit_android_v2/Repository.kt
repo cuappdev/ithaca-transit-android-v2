@@ -11,7 +11,7 @@ object Repository {
     var destinationLocation: Location? = null
 
     // Called from the SearchView everytime the RouteOptionsView should change
-    var _updateRouteOptions = fun() {}
+    var _updateRouteOptions = fun(hidden: Boolean) {}
 
     // Called from the SearchView everytime the MapView should change
     var _updateMapView = fun(a:Route) {}

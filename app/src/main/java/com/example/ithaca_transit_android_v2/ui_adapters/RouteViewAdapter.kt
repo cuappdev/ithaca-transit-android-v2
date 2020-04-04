@@ -233,7 +233,6 @@ class RouteViewAdapter(context: Context, var userList: ArrayList<Route>) :
     }
 
     fun swapItems(updatedInfo: ArrayList<Route>) {
-
         this.userList = updatedInfo
         notifyDataSetChanged()
     }

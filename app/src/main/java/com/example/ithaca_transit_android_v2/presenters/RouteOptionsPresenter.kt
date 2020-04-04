@@ -30,8 +30,11 @@ class RouteOptionsPresenter(bottomSheet: View, _routeViewAdapter: RouteViewAdapt
 
     private fun createRouteCardObservable(): Observable<RouteCardState> {
         val obs = Observable.create { emitter: ObservableEmitter<RouteCardState> ->
-            val callback = fun () {
-                if (Repository.startLocation != null && Repository.destinationLocation != null) {
+            val callback = fun(hidden: Boolean) {
+                if (hidden) {
+                    emitter.onNext(OptionsHiddenState())
+                } else if (Repository.startLocation != null && Repository.destinationLocation != null) {
+
                     emitter.onNext(
                         RouteListState(
                             Repository.startLocation!!,

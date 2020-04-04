@@ -57,7 +57,6 @@ class MapFragment: Fragment() , OnMapReadyCallback, GoogleMap.OnPolylineClickLis
         super.onResume()
     }
 
-
     override fun onPause() {
         super.onPause()
         mapView.onPause()
@@ -82,6 +81,10 @@ class MapFragment: Fragment() , OnMapReadyCallback, GoogleMap.OnPolylineClickLis
     override fun onLowMemory() {
         super.onLowMemory()
         mapView.onLowMemory()
+    }
+
+    fun getMapView():MapView {
+        return mapView
     }
 
     override fun onMapReady(googleMap: GoogleMap) {

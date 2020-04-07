@@ -70,12 +70,14 @@ class SearchPresenter(
                     if (Repository.destinationLocation == null) {
                         emitter.onNext(SearchLaunchState())
                     } else if (Repository.startLocation != null) {
+                        Repository._updateRouteOptions(false)
                         emitter.onNext(
                             RouteDisplayState(
                                 Repository.startLocation!!,
                                 Repository.destinationLocation!!
                             )
                         )
+
                     }
                     mMainActivity.hideKeyboard()
                 }
@@ -140,6 +142,7 @@ class SearchPresenter(
 
                 override fun onTextChanged(searchText: CharSequence?, p1: Int, p2: Int, p3: Int) {
                     if (mEditing) {
+                        Log.i("qwerty", "called from editing")
                         emitter.onNext(ChangeRouteState(searchText.toString(), false))
                     }
                 }
@@ -149,13 +152,14 @@ class SearchPresenter(
             view.edit_dest_loc.addTextChangedListener(watcherChangeLoc)
 
             view.edit_start_loc.setOnFocusChangeListener { view, hasFocus ->
-                if (hasFocus) {
+                if (hasFocus && mEditing) {
                     mEditingStart = true
                     emitter.onNext(ChangeRouteState(view.edit_start_loc.text.toString(), false))
                 }
             }
             view.edit_dest_loc.setOnFocusChangeListener { view, hasFocus ->
-                if (hasFocus) {
+                if (hasFocus && mEditing) {
+                    Log.i("qwerty", "called from end focus change")
                     mEditingStart = false
                     emitter.onNext(ChangeRouteState(view.edit_dest_loc.text.toString(), false))
                 }
@@ -163,26 +167,29 @@ class SearchPresenter(
 
             // Clicked on an updated location for the Route
             view.change_locations_list.setOnItemClickListener { parent, _, position, id ->
-                val location = parent.getItemAtPosition(position) as Location
-                // Depending on whether they were editing the start or destination field, change how
-                // things get updated
-                if (mEditingStart) {
-                    Repository.startLocation = location
-                    view.edit_start_loc.setText(location.name)
-                } else {
-                    Repository.destinationLocation = location
-                    view.edit_dest_loc.setText(location.name)
-                }
-                if (Repository.startLocation != null && Repository.destinationLocation != null) {
-                    Repository._updateRouteOptions(false)
-                    emitter.onNext(
-                        RouteDisplayState(
-                            Repository.startLocation!!,
-                            Repository.destinationLocation!!
+                if (mEditing) {
+                    mEditing = false;
+                    val location = parent.getItemAtPosition(position) as Location
+                    // Depending on whether they were editing the start or destination field, change how
+                    // things get updated
+                    if (mEditingStart) {
+                        Repository.startLocation = location
+                        view.edit_start_loc.setText(location.name)
+                    } else {
+                        Repository.destinationLocation = location
+                        view.edit_dest_loc.setText(location.name)
+                    }
+                    if (Repository.startLocation != null && Repository.destinationLocation != null) {
+                        Repository._updateRouteOptions(false)
+                        emitter.onNext(
+                            RouteDisplayState(
+                                Repository.startLocation!!,
+                                Repository.destinationLocation!!
+                            )
                         )
-                    )
+                    }
+                    mMainActivity.hideKeyboard()
                 }
-                mMainActivity.hideKeyboard()
             }
 
             // Switch button on the RHS was pressed
@@ -253,6 +260,7 @@ class SearchPresenter(
             }
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe({ state ->
+                Log.i("qwerty", state.toString())
                 when (state) {
                     is SearchLaunchState -> {
                         view.search_area.visibility = View.VISIBLE
@@ -284,8 +292,6 @@ class SearchPresenter(
 
                         view.display_start_loc.text = state.startLocation.name
                         view.display_dest_loc.text = state.endLocation.name
-
-                        mEditing = false;
                     }
                     is ChangeRouteLocationState -> {
                         view.display_route.visibility = View.GONE

@@ -29,7 +29,6 @@ class MapPresenter() {
     private fun createMapObservable(): Observable<MapState> {
         val obs = Observable.create { emitter: ObservableEmitter<MapState> ->
             val callback = fun (displayRoute: Route) {
-                Log.i("qwerty", "hwwwlo")
                 emitter.onNext(
                     SelectedTrip(displayRoute)
                 )

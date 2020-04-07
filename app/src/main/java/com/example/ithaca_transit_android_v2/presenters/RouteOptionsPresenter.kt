@@ -1,6 +1,5 @@
 package com.example.ithaca_transit_android_v2.presenters
 
-import android.util.Log
 import android.view.View
 import android.widget.AdapterView
 import android.widget.LinearLayout

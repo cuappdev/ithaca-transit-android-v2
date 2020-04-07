@@ -69,7 +69,7 @@ class SearchPresenter(
                 map.setOnMapClickListener {
                     if (Repository.destinationLocation == null) {
                         emitter.onNext(SearchLaunchState())
-                    } else if (Repository.startLocation != null) {
+                    } else if (Repository.startLocation != null && mEditing) {
                         Repository._updateRouteOptions(false)
                         emitter.onNext(
                             RouteDisplayState(
@@ -77,6 +77,7 @@ class SearchPresenter(
                                 Repository.destinationLocation!!
                             )
                         )
+                        mEditing = false
 
                     }
                     mMainActivity.hideKeyboard()

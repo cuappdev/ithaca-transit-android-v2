@@ -53,8 +53,8 @@ class DrawRouteCard(context: Context, attrs: AttributeSet?) : View(context, attr
 
     init {
         // create the Paint and set its color
-        blueDotColor.setARGB(255, 0, 173, 255)
-        grayDotColor.setARGB(255, 160, 160, 160)
+        blueDotColor.setARGB(255, 7, 157, 220)
+        grayDotColor.setARGB(255, 158, 158, 158)
         whiteDotColor.setARGB(255, 255, 255, 255)
 
     }

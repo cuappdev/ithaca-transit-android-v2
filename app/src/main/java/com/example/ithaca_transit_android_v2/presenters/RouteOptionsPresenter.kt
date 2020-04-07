@@ -81,7 +81,7 @@ class RouteOptionsPresenter(bottomSheet: View, _routeViewAdapter: RouteViewAdapt
                         routeCardHolder.boarding_soon_routes.removeAllViews()
 
                         val allRoutes : ArrayList<RouteAdapterObject> = ArrayList<RouteAdapterObject>()
-                        allRoutes.add(RouteAdapterObject("routeLabel", "Boarding from Nearby Stops"))
+                        allRoutes.add(RouteAdapterObject("routeLabel", "Boarding Soon from Nearby Stops"))
 
                         //Add all route objects and texts
                         for(r in state.routeOptions.boardingSoon){

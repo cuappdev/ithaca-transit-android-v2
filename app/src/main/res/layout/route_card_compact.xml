@@ -12,7 +12,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
-        android:background="@color/white"
+        android:background="@color/routeBackground"
         app:behavior_hideable="false"
         app:behavior_peekHeight="55dp"
         app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior">
@@ -22,10 +22,6 @@
             android:id="@+id/relative_layout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
-
-
-                />
-
             <RelativeLayout
                 android:id="@+id/fab"
                 android:layout_width="60dp"
@@ -87,7 +83,6 @@
             android:layout_marginLeft="16dp"
             android:layout_marginTop="8dp"
             android:layout_marginRight="16dp"
-            android:background="@color/lightGray"
             android:clipToPadding="false"
             android:nestedScrollingEnabled="true">
 

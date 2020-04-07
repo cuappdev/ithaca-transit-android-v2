@@ -190,20 +190,11 @@ class RouteViewAdapter(context: Context, var userList: ArrayList<RouteAdapterObj
         walkingView.layoutParams = walkingIconParams
         p0.busDrawing.addView(walkingView)
 
-        fun convertDate(date: Date): String {
-            val sdf = SimpleDateFormat("h:mm")
-            val newDate = sdf.format(date)
-            return newDate
-
-        }
+        val sdf = SimpleDateFormat("h:mm a", Locale.US)
+        val timeText:String = sdf.format(routeObj.depart) + " - " + sdf.format(routeObj.arrival)
 
         //set route duration
-        p0.routeDuration.setText(
-            "" + convertDate(routeObj.depart) + " - " + convertDate(
-                routeObj.arrival
-            )
-        )
-
+        p0.routeDuration.text = timeText
         p0.routeDuration.setTypeface(null, Typeface.BOLD);
 
         //Create list of directions
@@ -226,8 +217,8 @@ class RouteViewAdapter(context: Context, var userList: ArrayList<RouteAdapterObj
     }
 
     inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        val description = itemView.findViewById<TextView>(R.id.route_description)
-        val delay = itemView.findViewById<TextView>(R.id.delay)
+        val description = itemView.findViewById<TextView>(R.id.board_minutes)
+        val delay = itemView.findViewById<TextView>(R.id.delay_label)
         val directionList = itemView.findViewById<LinearLayout>(R.id.directions)
         val dotDrawing = itemView.findViewById<DrawRouteCard>(R.id.drawingDots)
         val busDrawing = itemView.findViewById<LinearLayout>(R.id.icons)

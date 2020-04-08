@@ -1,10 +1,14 @@
 package com.example.ithaca_transit_android_v2.presenters
 
+import android.content.Context
+import android.util.Log
+import android.util.TypedValue
 import android.view.View
 import android.widget.LinearLayout
 import androidx.annotation.NonNull
 import com.example.ithaca_transit_android_v2.NetworkUtils
 import com.example.ithaca_transit_android_v2.Repository
+import com.example.ithaca_transit_android_v2.models.Route
 import com.example.ithaca_transit_android_v2.states.OptionsHiddenState
 import com.example.ithaca_transit_android_v2.states.RouteCardState
 import com.example.ithaca_transit_android_v2.states.RouteDetailViewState
@@ -19,18 +23,42 @@ import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.route_card_compact.view.*
 
-class RouteOptionsPresenter(bottomSheet: View, _routeViewAdapter: RouteViewAdapter) {
+
+
+class RouteOptionsPresenter(private val bottom_sheet: View, _routeViewAdapter: RouteViewAdapter, _context: Context) {
 
     var mRoutesAdapter = _routeViewAdapter
-    var routeCardHolder: View = bottomSheet
+    var routeCardHolder: View = bottom_sheet.bottom_sheet_data
+    private val context = _context
+    private var mSlidingDisabled = true
 
     private fun createRouteCardObservable(): Observable<RouteCardState> {
         val obs = Observable.create { emitter: ObservableEmitter<RouteCardState> ->
-            val callback = fun(hidden: Boolean) {
+
+            // This callback is what is used to control RouteOptions from the SearchView
+            val searchCallback = fun(hidden: Boolean) {
                 if (hidden) {
                     emitter.onNext(OptionsHiddenState())
+                    mSlidingDisabled = true
                 } else if (Repository.startLocation != null && Repository.destinationLocation != null) {
+                    emitter.onNext(
+                        RouteListState(
+                            Repository.startLocation!!,
+                            Repository.destinationLocation!!, null
+                        )
+                    )
+                    mSlidingDisabled = false
+                }
+            }
+            Repository._updateRouteFromSearch = searchCallback
 
+            val adapterCallback = fun (route: Route) {
+                emitter.onNext(RouteDetailViewState(route))
+            }
+            Repository._updateRouteDetailed = adapterCallback
+
+            bottom_sheet.back.setOnClickListener { view ->
+                if (Repository.startLocation != null && Repository.destinationLocation != null) {
                     emitter.onNext(
                         RouteListState(
                             Repository.startLocation!!,
@@ -39,12 +67,17 @@ class RouteOptionsPresenter(bottomSheet: View, _routeViewAdapter: RouteViewAdapt
                     )
                 }
             }
-            Repository._updateRouteOptions = callback
-
         }
         return obs.startWith(OptionsHiddenState())
     }
 
+
+    fun setBottomSheetHeight(height: Float) {
+        BottomSheetBehavior.from(bottom_sheet).peekHeight =
+            TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP,
+                height, context.resources.displayMetrics).toInt()
+
+    }
     fun initRouteCardView(): Disposable {
         val observable = createRouteCardObservable()
 
@@ -71,10 +104,13 @@ class RouteOptionsPresenter(bottomSheet: View, _routeViewAdapter: RouteViewAdapt
                 when (state) {
                     is OptionsHiddenState -> {
                         routeCardHolder.visibility = View.GONE
+                        bottom_sheet.back.hide()
+                        setBottomSheetHeight(65f)
                     }
                     is RouteListState -> {
                         // Display the first routeOptions route on the map
                         Repository._updateMapView(state.routeOptions!!.boardingSoon[0])
+                        setBottomSheetHeight(140f)
 
                         // Refresh Views
                         routeCardHolder.boarding_soon_routes.invalidate()
@@ -98,9 +134,12 @@ class RouteOptionsPresenter(bottomSheet: View, _routeViewAdapter: RouteViewAdapt
                         }
 
                         routeCardHolder.visibility = View.VISIBLE
+                        routeCardHolder.boarding_soon_routes.visibility = View.VISIBLE
+                        bottom_sheet.back.hide()
                     }
                     is RouteDetailViewState -> {
                         routeCardHolder.boarding_soon_routes.visibility = View.GONE
+                        bottom_sheet.back.show()
 
                     }
 
@@ -125,26 +164,14 @@ class RouteOptionsPresenter(bottomSheet: View, _routeViewAdapter: RouteViewAdapt
                 * Tells the slider to snap to the middle when the user lifts their finger near the middle of the screen.
                 * */
                 if (location[1] > 600 && location[1] < 1000) {
-                    bottomSheetBehavior.setState(BottomSheetBehavior.STATE_HALF_EXPANDED)
+                    bottomSheetBehavior.state = BottomSheetBehavior.STATE_HALF_EXPANDED
                 }
 
             }
 
             override fun onStateChanged(@NonNull view: View, i: Int) {
-                when (i) {
-                    BottomSheetBehavior.STATE_COLLAPSED -> {
-                        slideState = BottomSheetBehavior.STATE_COLLAPSED
-                    }
-                    BottomSheetBehavior.STATE_EXPANDED -> {
-                        slideState = BottomSheetBehavior.STATE_EXPANDED
-                    }
-
-                    BottomSheetBehavior.STATE_HALF_EXPANDED -> slideState =
-                        BottomSheetBehavior.STATE_HALF_EXPANDED
-                    BottomSheetBehavior.STATE_DRAGGING,
-                    BottomSheetBehavior.STATE_HIDDEN,
-                    BottomSheetBehavior.STATE_SETTLING -> {
-                    }
+                if (mSlidingDisabled) {
+                    bottomSheetBehavior.state = BottomSheetBehavior.STATE_COLLAPSED
                 }
             }
 

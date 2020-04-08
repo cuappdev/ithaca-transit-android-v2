@@ -11,8 +11,12 @@ object Repository {
     var destinationLocation: Location? = null
 
     // Called from the SearchView everytime the RouteOptionsView should change
-    var _updateRouteOptions = fun(hidden: Boolean) {}
+    var _updateRouteFromSearch = fun(hidden: Boolean) {}
+
+    // Called from RouteAdapter each time a Route is clicked
+    var _updateRouteDetailed = fun(route: Route) {}
 
     // Called from the SearchView everytime the MapView should change
     var _updateMapView = fun(a:Route) {}
+
 }

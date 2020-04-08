@@ -11,6 +11,7 @@ import android.widget.*
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.example.ithaca_transit_android_v2.R
+import com.example.ithaca_transit_android_v2.Repository
 import com.example.ithaca_transit_android_v2.models.Route
 import com.example.ithaca_transit_android_v2.states.RouteCardState
 import com.example.ithaca_transit_android_v2.views.BusNumberComponent
@@ -25,9 +26,6 @@ class RouteViewAdapter(context: Context, var userList: ArrayList<RouteAdapterObj
     RecyclerView.Adapter<RouteViewAdapter.ViewHolder>() {
 
     var routeCardContext = context
-
-    //Creation of the observable object, defining that it will hold a RouteCardState
-    private val clickSubject = PublishSubject.create<RouteCardState>()
 
     override fun getItemViewType(position: Int): Int {
         if (userList[position].type.equals("routeLabel")) {
@@ -57,8 +55,8 @@ class RouteViewAdapter(context: Context, var userList: ArrayList<RouteAdapterObj
 
         //Temporary info to fill the routecard so that we can see the difference between cards.
         val boardMins = routeObj.boardInMin.toString()
-        p0.description?.setText("Board in " + boardMins + " Mins")
-        p0.delay.setText("On Time")
+        p0.description?.text = "Board in " + boardMins + " Mins"
+        p0.delay.text = "On Time"
 
         val summaryList: ArrayList<String> = ArrayList()
         val busList: ArrayList<Int> = ArrayList()
@@ -122,17 +120,12 @@ class RouteViewAdapter(context: Context, var userList: ArrayList<RouteAdapterObj
 
         }
 
-        for (i in summaryList) {
-
+        for (direction in summaryList) {
             val individualDirection = TextView(routeCardContext)
-            individualDirection.setText(i)
-
+            individualDirection.text = direction
             p0.directionList.addView(individualDirection)
-
             individualDirection.textSize = 15f
-
             individualDirection.layoutParams = lDirectionparams
-
         }
 
         //Create bus number images
@@ -143,7 +136,6 @@ class RouteViewAdapter(context: Context, var userList: ArrayList<RouteAdapterObj
                 null
             )
             busNumberView.setBusNumber(i)
-
             busIconParams.weight = 1f
             busIconParams.gravity = Gravity.CENTER
 
@@ -161,7 +153,6 @@ class RouteViewAdapter(context: Context, var userList: ArrayList<RouteAdapterObj
 
             //Set the busParams
             busNumberView.layoutParams = busIconParams
-
             p0.busDrawing.addView(busNumberView)
 
         }
@@ -226,12 +217,15 @@ class RouteViewAdapter(context: Context, var userList: ArrayList<RouteAdapterObj
 
         val routeLabel = itemView.findViewById<TextView>(R.id.routeLabel)
 
-//        init {
-//            //Listener for onClicks - creates observable with Route object corresponding to clicked routeCard
-//            itemView.setOnClickListener {
-//                clickSubject.onNext(RouteDetailViewState(userList[layoutPosition]))
-//            }
-//        }
+        init {
+                //Listener for onClicks - creates observable with Route object corresponding to clicked routeCard
+                itemView.setOnClickListener {
+                    _ -> if (userList[layoutPosition].data is Route) {
+                        Repository._updateRouteDetailed(userList[layoutPosition].data as Route)
+                    }
+                }
+
+        }
     }
 
     fun swapItems(updatedInfo: ArrayList<RouteAdapterObject>) {

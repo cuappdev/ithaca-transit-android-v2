@@ -33,10 +33,10 @@ class DrawRouteCard(context: Context, attrs: AttributeSet?) : View(context, attr
     //Dimensions for gray dots
     var circleX3 = 20f //36
     var circleY3 = 20f //42
-    var circleR3 = 8f
+    var circleR3 = 6f
 
     var circleX4 = 20f //36
-    var circleY4 = 8f //42
+    var circleY4 = 6f //42
 
     var circleX5 = 20f //36
     var circleY5 = 20f //42

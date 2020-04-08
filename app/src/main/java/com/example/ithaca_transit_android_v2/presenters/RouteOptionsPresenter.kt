@@ -117,13 +117,41 @@ class RouteOptionsPresenter(private val bottom_sheet: View, _routeViewAdapter: R
                         routeCardHolder.boarding_soon_routes.removeAllViews()
 
                         val allRoutes : ArrayList<RouteAdapterObject> = ArrayList<RouteAdapterObject>()
-                        allRoutes.add(RouteAdapterObject("routeLabel", "Boarding Soon from Nearby Stops"))
+                        if(state.routeOptions!!.boardingSoon.size!= 0){
+                            allRoutes.add(RouteAdapterObject("routeLabel", "Boarding from Nearby Stops"))
 
-                        //Add all route objects and texts
-                        for(r in state.routeOptions.boardingSoon){
-                            val boardObj : RouteAdapterObject = RouteAdapterObject("route", r)
-                            allRoutes.add(boardObj)
+                            //Add all route objects and texts
+                            for(r in state.routeOptions!!.boardingSoon){
+                                val boardObj : RouteAdapterObject = RouteAdapterObject("route", r)
+                                allRoutes.add(boardObj)
+                            }
                         }
+
+                        if(state.routeOptions!!.fromStop.size!= 0){
+                            allRoutes.add(RouteAdapterObject("routeLabel", "From Stops"))
+
+                            //Add all route objects and texts
+                            for(r in state.routeOptions!!.fromStop){
+                                val boardObj : RouteAdapterObject = RouteAdapterObject("route", r)
+                                allRoutes.add(boardObj)
+                            }
+                        }
+
+                        if(state.routeOptions!!.walking.size!= 0){
+                            allRoutes.add(RouteAdapterObject("routeLabel", "Walking"))
+
+                            //Add all route objects and texts
+                            for(r in state.routeOptions!!.walking){
+                                val boardObj : RouteAdapterObject = RouteAdapterObject("route", r)
+                                allRoutes.add(boardObj)
+                            }
+                        }
+
+
+
+                        //Log.d("Display From Stop", ""+ state.routeOptions!!.boardingSoon[1].stops[1].name)
+                        Log.d("Display Walking", ""+ state.routeOptions!!.walking.toString())
+
 
                         mRoutesAdapter.swapItems(allRoutes)
 

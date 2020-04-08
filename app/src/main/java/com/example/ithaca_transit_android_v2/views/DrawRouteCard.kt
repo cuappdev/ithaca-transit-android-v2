@@ -15,6 +15,8 @@ class DrawRouteCard(context: Context, attrs: AttributeSet?) : View(context, attr
     var grayDotColor = Paint(Paint.ANTI_ALIAS_FLAG)
     var whiteDotColor = Paint(Paint.ANTI_ALIAS_FLAG)
 
+    var containsWalking: Boolean = true;
+
     //Dimensions for Blue Dots and Line
     var circleX1 = 20f //36
     var circleY1 = 20f //42
@@ -59,10 +61,22 @@ class DrawRouteCard(context: Context, attrs: AttributeSet?) : View(context, attr
 
     }
 
-    fun setBlueDimensions(circlex2: Float, circley2: Float, lineL: Float) {
+    fun setBlueDimensions(circlex2: Float, circley2: Float, lineL: Float,  containsWalking: Boolean = true) {
         circleX2 = circlex2
         circleY2 = circley2
         this.lineL = lineL
+
+        if(!containsWalking){
+            this.containsWalking = containsWalking
+            circleX5 = circlex2
+            circleX6 = circlex2
+            circleX7 = circlex2
+            circleY5 = circley2
+            circleY6 = circley2
+            circleY7 = circley2
+            this.lineL = lineL
+
+        }
 
     }
 
@@ -87,17 +101,33 @@ class DrawRouteCard(context: Context, attrs: AttributeSet?) : View(context, attr
     }
 
     override fun onDraw(canvas: Canvas) {
-        canvas.drawCircle(circleX1, circleY1, circleR, blueDotColor)
 
-        canvas.drawRect(left, top, left + lineW, top + lineL, blueDotColor)
+        if(containsWalking){
+            canvas.drawCircle(circleX1, circleY1, circleR, blueDotColor)
 
-        canvas.drawCircle(circleX2, circleY2, circleR, blueDotColor)
+            canvas.drawRect(left, top, left + lineW, top + lineL, blueDotColor)
 
-        canvas.drawCircle(circleX3, circleY3, circleR3, grayDotColor)
-        canvas.drawCircle(circleX4, circleY4, circleR3, grayDotColor)
-        canvas.drawCircle(circleX5, circleY5, circleR5, grayDotColor)
-        canvas.drawCircle(circleX6, circleY6, circleR6, whiteDotColor)
-        canvas.drawCircle(circleX7, circleY7, circleR7, grayDotColor)
+            canvas.drawCircle(circleX2, circleY2, circleR, blueDotColor)
+
+            canvas.drawCircle(circleX3, circleY3, circleR3, grayDotColor)
+            canvas.drawCircle(circleX4, circleY4, circleR3, grayDotColor)
+
+            //Draw Target Dot
+            canvas.drawCircle(circleX5, circleY5, circleR5, grayDotColor)
+            canvas.drawCircle(circleX6, circleY6, circleR6, whiteDotColor)
+            canvas.drawCircle(circleX7, circleY7, circleR7, grayDotColor)
+        }
+        else if (!containsWalking){
+            canvas.drawCircle(circleX1, circleY1, circleR, blueDotColor)
+
+            canvas.drawRect(left, top, left + lineW, top + lineL, blueDotColor)
+
+            //Draw Target Dot
+            canvas.drawCircle(circleX5, circleY5, circleR5, blueDotColor)
+            canvas.drawCircle(circleX6, circleY6, circleR6, whiteDotColor)
+            canvas.drawCircle(circleX7, circleY7, circleR7, blueDotColor)
+        }
+
 
     }
 

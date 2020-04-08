@@ -18,4 +18,5 @@ data class Direction(
     val busStops: List<Stop>,
     @Json(name = "routeNumber")
     val busNumber: Int?
+
 )

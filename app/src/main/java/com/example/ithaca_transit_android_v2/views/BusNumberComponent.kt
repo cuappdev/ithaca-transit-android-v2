@@ -14,7 +14,7 @@ class BusNumberComponent(context: Context, attrs: AttributeSet?): FrameLayout(co
     lateinit var busNumb: TextView
 
     init {
-        inflate(context, R.layout.busimage, this)
+        inflate(context, R.layout.bus_image, this)
 
         busImg = findViewById<ImageView>(R.id.bus_image)
         busNumb = findViewById<TextView>(R.id.bus_number)

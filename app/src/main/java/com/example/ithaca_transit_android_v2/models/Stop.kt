@@ -5,5 +5,7 @@ import com.squareup.moshi.JsonClass
 data class Stop(
     val stopID: String,
     val lat: Double,
-    val long: Double
+    val long: Double,
+    val name: String
+
 )

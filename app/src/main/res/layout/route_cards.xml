@@ -1,62 +1,61 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.cardview.widget.CardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/cardviewdelegate"
     android:layout_width="match_parent"
+    android:layout_marginTop="10dp"
+    android:layout_marginBottom="10dp"
     android:layout_height="wrap_content"
-    app:cardCornerRadius="4dp">
+    app:cardElevation="0dp">
 
     <RelativeLayout
         android:id="@+id/rlayout"
+        android:background="@drawable/route_card_background"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
-
 
         <TextView
             android:id="@+id/duration"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
             android:layout_alignParentTop="true"
-            android:layout_marginLeft="8dp"
-            android:layout_marginTop="8dp"
-            android:text="00:00 - 00:00"
+            android:layout_marginStart="15dp"
+            android:layout_marginTop="15dp"
             android:textColor="@color/black"
             android:textSize="16sp" />
 
-        <TextView
-            android:id="@+id/moreInfo"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+        <ImageView
+            android:id="@+id/expand_img"
+            android:layout_width="15dp"
+            android:layout_height="15dp"
+            android:scaleType="fitCenter"
             android:layout_alignParentTop="true"
-            android:layout_alignParentRight="true"
-            android:layout_marginLeft="8dp"
-            android:layout_marginTop="8dp"
-            android:layout_marginRight="10dp"
-            android:text=">"
-            android:textColor="@color/black"
-            android:textSize="16sp" />
+            android:layout_alignParentEnd="true"
+            android:layout_margin="15dp"
+            android:contentDescription="More Details"
+            android:src="@drawable/ic_right_caret"/>
 
         <TextView
-            android:id="@+id/delay"
+            android:id="@+id/delay_label"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@id/duration"
-            android:layout_toRightOf="@+id/route_description"
-            android:paddingRight="48dp"
-            android:text="Delay"
+            android:layout_toEndOf="@+id/board_minutes"
             android:textColor="@color/green"
-            android:textSize="14sp"
-            android:textStyle="bold" />
+            android:layout_marginTop="5dp"
+            android:textSize="14sp" />
 
         <TextView
-            android:id="@+id/route_description"
+            android:id="@+id/board_minutes"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@id/duration"
-            android:layout_marginLeft="8dp"
-            android:paddingRight="36dp"
-            android:text="Route Description"
+            android:layout_marginStart="5dp"
+            android:layout_marginTop="5dp"
+            android:paddingStart="10dp"
+            android:paddingEnd="10dp"
             android:textColor="@color/routeDetails"
             android:textSize="14sp"
             android:textStyle="normal" />
@@ -67,15 +66,15 @@
             android:id="@+id/icons"
             android:layout_width="57dp"
             android:layout_height="match_parent"
-            android:layout_below="@id/route_description"
-            android:layout_marginLeft="16dp"
+            android:layout_below="@id/board_minutes"
+            android:layout_marginStart="16dp"
             android:layout_marginTop="25dp"
             android:background="@android:color/transparent"
             android:cacheColorHint="@android:color/transparent"
             android:divider="@color/white"
             android:dividerHeight="0dp"
             android:orientation="vertical"
-            android:paddingLeft="2dp">
+            android:paddingStart="2dp">
 
         </LinearLayout>
 
@@ -84,14 +83,13 @@
             android:id="@+id/path_dots"
             android:layout_width="50dp"
             android:layout_height="wrap_content"
-            android:layout_below="@id/route_description"
-            android:layout_marginLeft="80dp"
+            android:layout_below="@id/board_minutes"
+            android:layout_marginStart="80dp"
             android:layout_marginTop="2dp"
             android:background="@android:color/transparent"
             android:cacheColorHint="@android:color/transparent"
             android:divider="@color/white"
-            android:orientation="vertical"
-            android:paddingLeft="0dp">
+            android:orientation="vertical">
 
             <com.example.ithaca_transit_android_v2.views.DrawRouteCard
 
@@ -110,16 +108,16 @@
             android:id="@+id/directions"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@id/route_description"
+            android:layout_below="@id/board_minutes"
             android:layout_gravity="center_vertical"
             android:layout_marginTop="10dp"
-            android:layout_toRightOf="@+id/path_dots"
+            android:layout_toEndOf="@+id/path_dots"
             android:background="@android:color/transparent"
             android:cacheColorHint="@android:color/transparent"
             android:divider="@color/white"
             android:dividerHeight="-15dp"
             android:orientation="vertical"
-            android:paddingLeft="2dp"></LinearLayout>
+            android:paddingStart="2dp"/>
 
 
     </RelativeLayout>

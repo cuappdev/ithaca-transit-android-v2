@@ -6,147 +6,108 @@
     android:layout_height="match_parent"
     app:ignore="NamespaceTypo">
 
-
     <LinearLayout xmlns:app="http://schemas.android.com/apk/res-auto"
-        android:id="@+id/bottomSheet"
+        android:id="@+id/bottom_sheet"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
-        android:background="@color/white"
         app:behavior_hideable="false"
-        app:behavior_peekHeight="55dp"
+        app:behavior_peekHeight="50dp"
         app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior">
 
         <RelativeLayout
-            android:id="@+id/relative_layout"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_marginTop="15dp"
+            android:layout_height="50dp">
+            <com.google.android.material.floatingactionbutton.FloatingActionButton
+                android:id="@+id/back"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:clipChildren="false"
+                android:clipToPadding="false"
+                android:scaleType="center"
+                android:layout_alignParentStart="true"
+                android:layout_marginStart="15dp"
+                android:src="@drawable/ic_left_caret"
+                app:fabCustomSize="30dp"
+                app:maxImageSize="14dp"
+                app:backgroundTint="#FFFFFF" />
+        </RelativeLayout>
+
+        <include layout="@layout/route_detailed" />
+
+        <LinearLayout
+            android:id="@+id/bottom_sheet_data"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/routeBackground"
+            android:orientation="vertical">
+            <RelativeLayout
+                android:id="@+id/relative_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+                <RelativeLayout
+                    android:id="@+id/fab"
+                    android:layout_width="40dp"
+                    android:layout_height="6dp"
+                    android:layout_alignParentTop="true"
+                    android:layout_centerHorizontal="true"
+                    android:layout_marginStart="15dp"
+                    android:layout_marginTop="8dp"
+                    android:background="@drawable/fab">
+
+                </RelativeLayout>
+
+                <TextView
+                    android:id="@+id/optionsText"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentStart="true"
+                    android:layout_marginStart="20dp"
+                    android:layout_marginTop="20dp"
+                    android:text="Route Options"
+                    android:textColor="@color/black"
+                    android:textSize="22sp"
+                    android:textStyle="bold" />
+
+                <ImageView
+                    android:id="@+id/ic_clock"
+                    android:layout_width="26dp"
+                    android:layout_height="22dp"
+                    android:layout_below="@+id/fab"
+                    android:layout_alignLeft="@+id/chooseTime"
+                    android:layout_marginLeft="-28dp"
+                    android:layout_marginTop="6dp"
+                    android:src="@drawable/ic_clock" />
+
+                <TextView
+                    android:id="@+id/chooseTime"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentTop="true"
+                    android:layout_alignParentRight="true"
+                    android:layout_marginStart="20dp"
+                    android:layout_marginTop="23dp"
+                    android:layout_marginEnd="20dp"
+                    android:layout_marginRight="20dp"
+                    android:layout_marginBottom="20dp"
+                    android:text="Leave now"
+                    android:textColor="@color/leaveNowGray"
+                    android:textSize="16sp" />
+            </RelativeLayout>
 
             <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/nearby_stops_routes"
+                android:id="@+id/boarding_soon_routes"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_below="@id/optionsText"
                 android:layout_marginLeft="16dp"
                 android:layout_marginTop="8dp"
                 android:layout_marginRight="16dp"
-                android:background="@color/lightGray"
                 android:clipToPadding="false"
-                android:nestedScrollingEnabled="true"
+                android:nestedScrollingEnabled="true">
 
-                />
-
-            <RelativeLayout
-                android:id="@+id/fab"
-                android:layout_width="60dp"
-                android:layout_height="8dp"
-                android:layout_alignParentTop="true"
-                android:layout_centerHorizontal="true"
-                android:layout_marginStart="15dp"
-                android:layout_marginTop="8dp"
-                android:background="@drawable/fab">
-
-            </RelativeLayout>
-
-            <TextView
-                android:id="@+id/optionsText"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentLeft="true"
-                android:layout_marginLeft="20dp"
-                android:layout_marginTop="20dp"
-                android:text="Route Options"
-                android:textColor="@color/black"
-                android:textSize="22sp"
-                android:textStyle="bold" />
-
-            <ImageView
-                android:id="@+id/ic_clock"
-                android:layout_width="26dp"
-                android:layout_height="22dp"
-                android:layout_below="@+id/fab"
-                android:layout_alignLeft="@+id/chooseTime"
-                android:layout_marginLeft="-28dp"
-                android:layout_marginTop="6dp"
-                android:src="@drawable/ic_clock" />
-
-            <TextView
-                android:id="@+id/chooseTime"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentTop="true"
-                android:layout_alignParentRight="true"
-                android:layout_marginStart="20dp"
-                android:layout_marginTop="23dp"
-                android:layout_marginEnd="20dp"
-                android:layout_marginRight="20dp"
-                android:layout_marginBottom="20dp"
-                android:text="Leave now"
-                android:textColor="@color/leaveNowGray"
-                android:textSize="16sp" />
-
-
-        </RelativeLayout>
-
-        <LinearLayout
-            android:id="@+id/detailedLinearLayout"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal">
-
-            <LinearLayout
-                android:id="@+id/detailTime"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:orientation="vertical">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Detail Time">
-
-                </TextView>
-
-            </LinearLayout>
-
-            <LinearLayout
-                android:id="@+id/detailDots"
-                android:layout_width="0dp"
-                android:layout_weight="0."
-                android:layout_height="match_parent"
-                android:orientation="vertical">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Detail Dots">
-
-                </TextView>
-
-
-
-
-
-            </LinearLayout>
-
-            <LinearLayout
-                android:id="@+id/detailNames"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:orientation="vertical">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Detail Names">
-
-                </TextView>
-
-            </LinearLayout>
-
-
+            </androidx.recyclerview.widget.RecyclerView>
         </LinearLayout>
-
 
     </LinearLayout>
 

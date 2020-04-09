@@ -27,7 +27,7 @@ class NetworkUtils {
         .writeTimeout(15, TimeUnit.SECONDS) // write timeout
         .readTimeout(15, TimeUnit.SECONDS) // read timeout
         .build()
-    val url = "https://transit-backend.cornellappdev.com/api/v2/"
+    val url = "https://transit-testflight.cornellappdev.com/api/v2/"
     val mediaType = ("application/json; charset=utf-8").toMediaType()
 
     // Function that takes in query and returns list of Locations
@@ -110,7 +110,6 @@ class NetworkUtils {
     }
 
     fun getBusCoords(busDataList: List<BusInformation>) {
-        Log.i("qwerty", "Fooda")
         val busJsonArr = JSONArray()
         for(busInfo in busDataList) {
             if (busInfo.tripId != null && busInfo.routeId != null) {
@@ -122,6 +121,7 @@ class NetworkUtils {
         }
         val json = JSONObject()
         json.put("data", busJsonArr)
+        Log.i("qwerty", json.toString())
 
         val requestBody = json.toString().toRequestBody(mediaType)
         val request: Request = Request.Builder()
@@ -132,7 +132,7 @@ class NetworkUtils {
         val body = client.newCall(request).execute().body?.string()
         val response = JSONObject(body!!)
         val arr = response.get("data")
-        Log.i("qwerty", "The server returned: "+arr.toString())
+        Log.i("qwerty", "The server returned: "+response.toString())
 
     }
 

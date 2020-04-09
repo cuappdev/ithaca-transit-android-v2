@@ -82,6 +82,7 @@ class RouteAdapter {
         @Json(name = "departureTime")
         val depart: Date,
         val routeSummary: List<RouteSummary>
+
     )
 
     @FromJson
@@ -100,6 +101,7 @@ class RouteAdapter {
                 json.depart,
                 json.routeSummary,
                 boardInMins
+
             )
 
         } else {

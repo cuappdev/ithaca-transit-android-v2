@@ -69,20 +69,20 @@ class SearchPresenter(
                 map.setOnMapClickListener {
                     if (Repository.destinationLocation == null) {
                         emitter.onNext(SearchLaunchState())
-                    } else if (Repository.startLocation != null) {
-                        Repository._updateRouteOptions(false)
+                    } else if (Repository.startLocation != null && mEditing) {
+                        Repository._updateRouteFromSearch(false)
                         emitter.onNext(
                             RouteDisplayState(
                                 Repository.startLocation!!,
                                 Repository.destinationLocation!!
                             )
                         )
+                        mEditing = false
 
                     }
                     mMainActivity.hideKeyboard()
                 }
             }
-
 
             view.search_input.addTextChangedListener(watcher)
             view.search_input.setOnFocusChangeListener { view, hasFocus ->
@@ -114,7 +114,7 @@ class SearchPresenter(
 
                 Repository.startLocation = startLocation
                 Repository.destinationLocation = destination
-                Repository._updateRouteOptions(false)
+                Repository._updateRouteFromSearch(false)
                 emitter.onNext(RouteDisplayState(startLocation, destination))
                 mMainActivity.hideKeyboard()
             }
@@ -128,7 +128,7 @@ class SearchPresenter(
                     view.edit_dest_loc.setText(destLoc.name)
 
                     // hide the draggable routeOptions when editing location
-                    Repository._updateRouteOptions(true)
+                    Repository._updateRouteFromSearch(true)
                     emitter.onNext(ChangeRouteState("", true))
                 }
             }
@@ -178,7 +178,7 @@ class SearchPresenter(
                         view.edit_dest_loc.setText(location.name)
                     }
                     if (Repository.startLocation != null && Repository.destinationLocation != null) {
-                        Repository._updateRouteOptions(false)
+                        Repository._updateRouteFromSearch(false)
                         emitter.onNext(
                             RouteDisplayState(
                                 Repository.startLocation!!,
@@ -200,7 +200,7 @@ class SearchPresenter(
                     view.edit_start_loc.setText(location2.name)
                     view.edit_dest_loc.setText(location1.name)
                     emitter.onNext(RouteDisplayState(location2, location1))
-                    Repository._updateRouteOptions(true)
+                    Repository._updateRouteFromSearch(true)
                 }
             }
 

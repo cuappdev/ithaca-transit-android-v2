@@ -17,8 +17,6 @@
 
         <RelativeLayout
             android:layout_width="match_parent"
-            android:clipChildren="false"
-            android:clipToPadding="false"
             android:layout_marginTop="15dp"
             android:layout_height="50dp">
             <com.google.android.material.floatingactionbutton.FloatingActionButton
@@ -37,6 +35,7 @@
         </RelativeLayout>
 
         <include layout="@layout/route_detailed" />
+
         <LinearLayout
             android:id="@+id/bottom_sheet_data"
             android:layout_width="match_parent"

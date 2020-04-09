@@ -7,14 +7,14 @@
     android:orientation="vertical">
 
     <RelativeLayout
-        android:id="@+id/relative_layout"
+        android:id="@+id/route_detail_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:paddingBottom="40dp"
         android:background="@color/routeDetailsHeader">
 
         <RelativeLayout
-            android:id="@+id/fab"
+            android:id="@+id/detail_fab"
             android:layout_width="40dp"
             android:layout_height="6dp"
             android:layout_alignParentTop="true"
@@ -29,8 +29,7 @@
             android:layout_height="wrap_content"
             android:id="@+id/route_detail_header"
             android:layout_centerHorizontal="true"
-            android:layout_marginTop="30dp"
-            android:text="Departing at some random time from some random location"/>
+            android:layout_marginTop="30dp"/>
     </RelativeLayout>
 
     <LinearLayout
@@ -40,9 +39,7 @@
         android:layout_marginLeft="16dp"
         android:layout_marginTop="8dp"
         android:layout_marginRight="16dp"
-        android:clipToPadding="false"
-        android:orientation="vertical"
-        android:nestedScrollingEnabled="true">
+        android:orientation="vertical">
 
     </LinearLayout>
 </LinearLayout>

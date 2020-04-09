@@ -5,10 +5,11 @@ import android.view.View
 import com.example.ithaca_transit_android_v2.models.Route
 import kotlinx.android.synthetic.main.route_detailed.view.*
 
-class RouteDetailAdapter(var context: Context, _routeDetail: View) {
-    var routeDetail = _routeDetail
+class RouteDetailAdapter(var context: Context, _routeDetail:View) {
+    val routeDetail:View = _routeDetail
 
     fun updateRouteDetail(route: Route) {
+
         val headerText = "Leaving in "+route.boardInMin.toString() // placeholder for now
         routeDetail.route_detail_header.text = headerText
 

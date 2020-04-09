@@ -1,7 +1,9 @@
 package com.example.ithaca_transit_android_v2
+import android.util.Log
 import com.example.ithaca_transit_android_v2.models.Coordinate
 import com.example.ithaca_transit_android_v2.models.Location
 import com.example.ithaca_transit_android_v2.models.RouteOptions
+import com.example.ithaca_transit_android_v2.models.tracking.BusInformation
 import com.squareup.moshi.JsonAdapter
 import com.squareup.moshi.JsonReader
 import com.squareup.moshi.Moshi
@@ -11,6 +13,7 @@ import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import okhttp3.RequestBody.Companion.toRequestBody
+import org.json.JSONArray
 import org.json.JSONObject
 import java.util.concurrent.TimeUnit
 
@@ -105,4 +108,32 @@ class NetworkUtils {
             emptyList()
         )
     }
+
+    fun getBusCoords(busDataList: List<BusInformation>) {
+        Log.i("qwerty", "Fooda")
+        val busJsonArr = JSONArray()
+        for(busInfo in busDataList) {
+            if (busInfo.tripId != null && busInfo.routeId != null) {
+                val busJson = JSONObject()
+                busJson.put("tripId", busInfo.tripId)
+                busJson.put("routeId", busInfo.routeId)
+                busJsonArr.put(busJson)
+            }
+        }
+        val json = JSONObject()
+        json.put("data", busJsonArr)
+
+        val requestBody = json.toString().toRequestBody(mediaType)
+        val request: Request = Request.Builder()
+            .url(url + "tracking")
+            .post(requestBody)
+            .build()
+
+        val body = client.newCall(request).execute().body?.string()
+        val response = JSONObject(body!!)
+        val arr = response.get("data")
+        Log.i("qwerty", "The server returned: "+arr.toString())
+
+    }
+
 }

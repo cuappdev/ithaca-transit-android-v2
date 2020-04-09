@@ -85,7 +85,6 @@ class RouteViewAdapter(context: Context, var userList: ArrayList<Route>) :
         val busImageLayoutParam = p0.busDrawing.layoutParams
         val dotParams = p0.dotDrawing.layoutParams
 
-        Log.d("SummaryListSize", "" + summaryList.size)
         if (summaryList.size > 3) {
             linearlayoutparams.height = 400
             dotParams.height = 400

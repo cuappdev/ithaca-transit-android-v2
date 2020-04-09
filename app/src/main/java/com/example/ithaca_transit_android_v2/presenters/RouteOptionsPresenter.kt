@@ -1,7 +1,6 @@
 package com.example.ithaca_transit_android_v2.presenters
 
 import android.content.Context
-import android.util.Log
 import android.util.TypedValue
 import android.view.View
 import android.widget.LinearLayout
@@ -13,8 +12,9 @@ import com.example.ithaca_transit_android_v2.states.OptionsHiddenState
 import com.example.ithaca_transit_android_v2.states.RouteCardState
 import com.example.ithaca_transit_android_v2.states.RouteDetailViewState
 import com.example.ithaca_transit_android_v2.states.RouteListState
-import com.example.ithaca_transit_android_v2.ui_adapters.RouteAdapterObject
-import com.example.ithaca_transit_android_v2.ui_adapters.RouteViewAdapter
+import com.example.ithaca_transit_android_v2.ui_adapters.RouteDetailAdapter
+import com.example.ithaca_transit_android_v2.ui_adapters.RouteListAdapterObject
+import com.example.ithaca_transit_android_v2.ui_adapters.RouteListViewAdapter
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import io.reactivex.Observable
 import io.reactivex.ObservableEmitter
@@ -22,12 +22,15 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.route_card_compact.view.*
+import kotlinx.android.synthetic.main.route_detailed.view.*
 
+class RouteOptionsPresenter(private val bottom_sheet: View,
+                            _routeListViewAdapter: RouteListViewAdapter,
+                            _routeDetailAdapter: RouteDetailAdapter,
+                            _context: Context) {
 
-
-class RouteOptionsPresenter(private val bottom_sheet: View, _routeViewAdapter: RouteViewAdapter, _context: Context) {
-
-    var mRoutesAdapter = _routeViewAdapter
+    var mRouteListAdapter = _routeListViewAdapter
+    var mRouteDetailAdapter = _routeDetailAdapter
     var routeCardHolder: View = bottom_sheet.bottom_sheet_data
     private val context = _context
     private var mSlidingDisabled = true
@@ -104,6 +107,7 @@ class RouteOptionsPresenter(private val bottom_sheet: View, _routeViewAdapter: R
                 when (state) {
                     is OptionsHiddenState -> {
                         routeCardHolder.visibility = View.GONE
+                        bottom_sheet.route_detail_data.visibility = View.GONE
                         bottom_sheet.back.hide()
                         setBottomSheetHeight(65f)
                     }
@@ -116,16 +120,16 @@ class RouteOptionsPresenter(private val bottom_sheet: View, _routeViewAdapter: R
                         routeCardHolder.boarding_soon_routes.invalidate()
                         routeCardHolder.boarding_soon_routes.removeAllViews()
 
-                        val allRoutes : ArrayList<RouteAdapterObject> = ArrayList<RouteAdapterObject>()
-                        allRoutes.add(RouteAdapterObject("routeLabel", "Boarding Soon from Nearby Stops"))
+                        val allRouteLists : ArrayList<RouteListAdapterObject> = ArrayList<RouteListAdapterObject>()
+                        allRouteLists.add(RouteListAdapterObject("routeLabel", "Boarding Soon from Nearby Stops"))
 
                         //Add all route objects and texts
                         for(r in state.routeOptions.boardingSoon){
-                            val boardObj : RouteAdapterObject = RouteAdapterObject("route", r)
-                            allRoutes.add(boardObj)
+                            val boardObj : RouteListAdapterObject = RouteListAdapterObject("route", r)
+                            allRouteLists.add(boardObj)
                         }
 
-                        mRoutesAdapter.swapItems(allRoutes)
+                        mRouteListAdapter.swapItems(allRouteLists)
 
                         val count = routeCardHolder.boarding_soon_routes.childCount
                         for (i in 1..count - 1) {
@@ -134,11 +138,13 @@ class RouteOptionsPresenter(private val bottom_sheet: View, _routeViewAdapter: R
                         }
 
                         routeCardHolder.visibility = View.VISIBLE
-                        routeCardHolder.boarding_soon_routes.visibility = View.VISIBLE
+                        bottom_sheet.route_detail_data.visibility = View.GONE
                         bottom_sheet.back.hide()
                     }
                     is RouteDetailViewState -> {
-                        routeCardHolder.boarding_soon_routes.visibility = View.GONE
+                        routeCardHolder.visibility = View.GONE
+                        mRouteDetailAdapter.updateRouteDetail(state.route)
+                        bottom_sheet.route_detail_data.visibility = View.VISIBLE
                         bottom_sheet.back.show()
 
                     }

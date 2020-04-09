@@ -24,7 +24,9 @@ class RouteListState(
  * [RouteDetailViewState] displays the selected route in detail.
  * Takes in only one [route] object because only one route is displayed.
  */
-class RouteDetailViewState(route: Route) : RouteCardState()
+class RouteDetailViewState(
+    val route: Route
+) : RouteCardState()
 
 /*
  * User clicks on the [Leave Now] button in [RouteOptionState] and a dialog pops up (UI change).

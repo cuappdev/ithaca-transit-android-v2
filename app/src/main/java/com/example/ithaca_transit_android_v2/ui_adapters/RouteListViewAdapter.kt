@@ -13,17 +13,15 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.ithaca_transit_android_v2.R
 import com.example.ithaca_transit_android_v2.Repository
 import com.example.ithaca_transit_android_v2.models.Route
-import com.example.ithaca_transit_android_v2.states.RouteCardState
 import com.example.ithaca_transit_android_v2.views.BusNumberComponent
 import com.example.ithaca_transit_android_v2.views.DrawRouteCard
-import io.reactivex.subjects.PublishSubject
 import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.collections.ArrayList
 
 // Recycler view adapter that fills each route card with the list of Route objects that is returned by our RouteOptions networking call.
-class RouteViewAdapter(context: Context, var userList: ArrayList<RouteAdapterObject>) :
-    RecyclerView.Adapter<RouteViewAdapter.ViewHolder>() {
+class RouteListViewAdapter(context: Context, var userList: ArrayList<RouteListAdapterObject>) :
+    RecyclerView.Adapter<RouteListViewAdapter.ViewHolder>() {
 
     var routeCardContext = context
 
@@ -228,7 +226,7 @@ class RouteViewAdapter(context: Context, var userList: ArrayList<RouteAdapterObj
         }
     }
 
-    fun swapItems(updatedInfo: ArrayList<RouteAdapterObject>) {
+    fun swapItems(updatedInfo: ArrayList<RouteListAdapterObject>) {
         this.userList = updatedInfo
         notifyDataSetChanged()
     }

@@ -12,10 +12,11 @@ import com.example.ithaca_transit_android_v2.models.Route
 import com.example.ithaca_transit_android_v2.presenters.MapPresenter
 import com.example.ithaca_transit_android_v2.presenters.RouteOptionsPresenter
 import com.example.ithaca_transit_android_v2.presenters.SearchPresenter
+import com.example.ithaca_transit_android_v2.ui_adapters.RouteDetailAdapter
 import com.example.ithaca_transit_android_v2.ui_adapters.SearchViewAdapter
 
 import com.example.ithaca_transit_android_v2.util.CurrLocationManager
-import com.example.ithaca_transit_android_v2.ui_adapters.RouteViewAdapter
+import com.example.ithaca_transit_android_v2.ui_adapters.RouteListViewAdapter
 
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
@@ -23,6 +24,7 @@ import com.google.android.material.bottomsheet.BottomSheetBehavior
 import io.reactivex.disposables.Disposable
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.route_card_compact.*
+import kotlinx.android.synthetic.main.route_detailed.*
 
 import kotlinx.android.synthetic.main.search_main.*
 import kotlinx.android.synthetic.main.search_secondary.*
@@ -34,7 +36,8 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
     private var mSearchLocations: List<Location> = ArrayList()
     private var dataList = ArrayList<Route>()
     private lateinit var mSearchAdapter: SearchViewAdapter
-    private lateinit var mRouteViewAdapter: RouteViewAdapter
+    private lateinit var mRouteListViewAdapter: RouteListViewAdapter
+    private lateinit var mRouteDetailAdapter: RouteDetailAdapter
     private lateinit var mSearchPresenter: SearchPresenter
     private lateinit var mRouteOptionsPresenter: RouteOptionsPresenter
     private lateinit var mCurrLocationManager: CurrLocationManager
@@ -53,10 +56,11 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
         setContentView(R.layout.activity_main)
 
         mSearchAdapter = SearchViewAdapter(this, mSearchLocations)
-        mRouteViewAdapter =
-            RouteViewAdapter(this, ArrayList())
+        mRouteListViewAdapter =
+            RouteListViewAdapter(this, ArrayList())
+        mRouteDetailAdapter = RouteDetailAdapter(this, route_detail_data)
         mSearchPresenter = SearchPresenter(search_card_holder, map_fragment as MapFragment,this, mSearchAdapter)
-        mRouteOptionsPresenter = RouteOptionsPresenter(bottom_sheet, mRouteViewAdapter, this)
+        mRouteOptionsPresenter = RouteOptionsPresenter(bottom_sheet, mRouteListViewAdapter, mRouteDetailAdapter, this)
         mRouteOptionsPresenter.setBottomSheetCallback(
             BottomSheetBehavior.from(bottom_sheet),
             bottom_sheet
@@ -76,7 +80,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
 
         boarding_soon_routes.layoutManager =
             LinearLayoutManager(this, RecyclerView.VERTICAL, false)
-        boarding_soon_routes.adapter = mRouteViewAdapter
+        boarding_soon_routes.adapter = mRouteListViewAdapter
         
 
 

@@ -18,5 +18,4 @@ object Repository {
 
     // Called from the SearchView everytime the MapView should change
     var _updateMapView = fun(a:Route) {}
-
 }

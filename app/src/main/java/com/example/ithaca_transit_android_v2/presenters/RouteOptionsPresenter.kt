@@ -57,6 +57,7 @@ class RouteOptionsPresenter(private val bottom_sheet: View,
             Repository._updateRouteFromSearch = searchCallback
 
             val adapterCallback = fun (route: Route) {
+                Repository._updateMapView(route)
                 emitter.onNext(RouteDetailViewState(route))
             }
             Repository._updateRouteDetailed = adapterCallback

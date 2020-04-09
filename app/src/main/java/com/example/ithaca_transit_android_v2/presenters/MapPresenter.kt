@@ -19,16 +19,24 @@ import kotlinx.android.synthetic.main.search_main.view.*
 import kotlinx.android.synthetic.main.search_secondary.view.*
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.CameraUpdateFactory
+import com.google.android.gms.maps.model.Polyline
 import com.google.android.gms.maps.model.PolylineOptions
 
 class MapPresenter() {
 
+    private val polylines = mutableListOf<Polyline>()
     /**
      * Create search observable object and emit states corresponding to changes in the search bar
      */
     private fun createMapObservable(): Observable<MapState> {
         val obs = Observable.create { emitter: ObservableEmitter<MapState> ->
             val callback = fun (displayRoute: Route) {
+
+                for(polyline in polylines) {
+                    polyline.remove()
+                }
+                polylines.clear()
+
                 emitter.onNext(
                     SelectedTrip(displayRoute)
                 )
@@ -58,7 +66,8 @@ class MapPresenter() {
                     options.add(latLng)
                 }
             }
-            map.addPolyline(options)
+            val polyline =  map.addPolyline(options)
+            polylines.add(polyline)
         }
     }
 

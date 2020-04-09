@@ -84,7 +84,6 @@ class SearchPresenter(
                 }
             }
 
-
             view.search_input.addTextChangedListener(watcher)
             view.search_input.setOnFocusChangeListener { view, hasFocus ->
                 if (hasFocus && (view as EditText).text.isEmpty()) {

@@ -16,13 +16,14 @@ class DrawRouteCard(context: Context, attrs: AttributeSet?) : View(context, attr
     var whiteDotColor = Paint(Paint.ANTI_ALIAS_FLAG)
 
     var containsWalking: Boolean = true;
+    var onlyWalking: Boolean = false;
 
     //Dimensions for Blue Dots and Line
     var circleX1 = 20f //36
     var circleY1 = 20f //42
     var circleR = 20f
 
-    var circleX2 = 36f //36
+    var circleX2 = 20f //36
     var circleY2 = 222f //222
 
     var left = 15f //30
@@ -53,6 +54,20 @@ class DrawRouteCard(context: Context, attrs: AttributeSet?) : View(context, attr
     var circleY7 = 20f //42
     var circleR7 = 8f
 
+    //Walking only Route Card circles
+    var wCircleX1 = 20f
+    var wCircleY1 = 60f
+
+    var wCircleX2 = 20f
+    var wCircleY2 = 85f
+
+    var wCircleX3 = 20f
+    var wCircleY3 = 110f
+
+    var wCircleR = 6f
+
+
+
     init {
         // create the Paint and set its color
         blueDotColor.setARGB(255, 7, 157, 220)
@@ -62,6 +77,7 @@ class DrawRouteCard(context: Context, attrs: AttributeSet?) : View(context, attr
     }
 
     fun setBlueDimensions(circlex2: Float, circley2: Float, lineL: Float,  containsWalking: Boolean = true) {
+
         circleX2 = circlex2
         circleY2 = circley2
         this.lineL = lineL
@@ -83,6 +99,7 @@ class DrawRouteCard(context: Context, attrs: AttributeSet?) : View(context, attr
     //fun setGrayDimensions()
 
     fun setGrayDimensions(x: Float, y3: Float, y5: Float, dotSpace: Float) {
+
         circleX3 = x
         circleY3 = y3
 
@@ -100,9 +117,30 @@ class DrawRouteCard(context: Context, attrs: AttributeSet?) : View(context, attr
 
     }
 
-    override fun onDraw(canvas: Canvas) {
+    fun setDrawWalking(){
 
-        if(containsWalking){
+        onlyWalking = true;
+
+        circleY2 = 150f
+
+
+    }
+
+
+    override fun onDraw(canvas: Canvas) {
+        //reset
+        if(onlyWalking){
+            canvas.drawCircle(circleX1, circleY1, circleR, grayDotColor)
+
+            canvas.drawCircle(circleX2, circleY2, circleR, grayDotColor)
+
+            canvas.drawCircle(wCircleX1, wCircleY1, wCircleR, grayDotColor)
+            canvas.drawCircle(wCircleX2, wCircleY2, wCircleR, grayDotColor)
+            canvas.drawCircle(wCircleX3, wCircleY3, wCircleR, grayDotColor)
+
+
+        }
+        else if(containsWalking){
             canvas.drawCircle(circleX1, circleY1, circleR, blueDotColor)
 
             canvas.drawRect(left, top, left + lineW, top + lineL, blueDotColor)
@@ -127,6 +165,11 @@ class DrawRouteCard(context: Context, attrs: AttributeSet?) : View(context, attr
             canvas.drawCircle(circleX6, circleY6, circleR6, whiteDotColor)
             canvas.drawCircle(circleX7, circleY7, circleR7, blueDotColor)
         }
+
+        //reset variables
+        onlyWalking = false;
+        containsWalking = true;
+
 
 
     }

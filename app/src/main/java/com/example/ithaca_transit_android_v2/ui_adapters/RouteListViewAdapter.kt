@@ -2,6 +2,7 @@ package com.example.ithaca_transit_android_v2.ui_adapters
 
 import android.content.Context
 import android.graphics.Typeface
+import android.opengl.Visibility
 import android.util.Log
 import android.view.Gravity
 import android.view.LayoutInflater
@@ -26,6 +27,9 @@ class RouteListViewAdapter(context: Context, var userList: ArrayList<RouteListAd
 
     var routeCardContext = context
 
+    //Change to gray dots when walking
+    var walkingRouteCheck: Boolean = false
+
     override fun getItemViewType(position: Int): Int {
         if (userList[position].type.equals("routeLabel")) {
             return R.layout.route_label
@@ -44,6 +48,91 @@ class RouteListViewAdapter(context: Context, var userList: ArrayList<RouteListAd
 
     override fun getItemCount(): Int {
         return userList.size
+    }
+
+    fun drawRouteCardWalking(p0: ViewHolder, p1: Int) {
+        p0.directionList.removeAllViews()
+        p0.busDrawing.removeAllViews()
+
+        val lDirectionparams = LinearLayout.LayoutParams(
+            LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT
+        )
+        lDirectionparams.weight = 1f
+
+        val busIconParams = LinearLayout.LayoutParams(
+            LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT
+        )
+
+        val walkingIconParams = LinearLayout.LayoutParams(
+            LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT
+        )
+
+        val linearlayoutparams = p0.directionList.layoutParams
+        val busImageLayoutParam = p0.busDrawing.layoutParams
+        val dotParams = p0.dotDrawing.layoutParams
+
+        //Draw Dots
+        linearlayoutparams.height = 250
+        dotParams.height = 250
+
+
+        walkingRouteCheck = false;
+
+        val routeObj: Route = userList[p1].data as Route
+
+        val summaryList: ArrayList<String> = ArrayList()
+        val busList: ArrayList<Int> = ArrayList()
+
+        //Add current location to routeSummary for walking
+        Repository.startLocation?.name?.let { summaryList.add(it) }
+
+        for (i in 0 until routeObj.routeSummary!!.size) {
+
+            routeObj.routeSummary.get(i).stopName?.let { summaryList.add(it) }
+
+            //Check if bus number is null, if not add it to the list
+            if (routeObj.routeSummary.get(i).direction?.busNumber != null) {
+                routeObj.routeSummary.get(i).direction?.busNumber?.let { busList.add(it) }
+            }
+
+        }
+
+        for (direction in summaryList) {
+            val individualDirection = TextView(routeCardContext)
+            individualDirection.text = direction
+            p0.directionList.addView(individualDirection)
+            individualDirection.textSize = 15f
+            individualDirection.layoutParams = lDirectionparams
+        }
+        //p0.description.visibility = View.GONE;
+
+        val sdf = SimpleDateFormat("h:mm a", Locale.US)
+        val timeText: String = sdf.format(routeObj.depart) + " - " + sdf.format(routeObj.arrival)
+
+        p0.routeDuration.text = timeText
+        p0.routeDuration.setTypeface(null, Typeface.BOLD);
+
+
+        p0.dotDrawing.setDrawWalking()
+
+        //Create Walking Person
+        val walkingView = ImageView(routeCardContext)
+
+        // Set an image for ImageView
+        walkingView.setImageDrawable(
+            ContextCompat.getDrawable(
+                routeCardContext, // Context
+                R.drawable.walking_vector // Drawable
+            )
+        )
+
+
+        walkingIconParams.weight = 1f
+        walkingView.layoutParams = walkingIconParams
+
+
+        p0.busDrawing.addView(walkingView)
+
     }
 
     fun drawRouteCard(p0: ViewHolder, p1: Int) {
@@ -125,18 +214,17 @@ class RouteListViewAdapter(context: Context, var userList: ArrayList<RouteListAd
                 //var drawRouteCard=DrawRouteCard(routeCardContext, null, 36f, 222f, 180f )
 
             }
-        }
-        else if (!containsWalking){
+        } else if (!containsWalking) {
             if (summaryList.size > 2) {
-                linearlayoutparams.height = 400
-                dotParams.height = 400
+                linearlayoutparams.height = 350
+                dotParams.height = 350
 
 
                 if (summaryList.size == 3) {
-                    p0.dotDrawing.setBlueDimensions(20f, 325f, 305f, false)
+                    p0.dotDrawing.setBlueDimensions(20f, 255f, 235f, false)
 
                 } else {
-                    p0.dotDrawing.setBlueDimensions(20f, 255f, 235f, false)
+                    p0.dotDrawing.setBlueDimensions(20f, 300f, 280f, false)
                 }
 
                 //Forces the canvas to redraw and update dots
@@ -151,13 +239,13 @@ class RouteListViewAdapter(context: Context, var userList: ArrayList<RouteListAd
             }
         }
 
-            for (direction in summaryList) {
-                val individualDirection = TextView(routeCardContext)
-                individualDirection.text = direction
-                p0.directionList.addView(individualDirection)
-                individualDirection.textSize = 15f
-                individualDirection.layoutParams = lDirectionparams
-            }
+        for (direction in summaryList) {
+            val individualDirection = TextView(routeCardContext)
+            individualDirection.text = direction
+            p0.directionList.addView(individualDirection)
+            individualDirection.textSize = 15f
+            individualDirection.layoutParams = lDirectionparams
+        }
 
         //Create bus number images
         for (i in busList) {
@@ -233,10 +321,19 @@ class RouteListViewAdapter(context: Context, var userList: ArrayList<RouteListAd
 
     override fun onBindViewHolder(p0: ViewHolder, p1: Int) {
 
-        if (getItemViewType(p1) == R.layout.route_cards) {
+        if (walkingRouteCheck && getItemViewType(p1) == R.layout.route_cards) {
+
+            drawRouteCardWalking(p0, p1)
+
+        } else if (getItemViewType(p1) == R.layout.route_cards) {
             drawRouteCard(p0, p1)
         } else {
             val label = userList[p1].data as String
+            if (label == "Walking") {
+                Log.d("Route", "walking only")
+                walkingRouteCheck = true;
+
+            }
             p0.routeLabel.text = label
         }
 

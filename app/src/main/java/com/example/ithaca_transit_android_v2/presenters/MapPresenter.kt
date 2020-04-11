@@ -56,7 +56,7 @@ class MapPresenter() {
                 if (direction.tripIdentifiers != null) {
                     val busInfo = BusInformation(
                         direction.tripIdentifiers[0],
-                        direction.busNumber.toString()
+                        direction.routeNumber.toString()
                     )
                     NetworkUtils().getBusCoords(listOf(busInfo))
                 }

@@ -1,8 +1,13 @@
 package com.example.ithaca_transit_android_v2.ui_adapters
 
 import android.content.Context
+import android.graphics.Color
 import android.graphics.Typeface
 import android.opengl.Visibility
+import android.text.SpannableString
+import android.text.Spanned
+import android.text.style.ForegroundColorSpan
+import android.text.style.RelativeSizeSpan
 import android.util.Log
 import android.view.Gravity
 import android.view.LayoutInflater
@@ -20,6 +25,8 @@ import com.example.ithaca_transit_android_v2.views.DrawRouteCard
 import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.collections.ArrayList
+import java.math.BigDecimal
+import java.math.RoundingMode
 
 // Recycler view adapter that fills each route card with the list of Route objects that is returned by our RouteOptions networking call.
 class RouteListViewAdapter(context: Context, var userList: ArrayList<RouteListAdapterObject>) :
@@ -54,6 +61,12 @@ class RouteListViewAdapter(context: Context, var userList: ArrayList<RouteListAd
         p0.directionList.removeAllViews()
         p0.busDrawing.removeAllViews()
 
+        walkingRouteCheck = false;
+
+
+        val summaryList: ArrayList<String> = ArrayList()
+        val busList: ArrayList<Int> = ArrayList()
+
         val lDirectionparams = LinearLayout.LayoutParams(
             LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT
         )
@@ -68,23 +81,15 @@ class RouteListViewAdapter(context: Context, var userList: ArrayList<RouteListAd
         )
 
         val linearlayoutparams = p0.directionList.layoutParams
-        val busImageLayoutParam = p0.busDrawing.layoutParams
         val dotParams = p0.dotDrawing.layoutParams
 
         //Draw Dots
-        linearlayoutparams.height = 250
-        dotParams.height = 250
-
-
-        walkingRouteCheck = false;
+        linearlayoutparams.height = 220
+        dotParams.height = 220
 
         val routeObj: Route = userList[p1].data as Route
 
-        val summaryList: ArrayList<String> = ArrayList()
-        val busList: ArrayList<Int> = ArrayList()
-
         //Add current location to routeSummary for walking
-        Repository.startLocation?.name?.let { summaryList.add(it) }
 
         for (i in 0 until routeObj.routeSummary!!.size) {
 
@@ -95,6 +100,9 @@ class RouteListViewAdapter(context: Context, var userList: ArrayList<RouteListAd
                 routeObj.routeSummary.get(i).direction?.busNumber?.let { busList.add(it) }
             }
 
+        }
+        if(!summaryList.contains(Repository.startLocation?.name)){
+            Repository.startLocation?.name?.let { summaryList.add(0, it) }
         }
 
         for (direction in summaryList) {
@@ -133,6 +141,18 @@ class RouteListViewAdapter(context: Context, var userList: ArrayList<RouteListAd
 
         p0.busDrawing.addView(walkingView)
 
+        val distanceText = TextView(routeCardContext)
+
+        val roundedTravelDistance  = BigDecimal(routeObj.traveldistance).setScale(2, RoundingMode.HALF_EVEN)
+
+
+        distanceText.text = ""+roundedTravelDistance + " mi"
+        p0.busDrawing.addView(distanceText)
+        distanceText.textSize = 12f
+        distanceText.layoutParams = lDirectionparams
+
+
+
     }
 
     fun drawRouteCard(p0: ViewHolder, p1: Int) {
@@ -153,6 +173,8 @@ class RouteListViewAdapter(context: Context, var userList: ArrayList<RouteListAd
 
         val summaryList: ArrayList<String> = ArrayList()
         val busList: ArrayList<Int> = ArrayList()
+
+
 
         for (i in 0 until routeObj.routeSummary!!.size) {
 
@@ -182,25 +204,45 @@ class RouteListViewAdapter(context: Context, var userList: ArrayList<RouteListAd
         val busImageLayoutParam = p0.busDrawing.layoutParams
         val dotParams = p0.dotDrawing.layoutParams
 
-        Log.d("SummaryListSize", "" + summaryList.size)
-
         if (containsWalking) {
             if (summaryList.size > 3) {
-                linearlayoutparams.height = 400
-                dotParams.height = 400
 
 
                 if (summaryList.size == 4) {
+                    linearlayoutparams.height = 400
+                    dotParams.height = 400
+
                     p0.dotDrawing.setBlueDimensions(20f, 215f, 195f)
                     p0.dotDrawing.setGrayDimensions(20f, 255f, 325f, 30f)
 
                 } else if (summaryList.size == 5) {
+                    linearlayoutparams.height = 400
+                    dotParams.height = 400
+
                     p0.dotDrawing.setBlueDimensions(20f, 255f, 235f)
                     p0.dotDrawing.setGrayDimensions(20f, 302f, 345f, 0f)
 
                 } else {
-                    p0.dotDrawing.setBlueDimensions(20f, 255f, 235f)
-                    p0.dotDrawing.setGrayDimensions(20f, 260f, 310f, 22f)
+
+                    val newParamHeight = 400 + 110*(summaryList.size-5)
+
+                    linearlayoutparams.height = newParamHeight
+                    dotParams.height = newParamHeight
+
+                    Log.d("paramHeight", ""+linearlayoutparams.height )
+
+                    p0.busDrawing.invalidate()
+                    p0.directionList.invalidate()
+
+                    val blueCircle2Y : Float = (255f + (100*(summaryList.size-5)).toFloat())
+                    val blueLine : Float =  (235f + (100*(summaryList.size-5)).toFloat())
+
+                    val grayCircle2Y : Float = (260f + (130*(summaryList.size-5)).toFloat())
+                    val grayCircle5Y : Float = (310f + (135*(summaryList.size-5)).toFloat())
+                    val dotSpace : Float  = (22f + (1*(summaryList.size-5)).toFloat())
+
+                    p0.dotDrawing.setBlueDimensions(20f, blueCircle2Y, blueLine)
+                    p0.dotDrawing.setGrayDimensions(20f, grayCircle2Y, grayCircle5Y, dotSpace )
                 }
 
                 //Forces the canvas to redraw and update dots
@@ -239,12 +281,33 @@ class RouteListViewAdapter(context: Context, var userList: ArrayList<RouteListAd
             }
         }
 
-        for (direction in summaryList) {
-            val individualDirection = TextView(routeCardContext)
-            individualDirection.text = direction
-            p0.directionList.addView(individualDirection)
-            individualDirection.textSize = 15f
-            individualDirection.layoutParams = lDirectionparams
+        for ((i, direction) in summaryList.withIndex()) {
+            if( i == 0){
+                val routeText = direction + " " + routeObj.directions.get(i).distance.toInt() + "ft"
+                val ss = SpannableString(routeText)
+                val distanceIndex = routeText.indexOf(""+routeObj.directions.get(i).distance.toInt())
+                val greyColor = ForegroundColorSpan(Color.GRAY)
+                val blackColor = ForegroundColorSpan(Color.BLACK)
+                ss.setSpan(blackColor,0,distanceIndex,Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
+                ss.setSpan(greyColor, distanceIndex, routeText.length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
+
+                ss.setSpan(RelativeSizeSpan(0.7f), distanceIndex,routeText.length, 0);
+                val individualDirection = TextView(routeCardContext)
+                individualDirection.setText(ss)
+                p0.directionList.addView(individualDirection)
+                individualDirection.textSize = 15f
+                individualDirection.layoutParams = lDirectionparams
+            }
+
+            else{
+                val individualDirection = TextView(routeCardContext)
+                individualDirection.text = direction
+                individualDirection.setTextColor(Color.BLACK)
+                p0.directionList.addView(individualDirection)
+                individualDirection.textSize = 15f
+                individualDirection.layoutParams = lDirectionparams
+            }
+
         }
 
         //Create bus number images
@@ -330,7 +393,6 @@ class RouteListViewAdapter(context: Context, var userList: ArrayList<RouteListAd
         } else {
             val label = userList[p1].data as String
             if (label == "Walking") {
-                Log.d("Route", "walking only")
                 walkingRouteCheck = true;
 
             }

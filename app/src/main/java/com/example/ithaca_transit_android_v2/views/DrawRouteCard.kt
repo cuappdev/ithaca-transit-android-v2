@@ -64,7 +64,15 @@ class DrawRouteCard(context: Context, attrs: AttributeSet?) : View(context, attr
     var wCircleX3 = 20f
     var wCircleY3 = 110f
 
+    var wCircleX4 = 20f
+    var wCircleY4= 155f
+
+    var wCircleX5 = 20f
+    var wCircleY5= 155f
+
     var wCircleR = 6f
+    var wCircleR4 = 15f
+    var wCircleR5 = 8f
 
 
 
@@ -131,12 +139,14 @@ class DrawRouteCard(context: Context, attrs: AttributeSet?) : View(context, attr
         //reset
         if(onlyWalking){
             canvas.drawCircle(circleX1, circleY1, circleR, grayDotColor)
-
             canvas.drawCircle(circleX2, circleY2, circleR, grayDotColor)
 
             canvas.drawCircle(wCircleX1, wCircleY1, wCircleR, grayDotColor)
             canvas.drawCircle(wCircleX2, wCircleY2, wCircleR, grayDotColor)
             canvas.drawCircle(wCircleX3, wCircleY3, wCircleR, grayDotColor)
+
+            canvas.drawCircle(wCircleX4, circleY2, wCircleR4, whiteDotColor)
+            canvas.drawCircle(wCircleX5, circleY2, wCircleR5, grayDotColor)
 
 
         }

@@ -20,7 +20,8 @@ data class Route (
     val depart: Date,
     @Json(name = "routeSummary")
     val routeSummary: List<RouteSummary>?,
-    val boardInMin: Int
+    val boardInMin: Int,
+    val traveldistance : Double
 
 
 ) {

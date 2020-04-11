@@ -25,10 +25,12 @@ import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.route_card_compact.view.*
 import kotlinx.android.synthetic.main.route_detailed.view.*
 
-class RouteOptionsPresenter(private val bottom_sheet: View,
-                            _routeListViewAdapter: RouteListViewAdapter,
-                            _routeDetailAdapter: RouteDetailAdapter,
-                            _context: Context) {
+class RouteOptionsPresenter(
+    private val bottom_sheet: View,
+    _routeListViewAdapter: RouteListViewAdapter,
+    _routeDetailAdapter: RouteDetailAdapter,
+    _context: Context
+) {
 
     var mRouteListAdapter = _routeListViewAdapter
     var mRouteDetailAdapter = _routeDetailAdapter
@@ -56,7 +58,7 @@ class RouteOptionsPresenter(private val bottom_sheet: View,
             }
             Repository._updateRouteFromSearch = searchCallback
 
-            val adapterCallback = fun (route: Route) {
+            val adapterCallback = fun(route: Route) {
                 Repository._updateMapView(route)
                 emitter.onNext(RouteDetailViewState(route))
             }
@@ -76,13 +78,15 @@ class RouteOptionsPresenter(private val bottom_sheet: View,
         return obs.startWith(OptionsHiddenState())
     }
 
-
     fun setBottomSheetHeight(height: Float) {
         BottomSheetBehavior.from(bottom_sheet).peekHeight =
-            TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP,
-                height, context.resources.displayMetrics).toInt()
+            TypedValue.applyDimension(
+                TypedValue.COMPLEX_UNIT_DIP,
+                height, context.resources.displayMetrics
+            ).toInt()
 
     }
+
     fun initRouteCardView(): Disposable {
         val observable = createRouteCardObservable()
 
@@ -122,43 +126,45 @@ class RouteOptionsPresenter(private val bottom_sheet: View,
                         routeCardHolder.boarding_soon_routes.invalidate()
                         routeCardHolder.boarding_soon_routes.removeAllViews()
 
-
-                        val allRoutes : ArrayList<RouteListAdapterObject> = ArrayList<RouteListAdapterObject>()
-                        if(state.routeOptions.boardingSoon.size!= 0){
-                            allRoutes.add(RouteListAdapterObject("routeLabel", "Boarding Soon from Nearby Stops"))
+                        val allRoutes: ArrayList<RouteListAdapterObject> =
+                            ArrayList<RouteListAdapterObject>()
+                        if (state.routeOptions.boardingSoon.size != 0) {
+                            allRoutes.add(
+                                RouteListAdapterObject(
+                                    "routeLabel",
+                                    "Boarding Soon from Nearby Stops"
+                                )
+                            )
 
                             //Add all route objects and texts
-                            for(r in state.routeOptions.boardingSoon){
-                                val boardObj : RouteListAdapterObject = RouteListAdapterObject("route", r)
+                            for (r in state.routeOptions.boardingSoon) {
+                                val boardObj: RouteListAdapterObject =
+                                    RouteListAdapterObject("route", r)
                                 allRoutes.add(boardObj)
                             }
                         }
 
-                        if(state.routeOptions.fromStop.size!= 0){
+                        if (state.routeOptions.fromStop.size != 0) {
                             allRoutes.add(RouteListAdapterObject("routeLabel", "From Stops"))
 
                             //Add all route objects and texts
-                            for(r in state.routeOptions.fromStop){
-                                val boardObj : RouteListAdapterObject = RouteListAdapterObject("route", r)
+                            for (r in state.routeOptions.fromStop) {
+                                val boardObj: RouteListAdapterObject =
+                                    RouteListAdapterObject("route", r)
                                 allRoutes.add(boardObj)
                             }
                         }
 
-                        if(state.routeOptions.walking.size!= 0){
+                        if (state.routeOptions.walking.size != 0) {
                             allRoutes.add(RouteListAdapterObject("routeLabel", "Walking"))
 
                             //Add all route objects and texts
-                            for(r in state.routeOptions.walking){
-                                val boardObj : RouteListAdapterObject = RouteListAdapterObject("route", r)
+                            for (r in state.routeOptions.walking) {
+                                val boardObj: RouteListAdapterObject =
+                                    RouteListAdapterObject("route", r)
                                 allRoutes.add(boardObj)
                             }
                         }
-
-
-
-                        //Log.d("Display From Stop", ""+ state.routeOptions!!.boardingSoon[1].stops[1].name)
-                        Log.d("Display Walking", ""+ state.routeOptions!!.walking.toString())
-
 
                         mRouteListAdapter.swapItems(allRoutes)
 

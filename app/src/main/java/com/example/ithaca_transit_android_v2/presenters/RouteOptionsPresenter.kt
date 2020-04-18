@@ -102,7 +102,17 @@ class RouteOptionsPresenter(private val bottom_sheet: View,
                 } else {
                     state
                 }
+            }
+            .map{state ->
+                if (state is RouteListState) {
+                    val routeOptions = state.routeOptions
 
+                    // make network call here to add in delays
+                    val updatedRouteOptions = routeOptions
+                    RouteListState(state.startLocation, state.destLocation, updatedRouteOptions)
+                } else {
+                    state
+                }
             }
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe { state ->

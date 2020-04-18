@@ -53,6 +53,7 @@ class MapPresenter() {
     fun liveTrackingTEST(route: Route) {
         Thread(Runnable {
             for(direction in route.directions) {
+                Log.i("qwertyio", (direction.routeNumber ?: "null").toString())
                 if (direction.tripIdentifiers != null) {
                     val busInfo = BusInformation(
                         direction.tripIdentifiers[0],
@@ -62,7 +63,6 @@ class MapPresenter() {
                 }
             }
         }).start()
-
     }
 
     fun drawRoute(map: GoogleMap, route: Route) {

@@ -22,7 +22,6 @@ data class Route (
     val routeSummary: List<RouteSummary>?,
     val boardInMin: Int
 
-
 ) {
     companion object {
         fun computeBoardInMin(firstBusDirection: Direction): Int {

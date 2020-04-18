@@ -1,8 +1,6 @@
 package com.example.ithaca_transit_android_v2
 import android.util.Log
-import com.example.ithaca_transit_android_v2.models.Coordinate
-import com.example.ithaca_transit_android_v2.models.Location
-import com.example.ithaca_transit_android_v2.models.RouteOptions
+import com.example.ithaca_transit_android_v2.models.*
 import com.example.ithaca_transit_android_v2.models.tracking.BusInformation
 import com.squareup.moshi.JsonAdapter
 import com.squareup.moshi.JsonReader
@@ -135,5 +133,47 @@ class NetworkUtils {
         Log.i("qwerty", "The server returned: "+response.toString())
 
     }
+
+    fun applyDelayRoutes(routes: List<Route>): ArrayList<Int>{
+        var delays = arrayListOf<Int>()
+        for (i in routes){
+            delays.add(getDelay(i))
+        }
+        return delays
+    }
+
+    fun getDelay(route: Route):Int {
+        //getting StopID
+        var stopID = String()
+        var tripID = String()
+        for (i in route.directions) {
+            if (i.type != DirectionType.WALK) {
+                stopID = i.busStops[0].stopID
+                tripID = i.tripIdentifiers?.get(0) ?:
+                break
+            } else {break}
+        }
+
+        val arr = JSONArray()
+        val infoJSON = JSONObject()
+        infoJSON.put("stopID", stopID)
+        infoJSON.put("tripID", tripID)
+        arr.put(infoJSON)
+        val json = JSONObject()
+        json.put("data", json)
+
+        val requestBody = json.toString().toRequestBody(mediaType)
+        val request: Request = Request.Builder()
+            .url(url + "tracking")
+            .post(requestBody)
+            .build()
+        val body = client.newCall(request).execute().body?.string()
+        val response = JSONObject(body!!)
+        Log.i("qwerty", "The server returned: "+response.toString())
+
+        //not sure if this works
+        return Integer.parseInt(response.toString())
+    }
+
 
 }

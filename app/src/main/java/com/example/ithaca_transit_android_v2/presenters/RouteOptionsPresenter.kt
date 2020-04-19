@@ -1,7 +1,6 @@
 package com.example.ithaca_transit_android_v2.presenters
 
 import android.content.Context
-import android.util.Log
 import android.util.TypedValue
 import android.view.View
 import android.widget.LinearLayout
@@ -9,6 +8,7 @@ import androidx.annotation.NonNull
 import com.example.ithaca_transit_android_v2.NetworkUtils
 import com.example.ithaca_transit_android_v2.Repository
 import com.example.ithaca_transit_android_v2.models.Route
+import com.example.ithaca_transit_android_v2.models.RouteOptions
 import com.example.ithaca_transit_android_v2.states.OptionsHiddenState
 import com.example.ithaca_transit_android_v2.states.RouteCardState
 import com.example.ithaca_transit_android_v2.states.RouteDetailViewState
@@ -106,10 +106,18 @@ class RouteOptionsPresenter(private val bottom_sheet: View,
             .map{state ->
                 if (state is RouteListState) {
                     val routeOptions = state.routeOptions
-
-                    // make network call here to add in delays
-                    val updatedRouteOptions = routeOptions
-                    RouteListState(state.startLocation, state.destLocation, updatedRouteOptions)
+                    if (routeOptions == null || routeOptions.boardingSoon == null) {
+                        state
+                    } else {
+                        val boardingSoonWithDelay =
+                            NetworkUtils().applyDelayRoutes(routeOptions.boardingSoon)
+                        val updatedRouteOptions = RouteOptions(
+                            boardingSoonWithDelay,
+                            routeOptions.fromStop,
+                            routeOptions.walking
+                        )
+                        RouteListState(state.startLocation, state.destLocation, updatedRouteOptions)
+                    }
                 } else {
                     state
                 }

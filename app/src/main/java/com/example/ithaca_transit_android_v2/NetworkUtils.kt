@@ -49,22 +49,6 @@ class NetworkUtils {
         return adapter.fromJson(body) ?: emptyList()
     }
 
-    fun getAllBusStops(): List<Location> {
-        val request: Request = Request.Builder()
-            .url(url + "allstops")
-            .build()
-
-        val body = client.newCall(request).execute().body?.string()
-        val type = newParameterizedType(List::class.java, Location::class.java)
-        val moshi = Moshi.Builder()
-            .add(LocationAdapter())
-            .add(KotlinJsonAdapterFactory())
-            .build()
-
-        val adapter: JsonAdapter<List<Location>> = moshi.adapter(type)
-        return adapter.fromJson(body) ?: emptyList()
-    }
-
     fun getRouteOptions(
         start: Coordinate,
         end: Coordinate,
@@ -107,13 +91,14 @@ class NetworkUtils {
         )
     }
 
+    // Gets the list of locations given the specified list of tripIds and routeIds
     fun getBusCoords(busDataList: List<BusInformation>) {
         val busJsonArr = JSONArray()
         for(busInfo in busDataList) {
-            if (busInfo.tripId != null && busInfo.routeId != null) {
+            if (busInfo.tripId != null && busInfo.routeNumber != null) {
                 val busJson = JSONObject()
                 busJson.put("tripId", busInfo.tripId)
-                busJson.put("routeId", busInfo.routeId)
+                busJson.put("routeNumber", busInfo.routeNumber)
                 busJsonArr.put(busJson)
             }
         }
@@ -131,48 +116,52 @@ class NetworkUtils {
         val response = JSONObject(body!!)
         val arr = response.get("data")
         Log.i("qwerty", "The server returned: "+response.toString())
-
     }
 
-    fun applyDelayRoutes(routes: List<Route>): ArrayList<Int>{
-        var delays = arrayListOf<Int>()
-        for (i in routes){
-            delays.add(getDelay(i))
-        }
-        return delays
-    }
-
-    fun getDelay(route: Route):Int {
-        //getting StopID
-        var stopID = String()
-        var tripID = String()
-        for (i in route.directions) {
-            if (i.type != DirectionType.WALK) {
-                stopID = i.busStops[0].stopID
-                tripID = i.tripIdentifiers?.get(0) ?:
-                break
-            } else {break}
+    // Returns an updated list of routes containing delays
+    fun applyDelayRoutes(routes: List<Route>): List<Route>{
+        // pulling out stopIds and routeIds for the first direction that is not a walking direction
+        val stopIDs = ArrayList<String>()
+        val tripIDs = ArrayList<String>()
+        for(route in routes) {
+            for (i in route.directions) {
+                if (i.type != DirectionType.WALK) {
+                    stopIDs.add(i.busStops[0].stopID)
+                    tripIDs.add(i.tripIdentifiers?.get(0) ?: "")
+                }
+            }
         }
 
         val arr = JSONArray()
-        val infoJSON = JSONObject()
-        infoJSON.put("stopID", stopID)
-        infoJSON.put("tripID", tripID)
-        arr.put(infoJSON)
+        for(i in 0 until stopIDs.size) {
+            if (tripIDs.get(i) != "") {
+                val delayInfo = JSONObject()
+                delayInfo.put("stopID", stopIDs.get(i))
+                delayInfo.put("tripID", tripIDs.get(i))
+                arr.put(delayInfo)
+            }
+        }
         val json = JSONObject()
-        json.put("data", json)
+        json.put("data", arr)
 
         val requestBody = json.toString().toRequestBody(mediaType)
         val request: Request = Request.Builder()
-            .url(url + "tracking")
+            .url(url + "delays")
             .post(requestBody)
             .build()
         val body = client.newCall(request).execute().body?.string()
         val response = JSONObject(body!!)
-        Log.i("qwerty", "The server returned: "+response.toString())
+        val data:JSONArray = response.getJSONArray("data")
+        Log.i("delays_from_server", data.toString())
 
-        //not sure if this works
-        return Integer.parseInt(response.toString())
+        return routes.mapIndexed { index, route ->
+            val delay = data.getJSONObject(index).getString("delay")
+            if (delay.equals("null")) {
+                route
+            } else {
+                route.copy(delay = Integer.parseInt(delay))
+            }
+        }
     }
 
 

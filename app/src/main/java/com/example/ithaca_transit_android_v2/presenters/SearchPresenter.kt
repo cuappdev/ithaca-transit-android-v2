@@ -142,7 +142,6 @@ class SearchPresenter(
 
                 override fun onTextChanged(searchText: CharSequence?, p1: Int, p2: Int, p3: Int) {
                     if (mEditing) {
-                        Log.i("qwerty", "called from editing")
                         emitter.onNext(ChangeRouteState(searchText.toString(), false))
                     }
                 }
@@ -159,7 +158,6 @@ class SearchPresenter(
             }
             view.edit_dest_loc.setOnFocusChangeListener { view, hasFocus ->
                 if (hasFocus && mEditing) {
-                    Log.i("qwerty", "called from end focus change")
                     mEditingStart = false
                     emitter.onNext(ChangeRouteState(view.edit_dest_loc.text.toString(), false))
                 }
@@ -260,7 +258,6 @@ class SearchPresenter(
             }
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe({ state ->
-                Log.i("qwerty", state.toString())
                 when (state) {
                     is SearchLaunchState -> {
                         view.search_area.visibility = View.VISIBLE

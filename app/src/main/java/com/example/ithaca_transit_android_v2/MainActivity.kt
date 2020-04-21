@@ -23,7 +23,7 @@ import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import io.reactivex.disposables.Disposable
 import kotlinx.android.synthetic.main.activity_main.*
-import kotlinx.android.synthetic.main.route_card_compact.*
+import kotlinx.android.synthetic.main.routes_holder.*
 import kotlinx.android.synthetic.main.route_detailed.*
 
 import kotlinx.android.synthetic.main.search_main.*

@@ -22,7 +22,7 @@ import io.reactivex.ObservableEmitter
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
-import kotlinx.android.synthetic.main.route_card_compact.view.*
+import kotlinx.android.synthetic.main.routes_holder.view.*
 import kotlinx.android.synthetic.main.route_detailed.view.*
 
 class RouteOptionsPresenter(

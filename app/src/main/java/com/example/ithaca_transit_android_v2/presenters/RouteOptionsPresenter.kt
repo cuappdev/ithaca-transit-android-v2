@@ -192,9 +192,9 @@ class RouteOptionsPresenter(
     }
 
     fun setBottomSheetCallback(
-        bottomSheetBehavior: BottomSheetBehavior<LinearLayout>,
         bottom_sheet: LinearLayout
     ) {
+        val bottomSheetBehavior = BottomSheetBehavior.from(bottom_sheet)
         var slideState = BottomSheetBehavior.STATE_COLLAPSED
         bottomSheetBehavior.setBottomSheetCallback(object :
             BottomSheetBehavior.BottomSheetCallback() {

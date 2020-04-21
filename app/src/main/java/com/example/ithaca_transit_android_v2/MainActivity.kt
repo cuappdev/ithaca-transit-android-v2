@@ -61,10 +61,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
         mRouteDetailAdapter = RouteDetailAdapter(this, route_detail_data)
         mSearchPresenter = SearchPresenter(search_card_holder, map_fragment as MapFragment,this, mSearchAdapter)
         mRouteOptionsPresenter = RouteOptionsPresenter(bottom_sheet, mRouteListViewAdapter, mRouteDetailAdapter, this)
-        mRouteOptionsPresenter.setBottomSheetCallback(
-            BottomSheetBehavior.from(bottom_sheet),
-            bottom_sheet
-        );
+        mRouteOptionsPresenter.setBottomSheetCallback(bottom_sheet)
 
         searchDisposable = mSearchPresenter.initSearchView()
         routeCardDisposable = mRouteOptionsPresenter.initRouteCardView();

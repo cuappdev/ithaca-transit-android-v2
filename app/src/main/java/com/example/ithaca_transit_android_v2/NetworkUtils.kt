@@ -97,7 +97,7 @@ class NetworkUtils {
         for(busInfo in busDataList) {
             if (busInfo.tripId != null && busInfo.routeNumber != null) {
                 val busJson = JSONObject()
-                busJson.put("tripId", busInfo.tripId)
+                busJson.put("tripID", busInfo.tripId)
                 busJson.put("routeNumber", busInfo.routeNumber)
                 busJsonArr.put(busJson)
             }
@@ -115,7 +115,7 @@ class NetworkUtils {
         val body = client.newCall(request).execute().body?.string()
         val response = JSONObject(body!!)
         val arr = response.get("data")
-        Log.i("qwerty", "The server returned: "+response.toString())
+        Log.i("qwerty", "The server returns: "+response.toString())
     }
 
     // Returns an updated list of routes containing delays

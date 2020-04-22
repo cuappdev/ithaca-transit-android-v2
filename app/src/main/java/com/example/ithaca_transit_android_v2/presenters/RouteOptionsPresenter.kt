@@ -79,6 +79,7 @@ class RouteOptionsPresenter(bottomSheet: View, _routeViewAdapter: RouteViewAdapt
                     is RouteListState -> {
                         // Display the first routeOptions route on the map
                         Repository._updateMapView(state.routeOptions!!.boardingSoon[0])
+                        Repository._updateMapView(state.routeOptions!!.walking[0])
 
 
 

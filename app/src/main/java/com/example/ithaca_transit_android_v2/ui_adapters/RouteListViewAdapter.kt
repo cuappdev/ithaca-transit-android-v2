@@ -201,7 +201,6 @@ class RouteListViewAdapter(context: Context, var userList: ArrayList<RouteListAd
         }
 
         var iterator = 0
-        var lastIsBusStop = false
         for(i in 0 until routeObj.routeSummary.size) {
             val summaryObj = routeObj.routeSummary[i]
             iterator++

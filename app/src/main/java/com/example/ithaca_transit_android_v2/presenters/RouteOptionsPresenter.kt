@@ -129,7 +129,7 @@ class RouteOptionsPresenter(
                         } else if (state.routeOptions.walking.isNotEmpty()) {
                             Repository._updateMapView(state.routeOptions.walking[0])
                         }
-                        
+
                         setBottomSheetHeight(140f)
 
                         // Refresh Views

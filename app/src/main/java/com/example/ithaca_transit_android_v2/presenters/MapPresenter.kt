@@ -73,6 +73,19 @@ class MapPresenter() {
         circle.radius(20.0)
         map.addCircle(circle)
 
+        var circle1 = CircleOptions()
+        circle1.center(LatLng(lastCoor.latitude, lastCoor.longitude))
+        circle1.fillColor(Color.rgb(255,255,255))
+        circle1.strokeWidth(0.0F)
+        circle1.radius(15.0)
+        map.addCircle(circle1)
+
+        var circle2 = CircleOptions()
+        circle2.center(LatLng(lastCoor.latitude, lastCoor.longitude))
+        circle2.fillColor(Color.rgb(0,173,255))
+        circle2.strokeWidth(0.0F)
+        circle2.radius(10.0)
+        map.addCircle(circle2)
 
     }
 

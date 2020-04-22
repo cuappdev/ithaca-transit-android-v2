@@ -119,7 +119,17 @@ class RouteOptionsPresenter(
                     }
                     is RouteListState -> {
                         // Display the first routeOptions route on the map
-                        Repository._updateMapView(state.routeOptions!!.boardingSoon[0])
+                        if (state.routeOptions == null) {
+                            return@subscribe
+                        }
+                        if (state.routeOptions.boardingSoon.isNotEmpty()) {
+                            Repository._updateMapView(state.routeOptions.boardingSoon[0])
+                        } else if (state.routeOptions.fromStop.isNotEmpty()) {
+                            Repository._updateMapView(state.routeOptions.fromStop[0])
+                        } else if (state.routeOptions.walking.isNotEmpty()) {
+                            Repository._updateMapView(state.routeOptions.walking[0])
+                        }
+                        
                         setBottomSheetHeight(140f)
 
                         // Refresh Views
@@ -128,7 +138,7 @@ class RouteOptionsPresenter(
 
                         val allRoutes: ArrayList<RouteListAdapterObject> =
                             ArrayList<RouteListAdapterObject>()
-                        if (state.routeOptions.boardingSoon.size != 0) {
+                        if (state.routeOptions.boardingSoon.isNotEmpty()) {
                             allRoutes.add(
                                 RouteListAdapterObject(
                                     "routeLabel",
@@ -144,7 +154,7 @@ class RouteOptionsPresenter(
                             }
                         }
 
-                        if (state.routeOptions.fromStop.size != 0) {
+                        if (state.routeOptions.fromStop.isNotEmpty()) {
                             allRoutes.add(RouteListAdapterObject("routeLabel", "From Stops"))
 
                             //Add all route objects and texts
@@ -155,7 +165,7 @@ class RouteOptionsPresenter(
                             }
                         }
 
-                        if (state.routeOptions.walking.size != 0) {
+                        if (state.routeOptions.walking.isNotEmpty()) {
                             allRoutes.add(RouteListAdapterObject("routeLabel", "Walking"))
 
                             //Add all route objects and texts

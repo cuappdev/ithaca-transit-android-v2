@@ -9,8 +9,8 @@ import android.view.View
 class DirectionLine(context: Context) : View(context) {
 
     lateinit var primaryColor:Paint
-    private var length:Float = 100f
-    private var width: Float = 3f
+    private var length:Float = -1f
+    private var width: Float = -1f
 
     constructor(context: Context, colorStr: String, length: Float, width: Float):this(context) {
         val paint = Paint(Paint.ANTI_ALIAS_FLAG)
@@ -24,6 +24,6 @@ class DirectionLine(context: Context) : View(context) {
     }
 
     override fun onDraw(canvas: Canvas) {
-        canvas.drawRect(0f, -10f, width, length, primaryColor)
+        canvas.drawRect(0f, 0f, width, length, primaryColor)
     }
 }

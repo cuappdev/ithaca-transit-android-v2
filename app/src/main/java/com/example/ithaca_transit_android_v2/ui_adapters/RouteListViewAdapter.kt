@@ -52,7 +52,10 @@ class RouteListViewAdapter(context: Context, var userList: ArrayList<RouteListAd
         return userList.size
     }
 
-    private fun createDirectionLinearLayout(description:String, isBusStop:Boolean,
+    private fun createDirectionLinearLayout(description:String,
+                                            isBusStop:Boolean,
+                                            drawSegmentAbove:Boolean,
+                                            drawSegmentBelow:Boolean,
                                             isDestination: Boolean):LinearLayout{
         val dotDirectionLayout = LinearLayout(routeCardContext)
         dotDirectionLayout.orientation = LinearLayout.HORIZONTAL
@@ -65,13 +68,14 @@ class RouteListViewAdapter(context: Context, var userList: ArrayList<RouteListAd
         var radius = 16f
         if (isDestination) {
             radius = 20f
-            params.leftMargin = params.leftMargin - 2
-            params.topMargin = 2
+            params.leftMargin = params.leftMargin - 4
         }
         val colorStr:String = if (isBusStop) {"blue"} else {"gray"}
-        val dot = DirectionDot(routeCardContext, colorStr, isDestination, radius)
+        val verticalPadding = 10f
+        val dot = DirectionDot(routeCardContext, colorStr, isDestination, drawSegmentAbove,
+            drawSegmentBelow, radius, 8f, verticalPadding)
         val size:Int = (radius*2).toInt()
-        val canvasParams:ViewGroup.LayoutParams = ViewGroup.LayoutParams(size, size)
+        val canvasParams:ViewGroup.LayoutParams = ViewGroup.LayoutParams(size, size + 2 * verticalPadding.toInt())
         dot.layoutParams = canvasParams
         dotDirectionLayout.addView(dot)
 
@@ -117,11 +121,12 @@ class RouteListViewAdapter(context: Context, var userList: ArrayList<RouteListAd
         grayDotParams.leftMargin = 10
         grayDotParams.topMargin = 6
 
-        val grayDot1 = DirectionDot(routeCardContext, "gray", false, 6f)
+        val grayDot1 = DirectionDot(routeCardContext, "gray", false, false, false, 6f, 0f, 0f)
         grayDot1.layoutParams = grayDotParams
         dotsHolder.addView(grayDot1)
 
-        val grayDot2 = DirectionDot(routeCardContext, "gray", false, 6f)
+        val grayDot2 = DirectionDot(routeCardContext, "gray", false,
+           false, false, 6f, 0f,  0f)
         grayDot2.layoutParams = grayDotParams
         dotsHolder.addView(grayDot2)
 
@@ -186,7 +191,10 @@ class RouteListViewAdapter(context: Context, var userList: ArrayList<RouteListAd
             val walkingImageView = createWalkingComponent()
             Repository.startLocation?.name?.let {
                 val directionLayout = createDirectionLinearLayout(it,
-                    isBusStop = false, isDestination = false)
+                    isBusStop = false,
+                    drawSegmentAbove = false,
+                    drawSegmentBelow = false,
+                    isDestination = false)
                 p0.routeDynamicList.addView(directionLayout)
                 p0.routeDynamicList.addView(walkingImageView)
             }
@@ -194,17 +202,20 @@ class RouteListViewAdapter(context: Context, var userList: ArrayList<RouteListAd
 
         var iterator = 0
         var lastIsBusStop = false
-        for(summaryObj in routeObj.routeSummary) {
+        for(i in 0 until routeObj.routeSummary.size) {
+            val summaryObj = routeObj.routeSummary[i]
             iterator++
             val stopName = summaryObj.stopName?:continue
-            val isBusStop = summaryObj.direction?.type === DirectionType.BUS
+            val isBusRoute = summaryObj.direction?.type === DirectionType.BUS
+            val prevIsBusRoute = i > 0 && routeObj.routeSummary[i-1].direction?.type === DirectionType.BUS
             val directionLayout = createDirectionLinearLayout(stopName,
-                isBusStop = lastIsBusStop || isBusStop,
+                isBusStop = prevIsBusRoute || isBusRoute,
+                drawSegmentAbove = prevIsBusRoute,
+                drawSegmentBelow = isBusRoute,
                 isDestination = iterator == routeObj.routeSummary.size)
-            p0.routeDynamicList.addView(directionLayout)
 
-            lastIsBusStop = isBusStop
-            if (isBusStop && summaryObj.direction?.busNumber != null) {
+            p0.routeDynamicList.addView(directionLayout)
+            if (isBusRoute && summaryObj.direction?.busNumber != null) {
                 val busImageView = createBusIconComponent(summaryObj.direction.busNumber)
                 p0.routeDynamicList.addView(busImageView)
             } else if (summaryObj.direction?.type === DirectionType.WALK) {

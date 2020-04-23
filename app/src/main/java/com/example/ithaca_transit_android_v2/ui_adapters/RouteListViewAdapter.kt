@@ -241,7 +241,17 @@ class RouteListViewAdapter(context: Context, var userList: ArrayList<RouteListAd
         if (!stopNames.contains(Repository.startLocation?.name)) {
             // The person has to walk from where they are to the start location
             val distance = "" + routeObj.directions.get(0).distance.toInt() + " ft"
-            val walkingImageView = createWalkingComponent(distance, true)
+            var walkingImageView = createWalkingComponent(distance, true)
+
+            //Walking Only Route
+            if (routeObj.routeSummary.size <= 2) {
+                val distanceWalking = "" + BigDecimal(routeObj.traveldistance).setScale(
+                    2,
+                    RoundingMode.HALF_EVEN
+                ) + " mi"
+                walkingImageView = createWalkingComponent(distanceWalking, true)
+            }
+
             Repository.startLocation?.name?.let {
                 val directionLayout = createDirectionLinearLayout(
                     it,
@@ -286,6 +296,7 @@ class RouteListViewAdapter(context: Context, var userList: ArrayList<RouteListAd
                     ) + " mi"
                     walkingImageView = createWalkingComponent(distanceWalking, true)
                 }
+
                 p0.routeDynamicList.addView(walkingImageView)
             }
         }

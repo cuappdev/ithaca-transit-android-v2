@@ -64,8 +64,9 @@ class MapPresenter() {
             }
             map.addPolyline(options)
         }
-
+        val options1 = PolylineOptions()
         val lastCoor = route.directions.get(route.directions.size-1).endCoords
+        options1.add(LatLng())
         var circle = CircleOptions()
         circle.center(LatLng(lastCoor.latitude, lastCoor.longitude))
         circle.fillColor(Color.rgb(0,173,255))

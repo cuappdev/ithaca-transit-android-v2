@@ -34,7 +34,6 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
     private lateinit var routeCardDisposable: Disposable
 
     private var mSearchLocations: List<Location> = ArrayList()
-    private var dataList = ArrayList<Route>()
     private lateinit var mSearchAdapter: SearchViewAdapter
     private lateinit var mRouteListViewAdapter: RouteListViewAdapter
     private lateinit var mRouteDetailAdapter: RouteDetailAdapter
@@ -61,6 +60,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
         mRouteDetailAdapter = RouteDetailAdapter(this, route_detail_data)
         mSearchPresenter = SearchPresenter(search_card_holder, map_fragment as MapFragment,this, mSearchAdapter)
         mRouteOptionsPresenter = RouteOptionsPresenter(bottom_sheet, mRouteListViewAdapter, mRouteDetailAdapter, this)
+
         mRouteOptionsPresenter.setBottomSheetCallback(bottom_sheet)
 
         searchDisposable = mSearchPresenter.initSearchView()

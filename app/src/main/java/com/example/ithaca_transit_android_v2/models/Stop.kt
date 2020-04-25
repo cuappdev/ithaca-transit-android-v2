@@ -7,5 +7,4 @@ data class Stop(
     val lat: Double,
     val long: Double,
     val name: String
-
 )

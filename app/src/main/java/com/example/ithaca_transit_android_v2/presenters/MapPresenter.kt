@@ -2,9 +2,11 @@ package com.example.ithaca_transit_android_v2.presenters
 
 import android.graphics.Color
 import android.util.Log
+import com.example.ithaca_transit_android_v2.NetworkUtils
 
 import com.example.ithaca_transit_android_v2.Repository
 import com.example.ithaca_transit_android_v2.models.*
+import com.example.ithaca_transit_android_v2.models.tracking.BusInformation
 
 import com.example.ithaca_transit_android_v2.states.*
 import com.example.ithaca_transit_android_v2.ui_adapters.SearchViewAdapter
@@ -40,11 +42,27 @@ class MapPresenter() {
                 emitter.onNext(
                     SelectedTrip(displayRoute)
                 )
+                liveTrackingTEST(displayRoute)
             }
             Repository._updateMapView = callback
 
         }
         return obs.startWith(MapLaunchState())
+    }
+
+    fun liveTrackingTEST(route: Route) {
+        Thread(Runnable {
+            for(direction in route.directions) {
+                Log.i("qwertyio", (direction.routeNumber ?: "null").toString())
+                if (direction.tripIdentifiers != null) {
+                    val busInfo = BusInformation(
+                        direction.tripIdentifiers[0],
+                        direction.routeNumber.toString()
+                    )
+                    NetworkUtils().getBusCoords(listOf(busInfo))
+                }
+            }
+        }).start()
     }
 
     fun drawRoute(map: GoogleMap, route: Route) {

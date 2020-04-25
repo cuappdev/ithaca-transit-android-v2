@@ -69,18 +69,20 @@ class SearchPresenter(
                 map.setOnMapClickListener {
                     if (Repository.destinationLocation == null) {
                         emitter.onNext(SearchLaunchState())
-                    } else if (Repository.startLocation != null) {
+                    } else if (Repository.startLocation != null && mEditing) {
+                        Repository._updateRouteFromSearch(false)
                         emitter.onNext(
                             RouteDisplayState(
                                 Repository.startLocation!!,
                                 Repository.destinationLocation!!
                             )
                         )
+                        mEditing = false
+
                     }
                     mMainActivity.hideKeyboard()
                 }
             }
-
 
             view.search_input.addTextChangedListener(watcher)
             view.search_input.setOnFocusChangeListener { view, hasFocus ->
@@ -112,7 +114,7 @@ class SearchPresenter(
 
                 Repository.startLocation = startLocation
                 Repository.destinationLocation = destination
-                Repository._updateRouteOptions(false)
+                Repository._updateRouteFromSearch(false)
                 emitter.onNext(RouteDisplayState(startLocation, destination))
                 mMainActivity.hideKeyboard()
             }
@@ -126,7 +128,7 @@ class SearchPresenter(
                     view.edit_dest_loc.setText(destLoc.name)
 
                     // hide the draggable routeOptions when editing location
-                    Repository._updateRouteOptions(true)
+                    Repository._updateRouteFromSearch(true)
                     emitter.onNext(ChangeRouteState("", true))
                 }
             }
@@ -149,13 +151,13 @@ class SearchPresenter(
             view.edit_dest_loc.addTextChangedListener(watcherChangeLoc)
 
             view.edit_start_loc.setOnFocusChangeListener { view, hasFocus ->
-                if (hasFocus) {
+                if (hasFocus && mEditing) {
                     mEditingStart = true
                     emitter.onNext(ChangeRouteState(view.edit_start_loc.text.toString(), false))
                 }
             }
             view.edit_dest_loc.setOnFocusChangeListener { view, hasFocus ->
-                if (hasFocus) {
+                if (hasFocus && mEditing) {
                     mEditingStart = false
                     emitter.onNext(ChangeRouteState(view.edit_dest_loc.text.toString(), false))
                 }
@@ -163,26 +165,29 @@ class SearchPresenter(
 
             // Clicked on an updated location for the Route
             view.change_locations_list.setOnItemClickListener { parent, _, position, id ->
-                val location = parent.getItemAtPosition(position) as Location
-                // Depending on whether they were editing the start or destination field, change how
-                // things get updated
-                if (mEditingStart) {
-                    Repository.startLocation = location
-                    view.edit_start_loc.setText(location.name)
-                } else {
-                    Repository.destinationLocation = location
-                    view.edit_dest_loc.setText(location.name)
-                }
-                if (Repository.startLocation != null && Repository.destinationLocation != null) {
-                    Repository._updateRouteOptions(false)
-                    emitter.onNext(
-                        RouteDisplayState(
-                            Repository.startLocation!!,
-                            Repository.destinationLocation!!
+                if (mEditing) {
+                    mEditing = false;
+                    val location = parent.getItemAtPosition(position) as Location
+                    // Depending on whether they were editing the start or destination field, change how
+                    // things get updated
+                    if (mEditingStart) {
+                        Repository.startLocation = location
+                        view.edit_start_loc.setText(location.name)
+                    } else {
+                        Repository.destinationLocation = location
+                        view.edit_dest_loc.setText(location.name)
+                    }
+                    if (Repository.startLocation != null && Repository.destinationLocation != null) {
+                        Repository._updateRouteFromSearch(false)
+                        emitter.onNext(
+                            RouteDisplayState(
+                                Repository.startLocation!!,
+                                Repository.destinationLocation!!
+                            )
                         )
-                    )
+                    }
+                    mMainActivity.hideKeyboard()
                 }
-                mMainActivity.hideKeyboard()
             }
 
             // Switch button on the RHS was pressed
@@ -195,7 +200,7 @@ class SearchPresenter(
                     view.edit_start_loc.setText(location2.name)
                     view.edit_dest_loc.setText(location1.name)
                     emitter.onNext(RouteDisplayState(location2, location1))
-                    Repository._updateRouteOptions(true)
+                    Repository._updateRouteFromSearch(true)
                 }
             }
 
@@ -284,8 +289,6 @@ class SearchPresenter(
 
                         view.display_start_loc.text = state.startLocation.name
                         view.display_dest_loc.text = state.endLocation.name
-
-                        mEditing = false;
                     }
                     is ChangeRouteLocationState -> {
                         view.display_route.visibility = View.GONE

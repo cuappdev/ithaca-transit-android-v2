@@ -20,15 +20,28 @@ import io.reactivex.schedulers.Schedulers
 import java.util.*
 
 
+import kotlinx.android.synthetic.main.search_main.view.*
+import kotlinx.android.synthetic.main.search_secondary.view.*
+import com.google.android.gms.maps.model.LatLng
+import com.google.android.gms.maps.model.Polyline
+import com.google.android.gms.maps.model.PolylineOptions
+
+
 class MapPresenter() {
 
+    private val polylines = mutableListOf<Polyline>()
     /**
      * Create search observable object and emit states corresponding to changes in the search bar
      */
     private fun createMapObservable(): Observable<MapState> {
         val obs = Observable.create { emitter: ObservableEmitter<MapState> ->
             val callback = fun (displayRoute: Route) {
-                Log.i("qwerty", "hwwwlo")
+
+                for(polyline in polylines) {
+                    polyline.remove()
+                }
+                polylines.clear()
+
                 emitter.onNext(
                     SelectedTrip(displayRoute)
                 )
@@ -62,11 +75,12 @@ class MapPresenter() {
 
                 }
             }
-            map.addPolyline(options)
+            val polyline =  map.addPolyline(options)
+            polylines.add(polyline)
         }
         val options1 = PolylineOptions()
         val lastCoor = route.directions.get(route.directions.size-1).endCoords
-        options1.add(LatLng())
+        //options1.add(LatLng())
         var circle = CircleOptions()
         circle.center(LatLng(lastCoor.latitude, lastCoor.longitude))
         circle.fillColor(Color.rgb(0,173,255))

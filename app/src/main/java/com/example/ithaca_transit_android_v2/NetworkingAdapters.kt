@@ -81,7 +81,8 @@ class RouteAdapter {
         val arrival: Date,
         @Json(name = "departureTime")
         val depart: Date,
-        val routeSummary: List<RouteSummary>
+        val routeSummary: List<RouteSummary>,
+        val travelDistance : Double
 
     )
 
@@ -101,7 +102,8 @@ class RouteAdapter {
                 json.depart,
                 json.routeSummary,
                 boardInMins,
-                null
+                null,
+                json.travelDistance
             )
 
         } else {
@@ -113,7 +115,8 @@ class RouteAdapter {
                 json.depart,
                 listOf(RouteSummary(directionSummary(-1, null), false, "noSummary")),
                 boardInMins,
-                null
+                null,
+                json.travelDistance
             )
         }
 

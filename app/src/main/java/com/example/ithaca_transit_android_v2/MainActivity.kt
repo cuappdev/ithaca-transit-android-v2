@@ -23,7 +23,7 @@ import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import io.reactivex.disposables.Disposable
 import kotlinx.android.synthetic.main.activity_main.*
-import kotlinx.android.synthetic.main.route_card_compact.*
+import kotlinx.android.synthetic.main.routes_holder.*
 import kotlinx.android.synthetic.main.route_detailed.*
 
 import kotlinx.android.synthetic.main.search_main.*
@@ -34,7 +34,6 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
     private lateinit var routeCardDisposable: Disposable
 
     private var mSearchLocations: List<Location> = ArrayList()
-    private var dataList = ArrayList<Route>()
     private lateinit var mSearchAdapter: SearchViewAdapter
     private lateinit var mRouteListViewAdapter: RouteListViewAdapter
     private lateinit var mRouteDetailAdapter: RouteDetailAdapter
@@ -61,10 +60,8 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
         mRouteDetailAdapter = RouteDetailAdapter(this, route_detail_data)
         mSearchPresenter = SearchPresenter(search_card_holder, map_fragment as MapFragment,this, mSearchAdapter)
         mRouteOptionsPresenter = RouteOptionsPresenter(bottom_sheet, mRouteListViewAdapter, mRouteDetailAdapter, this)
-        mRouteOptionsPresenter.setBottomSheetCallback(
-            BottomSheetBehavior.from(bottom_sheet),
-            bottom_sheet
-        );
+
+        mRouteOptionsPresenter.setBottomSheetCallback(bottom_sheet)
 
         searchDisposable = mSearchPresenter.initSearchView()
         routeCardDisposable = mRouteOptionsPresenter.initRouteCardView();

@@ -8,21 +8,21 @@ import android.widget.TextView
 import com.example.ithaca_transit_android_v2.R
 
 
-class BusNumberComponent(context: Context, attrs: AttributeSet?): FrameLayout(context, attrs){
+class BusNumberComponent(context: Context): FrameLayout(context){
 
-    lateinit var busImg: ImageView
-    lateinit var busNumb: TextView
+    private var busImg: ImageView
+    private var busNumber: TextView
 
     init {
         inflate(context, R.layout.bus_image, this)
 
-        busImg = findViewById<ImageView>(R.id.bus_image)
-        busNumb = findViewById<TextView>(R.id.bus_number)
+        busImg = findViewById(R.id.bus_image)
+        busNumber = findViewById(R.id.bus_number)
 
     }
 
     fun setBusNumber(number: Int) {
-        busNumb.setText(number.toString())
+        busNumber.text = number.toString()
     }
 
 }

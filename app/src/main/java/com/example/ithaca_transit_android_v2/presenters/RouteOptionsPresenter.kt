@@ -1,6 +1,7 @@
 package com.example.ithaca_transit_android_v2.presenters
 
 import android.content.Context
+import android.util.Log
 import android.util.TypedValue
 import android.view.View
 import android.widget.LinearLayout
@@ -8,7 +9,6 @@ import androidx.annotation.NonNull
 import com.example.ithaca_transit_android_v2.NetworkUtils
 import com.example.ithaca_transit_android_v2.Repository
 import com.example.ithaca_transit_android_v2.models.Route
-import com.example.ithaca_transit_android_v2.models.RouteOptions
 import com.example.ithaca_transit_android_v2.states.OptionsHiddenState
 import com.example.ithaca_transit_android_v2.states.RouteCardState
 import com.example.ithaca_transit_android_v2.states.RouteDetailViewState
@@ -22,13 +22,15 @@ import io.reactivex.ObservableEmitter
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
-import kotlinx.android.synthetic.main.route_card_compact.view.*
+import kotlinx.android.synthetic.main.routes_holder.view.*
 import kotlinx.android.synthetic.main.route_detailed.view.*
 
-class RouteOptionsPresenter(private val bottom_sheet: View,
-                            _routeListViewAdapter: RouteListViewAdapter,
-                            _routeDetailAdapter: RouteDetailAdapter,
-                            _context: Context) {
+class RouteOptionsPresenter(
+    private val bottom_sheet: View,
+    _routeListViewAdapter: RouteListViewAdapter,
+    _routeDetailAdapter: RouteDetailAdapter,
+    _context: Context
+) {
 
     var mRouteListAdapter = _routeListViewAdapter
     var mRouteDetailAdapter = _routeDetailAdapter
@@ -56,7 +58,7 @@ class RouteOptionsPresenter(private val bottom_sheet: View,
             }
             Repository._updateRouteFromSearch = searchCallback
 
-            val adapterCallback = fun (route: Route) {
+            val adapterCallback = fun(route: Route) {
                 Repository._updateMapView(route)
                 emitter.onNext(RouteDetailViewState(route))
             }
@@ -76,13 +78,15 @@ class RouteOptionsPresenter(private val bottom_sheet: View,
         return obs.startWith(OptionsHiddenState())
     }
 
-
     fun setBottomSheetHeight(height: Float) {
         BottomSheetBehavior.from(bottom_sheet).peekHeight =
-            TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP,
-                height, context.resources.displayMetrics).toInt()
+            TypedValue.applyDimension(
+                TypedValue.COMPLEX_UNIT_DIP,
+                height, context.resources.displayMetrics
+            ).toInt()
 
     }
+
     fun initRouteCardView(): Disposable {
         val observable = createRouteCardObservable()
 
@@ -102,25 +106,7 @@ class RouteOptionsPresenter(private val bottom_sheet: View,
                 } else {
                     state
                 }
-            }
-            .map{state ->
-                if (state is RouteListState) {
-                    val routeOptions = state.routeOptions
-                    if (routeOptions == null || routeOptions.boardingSoon == null) {
-                        state
-                    } else {
-                        val boardingSoonWithDelay =
-                            NetworkUtils().applyDelayRoutes(routeOptions.boardingSoon)
-                        val updatedRouteOptions = RouteOptions(
-                            boardingSoonWithDelay,
-                            routeOptions.fromStop,
-                            routeOptions.walking
-                        )
-                        RouteListState(state.startLocation, state.destLocation, updatedRouteOptions)
-                    }
-                } else {
-                    state
-                }
+
             }
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe { state ->
@@ -132,105 +118,93 @@ class RouteOptionsPresenter(private val bottom_sheet: View,
                         setBottomSheetHeight(65f)
                     }
                     is RouteListState -> {
-                        if (state.routeOptions == null || (state.routeOptions.fromStop == null &&
-                                    state.routeOptions.boardingSoon == null &&
-                                    state.routeOptions.walking == null)) {
-                            // TODO: Display error message - "cannot find route"
-                        } else {
-                            // Display the first routeOptions route available
-                            when {
-                                state.routeOptions.fromStop != null &&
-                                state.routeOptions.fromStop.isNotEmpty() ->
-                                    Repository._updateMapView(state.routeOptions.fromStop[0])
-                                state.routeOptions.boardingSoon != null &&
-                                state.routeOptions.boardingSoon.isNotEmpty() ->
-                                    Repository._updateMapView(state.routeOptions.boardingSoon[0])
-                                state.routeOptions.walking != null &&
-                                state.routeOptions.walking.isNotEmpty() ->
-                                    Repository._updateMapView(state.routeOptions.walking[0])
-                            }
+                        // Display the first routeOptions route on the map
+                        if (state.routeOptions == null) {
+                            return@subscribe
+                        }
+                        if (state.routeOptions.boardingSoon.isNotEmpty()) {
+                            Repository._updateMapView(state.routeOptions.boardingSoon[0])
+                        } else if (state.routeOptions.fromStop.isNotEmpty()) {
+                            Repository._updateMapView(state.routeOptions.fromStop[0])
+                        } else if (state.routeOptions.walking.isNotEmpty()) {
+                            Repository._updateMapView(state.routeOptions.walking[0])
+                        }
 
-                            setBottomSheetHeight(140f)
+                        setBottomSheetHeight(140f)
 
-                            // Refresh Views
-                            routeCardHolder.boarding_soon_routes.invalidate()
-                            routeCardHolder.boarding_soon_routes.removeAllViews()
+                        // Refresh Views
+                        routeCardHolder.boarding_soon_routes.invalidate()
+                        routeCardHolder.boarding_soon_routes.removeAllViews()
 
-                            val allRoutes: ArrayList<RouteListAdapterObject> =
-                                ArrayList<RouteListAdapterObject>()
-                            if (state.routeOptions.boardingSoon != null &&
-                                state.routeOptions.boardingSoon.isNotEmpty()
-                            ) {
-                                allRoutes.add(
-                                    RouteListAdapterObject(
-                                        "routeLabel",
-                                        "Boarding Soon from Nearby Stops"
-                                    )
+                        val allRoutes: ArrayList<RouteListAdapterObject> =
+                            ArrayList<RouteListAdapterObject>()
+                        if (state.routeOptions.boardingSoon.isNotEmpty()) {
+                            allRoutes.add(
+                                RouteListAdapterObject(
+                                    "routeLabel",
+                                    "Boarding Soon from Nearby Stops"
                                 )
+                            )
 
-                                //Add all route objects and texts
-                                for (r in state.routeOptions.boardingSoon) {
-                                    val boardObj: RouteListAdapterObject =
-                                        RouteListAdapterObject("route", r)
-                                    allRoutes.add(boardObj)
-                                }
+                            //Add all route objects and texts
+                            for (r in state.routeOptions.boardingSoon) {
+                                val boardObj: RouteListAdapterObject =
+                                    RouteListAdapterObject("route", r)
+                                allRoutes.add(boardObj)
                             }
-
-                            if (state.routeOptions.fromStop != null &&
-                                state.routeOptions.fromStop.isNotEmpty()
-                            ) {
-                                allRoutes.add(RouteListAdapterObject("routeLabel", "From Stops"))
-
-                                //Add all route objects and texts
-                                for (r in state.routeOptions.fromStop) {
-                                    val boardObj: RouteListAdapterObject =
-                                        RouteListAdapterObject("route", r)
-                                    allRoutes.add(boardObj)
-                                }
-                            }
-
-                            if (state.routeOptions.walking != null &&
-                                state.routeOptions.walking.isNotEmpty()) {
-                                allRoutes.add(RouteListAdapterObject("routeLabel", "Walking"))
-
-                                //Add all route objects and texts
-                                for (r in state.routeOptions.walking) {
-                                    val boardObj: RouteListAdapterObject =
-                                        RouteListAdapterObject("route", r)
-                                    allRoutes.add(boardObj)
-                                }
-                            }
-
-                            mRouteListAdapter.swapItems(allRoutes)
-
-                            val count = routeCardHolder.boarding_soon_routes.childCount
-                            for (i in 1 until count - 1 step 1) {
-                                routeCardHolder.boarding_soon_routes.getChildAt(i).invalidate()
-                            }
-
-                            routeCardHolder.visibility = View.VISIBLE
-                            bottom_sheet.route_detail_data.visibility = View.GONE
-                            bottom_sheet.back.hide()
                         }
-                }
-                        is RouteDetailViewState -> {
-                            routeCardHolder.visibility = View.GONE
-                            mRouteDetailAdapter.updateRouteDetail(state.route)
-                            bottom_sheet.route_detail_data.visibility = View.VISIBLE
-                            bottom_sheet.back.show()
+
+                        if (state.routeOptions.fromStop.isNotEmpty()) {
+                            allRoutes.add(RouteListAdapterObject("routeLabel", "From Stops"))
+
+                            //Add all route objects and texts
+                            for (r in state.routeOptions.fromStop) {
+                                val boardObj: RouteListAdapterObject =
+                                    RouteListAdapterObject("route", r)
+                                allRoutes.add(boardObj)
+                            }
+                        }
+
+                        if (state.routeOptions.walking.isNotEmpty()) {
+                            allRoutes.add(RouteListAdapterObject("routeLabel", "Walking"))
+
+                            //Add all route objects and texts
+                            for (r in state.routeOptions.walking) {
+                                val boardObj: RouteListAdapterObject =
+                                    RouteListAdapterObject("route", r)
+                                allRoutes.add(boardObj)
+                            }
+                        }
+
+                        mRouteListAdapter.swapItems(allRoutes)
+
+                        val count = routeCardHolder.boarding_soon_routes.childCount
+                        for (i in 1..count - 1) {
+                            routeCardHolder.boarding_soon_routes.getChildAt(i).invalidate()
 
                         }
+
+                        routeCardHolder.visibility = View.VISIBLE
+                        bottom_sheet.route_detail_data.visibility = View.GONE
+                        bottom_sheet.back.hide()
+                    }
+                    is RouteDetailViewState -> {
+                        routeCardHolder.visibility = View.GONE
+                        mRouteDetailAdapter.updateRouteDetail(state.route)
+                        bottom_sheet.route_detail_data.visibility = View.VISIBLE
+                        bottom_sheet.back.show()
+
                     }
 
                 }
 
             }
-
+    }
 
     fun setBottomSheetCallback(
-        bottomSheetBehavior: BottomSheetBehavior<LinearLayout>,
         bottom_sheet: LinearLayout
     ) {
+        val bottomSheetBehavior = BottomSheetBehavior.from(bottom_sheet)
         var slideState = BottomSheetBehavior.STATE_COLLAPSED
         bottomSheetBehavior.setBottomSheetCallback(object :
             BottomSheetBehavior.BottomSheetCallback() {

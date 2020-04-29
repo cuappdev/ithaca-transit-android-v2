@@ -65,6 +65,7 @@ class RouteOptionsPresenter(
             Repository._updateRouteDetailed = adapterCallback
 
             bottom_sheet.back.setOnClickListener { view ->
+                Log.d("Detailed", "Detailed")
                 if (Repository.startLocation != null && Repository.destinationLocation != null) {
                     emitter.onNext(
                         RouteListState(

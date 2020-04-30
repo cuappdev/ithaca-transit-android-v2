@@ -281,7 +281,7 @@ class RouteListViewAdapter(context: Context, var userList: ArrayList<RouteListAd
                     stopName,
                     isBusStop = isBusRoute,
                     drawSegmentAbove =
-                        i > 0 && routeObj.directions[i - 1].type == DirectionType.BUS && stopName != routeObj.endDestination,
+                    i > 0 && routeObj.directions[i - 1].type == DirectionType.BUS && stopName != routeObj.endDestination,
                     drawSegmentBelow = isBusRoute,
                     isDestination = stopName == routeObj.endDestination)
                 p0.routeDynamicList.addView(directionLayout)
@@ -303,8 +303,8 @@ class RouteListViewAdapter(context: Context, var userList: ArrayList<RouteListAd
                                 isDestination = false
                             )
                         )
-                    //This considers if the destination happens to be the last stop of the current
-                    //direction
+                        //This considers if the destination happens to be the last stop of the current
+                        //direction
                     } else if (busStop.name == routeObj.endDestination) {
                         p0.routeDynamicList.addView(
                             createDirectionLinearLayout(

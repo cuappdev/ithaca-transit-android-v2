@@ -57,7 +57,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
         mSearchAdapter = SearchViewAdapter(this, mSearchLocations)
         mRouteListViewAdapter =
             RouteListViewAdapter(this, ArrayList())
-        mRouteDetailAdapter = RouteDetailAdapter(this, route_detail_data)
+        mRouteDetailAdapter = RouteDetailAdapter(this, route_detailed_holder)
         mSearchPresenter = SearchPresenter(search_card_holder, map_fragment as MapFragment,this, mSearchAdapter)
         mRouteOptionsPresenter = RouteOptionsPresenter(bottom_sheet, mRouteListViewAdapter, mRouteDetailAdapter, this)
 

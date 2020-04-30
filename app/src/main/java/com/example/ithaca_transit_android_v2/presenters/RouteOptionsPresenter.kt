@@ -114,7 +114,7 @@ class RouteOptionsPresenter(
                 when (state) {
                     is OptionsHiddenState -> {
                         routeCardHolder.visibility = View.GONE
-                        bottom_sheet.route_detail_data.visibility = View.GONE
+                        bottom_sheet.route_detailed_holder.visibility = View.GONE
                         bottom_sheet.back.hide()
                         setBottomSheetHeight(65f)
                     }
@@ -186,13 +186,13 @@ class RouteOptionsPresenter(
                         }
 
                         routeCardHolder.visibility = View.VISIBLE
-                        bottom_sheet.route_detail_data.visibility = View.GONE
+                        bottom_sheet.route_detailed_holder.visibility = View.GONE
                         bottom_sheet.back.hide()
                     }
                     is RouteDetailViewState -> {
                         routeCardHolder.visibility = View.GONE
                         mRouteDetailAdapter.updateRouteDetail(state.route)
-                        bottom_sheet.route_detail_data.visibility = View.VISIBLE
+                        bottom_sheet.route_detailed_holder.visibility = View.VISIBLE
                         bottom_sheet.back.show()
 
                     }

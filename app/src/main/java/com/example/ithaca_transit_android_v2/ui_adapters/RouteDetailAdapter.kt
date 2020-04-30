@@ -2,6 +2,9 @@ package com.example.ithaca_transit_android_v2.ui_adapters
 
 import android.content.Context
 import android.graphics.Typeface
+import android.text.Spannable
+import android.text.SpannableStringBuilder
+import android.text.style.StyleSpan
 import android.view.Gravity
 import android.view.View
 import android.view.ViewGroup
@@ -37,7 +40,7 @@ class RouteDetailAdapter(var context: Context, _routeDetail: View) {
     val DOTS_LEFT_MARGIN = 25
     val BUS_ICON_LEFT_MARGIN = 50
     val WALKING_ICON_LEFT_MARGIN = 92
-    val DESCRIPTION_LEFT_MARGIN = 80
+    val DESCRIPTION_LEFT_MARGIN = 60
     val DISTANCE_TOP_MARGIN = 5
     val SMALLDOT_LEFT_MARGIN = TIME_LEFT_MARGIN + TIME_RIGHT_MARGIN + 170
     val SMALLDOT_TOP_MARGIN = 20
@@ -49,23 +52,42 @@ class RouteDetailAdapter(var context: Context, _routeDetail: View) {
         routeDetail.route_detail_header.text = headerText
 
         detailedLayout.removeAllViews()
+        if (route.routeSummary == null) {
+            return
+        }
 
-        // TODO: Create views in route_detailed_holder_holder.xml
-        // Dynamically set the views to the appropriate information in this method
+        val stopNames: List<String> =
+            route.routeSummary.map { summaryObj -> summaryObj.stopName ?: "" }
 
-        drawRouteCard(route)
+        if (!stopNames.contains(Repository.startLocation?.name)) {
+            val walkingToLine = createDirectionLinearLayout("3:52 PM",
+                "Walk to",
+                route.directions[0].name,
+                route.directions[0].type,
+                drawSegmentAbove = false,
+                drawSegmentBelow = false,
+                isFinalDestination = false)
+
+            detailedLayout.addView(walkingToLine)
+            val smallerDotsArea = createWalkingComponent("200");
+            detailedLayout.addView(smallerDotsArea)
+        }
+        for(direction in route.directions) {
+
+        }
     }
 
-    //Creates views for dots and stop names
+    //Creates views for times, dots and stop names
     private fun createDirectionLinearLayout(
         time: String,
-        description: String,
+        movementDescription: String, //"Walk to", "Get off at", etc.
+        destination: String,
         directionType: DirectionType,
         //Boolean values to fill in segments between two blue dots
         drawSegmentAbove: Boolean,
         drawSegmentBelow: Boolean,
         //Boolean to handle textview distance
-        isDestination: Boolean
+        isFinalDestination: Boolean
     ): LinearLayout {
 
         //Layout that holds dots and stop names
@@ -93,7 +115,7 @@ class RouteDetailAdapter(var context: Context, _routeDetail: View) {
 
         // Setting Dot Radius
         var radius = 16f
-        if (isDestination) {
+        if (isFinalDestination) {
             radius = 20f
             params.leftMargin = params.leftMargin - 4
         }
@@ -107,7 +129,7 @@ class RouteDetailAdapter(var context: Context, _routeDetail: View) {
 
         //Initialize Dots (Done indiviudally)
         val dot = DirectionDot(
-            detailedContext, colorStr, isDestination, drawSegmentAbove,
+            detailedContext, colorStr, isFinalDestination, drawSegmentAbove,
             drawSegmentBelow, radius, 8f, verticalPadding
         )
         val size: Int = (radius * 2).toInt()
@@ -117,13 +139,17 @@ class RouteDetailAdapter(var context: Context, _routeDetail: View) {
             ViewGroup.LayoutParams(size, size + 2 * verticalPadding.toInt())
 
         dot.layoutParams = canvasParams
-
-
         dotDirectionLayout.addView(dot)
 
         //Stop Name
         val descriptionView = TextView(detailedContext)
-        descriptionView.text = description
+
+        val infoText = String.format("%s %s", movementDescription, destination)
+        val sb = SpannableStringBuilder(infoText)
+        val bss = StyleSpan(android.graphics.Typeface.BOLD)
+        sb.setSpan(bss,movementDescription.length + 1, infoText.length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
+        descriptionView.text = infoText
+
         descriptionView.setTextColor(ContextCompat.getColor(detailedContext, R.color.black))
         val descriptionParams: ViewGroup.MarginLayoutParams = ViewGroup.MarginLayoutParams(
             ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT
@@ -136,58 +162,47 @@ class RouteDetailAdapter(var context: Context, _routeDetail: View) {
         return dotDirectionLayout
     }
 
-    private fun createWalkingComponent(
-        distance: String = "",
-        hasDistance: Boolean = false
-    ): LinearLayout {
+
+    private fun makeSmallGrayDot():View {
+        val grayDotParams = ViewGroup.MarginLayoutParams(32, 27)
+        grayDotParams.topMargin = 6
+        val grayDot = DirectionDot(
+            context = detailedContext,
+            colorStr = "gray",
+            useNestedCircles = false,
+            drawSegmentBelow = false,
+            drawSegmentAbove = false,
+            radius = 6f,
+            lineWidth = 0f,
+            verticalPadding = 0f)
+        grayDot.layoutParams = grayDotParams
+        return grayDot
+    }
+
+    private fun createWalkingComponent(distance: String): LinearLayout {
         val walkingHolder = LinearLayout(detailedContext)
         walkingHolder.orientation = LinearLayout.HORIZONTAL
-
-
-
-
         val dotHolderparams: ViewGroup.MarginLayoutParams = ViewGroup.MarginLayoutParams(
             ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT)
-
         dotHolderparams.leftMargin = SMALLDOT_LEFT_MARGIN
         dotHolderparams.topMargin = SMALLDOT_TOP_MARGIN
         val dotsHolder = LinearLayout(detailedContext)
         dotsHolder.orientation = LinearLayout.VERTICAL
-
         dotsHolder.layoutParams = dotHolderparams
 
-        val grayDotParams = ViewGroup.MarginLayoutParams(32, 27)
-        grayDotParams.topMargin = 6
-
-        val grayDot1 = DirectionDot(detailedContext, "gray", false, false, false, 6f, 0f, 0f)
-        grayDot1.layoutParams = grayDotParams
+        val grayDot1 = makeSmallGrayDot()
+        val grayDot2 = makeSmallGrayDot()
+        val grayDot3 = makeSmallGrayDot()
         dotsHolder.addView(grayDot1)
-
-        val grayDot2 = DirectionDot(
-            detailedContext, "gray", false,
-            false, false, 6f, 0f, 0f
-        )
-        grayDot2.layoutParams = grayDotParams
         dotsHolder.addView(grayDot2)
-
-
-        //Add 3rd dto
-
-        val grayDot3 = DirectionDot(
-            detailedContext, "gray", false,
-            false, false, 6f, 0f, 0f
-        )
-        grayDot3.layoutParams = grayDotParams
         dotsHolder.addView(grayDot3)
-
-
         walkingHolder.addView(dotsHolder)
 
-        if (hasDistance) {
+        if (distance.isNotEmpty()) {
             //Distance Text
             val distanceView = TextView(detailedContext)
             distanceView.text = distance
-            distanceView.setTextSize(10f)
+            distanceView.setTextSize(12f)
             distanceView.setTextColor(ContextCompat.getColor(detailedContext, R.color.gray))
             val distanceParams: RelativeLayout.LayoutParams = RelativeLayout.LayoutParams(
                 ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT
@@ -200,24 +215,6 @@ class RouteDetailAdapter(var context: Context, _routeDetail: View) {
         }
 
         return walkingHolder
-    }
-
-
-    private fun drawRouteCard(route: Route) {
-        val routeObj = route
-
-        val directions: List<Direction> = routeObj.directions
-
-        val firstD = directions[0]
-        val firstDot =
-            createDirectionLinearLayout("3:52 PM", firstD.name, firstD.type, false, false, false)
-
-        detailedLayout.addView(firstDot)
-
-        val smallerDots = createWalkingComponent("200", true)
-
-        detailedLayout.addView(smallerDots)
-
     }
 
 }

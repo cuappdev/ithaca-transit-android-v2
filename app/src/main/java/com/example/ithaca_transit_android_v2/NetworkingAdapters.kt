@@ -102,8 +102,8 @@ class RouteAdapter {
                 json.depart,
                 json.routeSummary,
                 boardInMins,
+                null,
                 json.travelDistance
-
             )
 
         } else {
@@ -115,6 +115,7 @@ class RouteAdapter {
                 json.depart,
                 listOf(RouteSummary(directionSummary(-1, null), false, "noSummary")),
                 boardInMins,
+                null,
                 json.travelDistance
             )
         }

@@ -31,7 +31,6 @@ class RouteListViewAdapter(context: Context, var userList: ArrayList<RouteListAd
     val WALKING_ICON_LEFT_MARGIN = 92
     val DESCRIPTION_LEFT_MARGIN = 40
     val DISTANCE_TOP_MARGIN = 5
-
     var routeCardContext = context
 
     override fun getItemViewType(position: Int): Int {
@@ -303,7 +302,6 @@ class RouteListViewAdapter(context: Context, var userList: ArrayList<RouteListAd
     }
 
     override fun onBindViewHolder(p0: ViewHolder, p1: Int) {
-
         if (getItemViewType(p1) == R.layout.route_card) {
             drawRouteCard(p0, p1)
         } else {
@@ -315,10 +313,6 @@ class RouteListViewAdapter(context: Context, var userList: ArrayList<RouteListAd
     inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val description = itemView.findViewById<TextView>(R.id.board_minutes)
         val delay = itemView.findViewById<TextView>(R.id.delay_label)
-
-        //val directionList = itemView.findViewById<LinearLayout>(R.id.directions)
-        //val dotDrawing = itemView.findViewById<DrawRouteCard>(R.id.drawingDots)
-        //val busDrawing = itemView.findViewById<LinearLayout>(R.id.icons)
         val routeDynamicList = itemView.findViewById<LinearLayout>(R.id.route_dynamic_list)
         val routeDuration = itemView.findViewById<TextView>(R.id.duration)
 

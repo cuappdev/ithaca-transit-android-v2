@@ -21,8 +21,8 @@ data class Route (
     @Json(name = "routeSummary")
     val routeSummary: List<RouteSummary>?,
     val boardInMin: Int,
+    val delay: Int?,
     val traveldistance : Double
-
 
 ) {
     companion object {

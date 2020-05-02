@@ -10,6 +10,11 @@ import com.example.ithaca_transit_android_v2.states.MapState
 import com.example.ithaca_transit_android_v2.states.SelectedTrip
 import com.example.ithaca_transit_android_v2.states.TripOptions
 import com.google.android.gms.maps.CameraUpdateFactory
+import com.example.ithaca_transit_android_v2.NetworkUtils
+import com.example.ithaca_transit_android_v2.models.*
+import com.example.ithaca_transit_android_v2.models.tracking.BusInformation
+import com.example.ithaca_transit_android_v2.states.*
+import com.example.ithaca_transit_android_v2.ui_adapters.SearchViewAdapter
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.model.*
 import io.reactivex.Observable
@@ -45,11 +50,27 @@ class MapPresenter() {
                 emitter.onNext(
                     SelectedTrip(displayRoute)
                 )
+                liveTrackingTEST(displayRoute)
             }
             Repository._updateMapView = callback
 
         }
         return obs.startWith(MapLaunchState())
+    }
+
+    fun liveTrackingTEST(route: Route) {
+        Thread(Runnable {
+            for(direction in route.directions) {
+                Log.i("qwertyio", (direction.routeNumber ?: "null").toString())
+                if (direction.tripIdentifiers != null) {
+                    val busInfo = BusInformation(
+                        direction.tripIdentifiers[0],
+                        direction.routeNumber.toString()
+                    )
+                    NetworkUtils().getBusCoords(listOf(busInfo))
+                }
+            }
+        }).start()
     }
 
     fun drawRoute(map: GoogleMap, route: Route) {

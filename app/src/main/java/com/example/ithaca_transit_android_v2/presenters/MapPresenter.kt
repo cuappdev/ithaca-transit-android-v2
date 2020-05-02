@@ -78,29 +78,52 @@ class MapPresenter() {
             val polyline =  map.addPolyline(options)
             polylines.add(polyline)
         }
-        val options1 = PolylineOptions()
+
         val lastCoor = route.directions.get(route.directions.size-1).endCoords
-        //options1.add(LatLng())
-        var circle = CircleOptions()
-        circle.center(LatLng(lastCoor.latitude, lastCoor.longitude))
-        circle.fillColor(Color.rgb(0,173,255))
-        circle.strokeWidth(0.0F)
-        circle.radius(20.0)
-        map.addCircle(circle)
+        val options1 = PolylineOptions()
+        options1.width(20f)
 
-        var circle1 = CircleOptions()
-        circle1.center(LatLng(lastCoor.latitude, lastCoor.longitude))
-        circle1.fillColor(Color.rgb(255,255,255))
-        circle1.strokeWidth(0.0F)
-        circle1.radius(15.0)
-        map.addCircle(circle1)
+        options1.color(Color.rgb(0,173,255))
+        options1.add(LatLng(lastCoor.latitude, lastCoor.longitude));
+        options1.add(LatLng(lastCoor.latitude, lastCoor.longitude));
+        val pattern1: List<PatternItem> =
+            Arrays.asList(Dot(), Gap(0F))
+        options1.pattern(pattern1)
+        val polyline1 = map.addPolyline(options1)
 
-        var circle2 = CircleOptions()
-        circle2.center(LatLng(lastCoor.latitude, lastCoor.longitude))
-        circle2.fillColor(Color.rgb(0,173,255))
-        circle2.strokeWidth(0.0F)
-        circle2.radius(10.0)
-        map.addCircle(circle2)
+
+        val options2 = PolylineOptions()
+        options2.width(20f)
+        options2.color(Color.rgb(160,160,160))
+        options2.add(LatLng(lastCoor.latitude, lastCoor.longitude));
+        val pattern2: List<PatternItem> =
+            Arrays.asList(Dot(), Gap(0F))
+        options1.pattern(pattern2)
+        val polyline2 = map.addPolyline(options2)
+
+        polylines.add(polyline1)
+        polylines.add(polyline2)
+
+//        var circle = CircleOptions()
+//        circle.center(LatLng(lastCoor.latitude, lastCoor.longitude))
+//        circle.fillColor(Color.rgb(0,173,255))
+//        circle.strokeWidth(0.0F)
+//        circle.radius(20.0)
+//        map.addCircle(circle)
+
+//        var circle1 = CircleOptions()
+//        circle1.center(LatLng(lastCoor.latitude, lastCoor.longitude))
+//        circle1.fillColor(Color.rgb(255,255,255))
+//        circle1.strokeWidth(0.0F)
+//        circle1.radius(15.0)
+//        map.addCircle(circle1)
+//
+//        var circle2 = CircleOptions()
+//        circle2.center(LatLng(lastCoor.latitude, lastCoor.longitude))
+//        circle2.fillColor(Color.rgb(0,173,255))
+//        circle2.strokeWidth(0.0F)
+//        circle2.radius(10.0)
+//        map.addCircle(circle2)
 
     }
 

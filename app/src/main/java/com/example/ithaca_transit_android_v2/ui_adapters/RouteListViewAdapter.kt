@@ -277,8 +277,7 @@ class RouteListViewAdapter(context: Context, var userList: ArrayList<RouteListAd
                 isBusStop = prevIsBusRoute || isBusRoute,
                 drawSegmentAbove = prevIsBusRoute,
                 drawSegmentBelow = isBusRoute,
-                isDestination = iterator == routeObj.routeSummary.size
-            )
+                isDestination = iterator == routeObj.routeSummary.size)
 
             p0.routeDynamicList.addView(directionLayout)
             if (isBusRoute && summaryObj.direction?.busNumber != null) {

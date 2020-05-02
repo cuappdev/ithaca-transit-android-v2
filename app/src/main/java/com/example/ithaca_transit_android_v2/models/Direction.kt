@@ -10,6 +10,7 @@ data class Direction(
     val listOfCoordinates: List<Coordinate>,
     val startTime: Date,
     val endTime: Date,
+    val name : String,
     @Json(name = "startLocation")
     val startCoords: Coordinate,
     @Json(name = "endLocation")

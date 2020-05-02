@@ -23,7 +23,7 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.routes_holder.view.*
-import kotlinx.android.synthetic.main.route_detailed.view.*
+import kotlinx.android.synthetic.main.route_detailed_holder.view.*
 
 class RouteOptionsPresenter(
     private val bottom_sheet: View,
@@ -65,6 +65,7 @@ class RouteOptionsPresenter(
             Repository._updateRouteDetailed = adapterCallback
 
             bottom_sheet.back.setOnClickListener { view ->
+                Log.d("Detailed", "Detailed")
                 if (Repository.startLocation != null && Repository.destinationLocation != null) {
                     emitter.onNext(
                         RouteListState(
@@ -113,7 +114,7 @@ class RouteOptionsPresenter(
                 when (state) {
                     is OptionsHiddenState -> {
                         routeCardHolder.visibility = View.GONE
-                        bottom_sheet.route_detail_data.visibility = View.GONE
+                        bottom_sheet.route_detailed_holder.visibility = View.GONE
                         bottom_sheet.back.hide()
                         setBottomSheetHeight(65f)
                     }
@@ -185,13 +186,13 @@ class RouteOptionsPresenter(
                         }
 
                         routeCardHolder.visibility = View.VISIBLE
-                        bottom_sheet.route_detail_data.visibility = View.GONE
+                        bottom_sheet.route_detailed_holder.visibility = View.GONE
                         bottom_sheet.back.hide()
                     }
                     is RouteDetailViewState -> {
                         routeCardHolder.visibility = View.GONE
                         mRouteDetailAdapter.updateRouteDetail(state.route)
-                        bottom_sheet.route_detail_data.visibility = View.VISIBLE
+                        bottom_sheet.route_detailed_holder.visibility = View.VISIBLE
                         bottom_sheet.back.show()
 
                     }

@@ -34,7 +34,7 @@
                 app:backgroundTint="#FFFFFF" />
         </RelativeLayout>
 
-        <include layout="@layout/route_detailed" />
+        <include layout="@layout/route_detailed_holder" />
 
         <LinearLayout
             android:id="@+id/bottom_sheet_data"

@@ -46,6 +46,17 @@ class MapPresenter() {
             }
             Repository._updateMapView = callback
 
+
+            val clearCallback = fun () {
+
+                for(polyline in polylines) {
+                    polyline.remove()
+                }
+                polylines.clear()
+            }
+            Repository._clearMapView = clearCallback
+
+
         }
         return obs.startWith(MapLaunchState())
     }

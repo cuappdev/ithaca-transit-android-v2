@@ -18,4 +18,7 @@ object Repository {
 
     // Called from the SearchView everytime the MapView should change
     var _updateMapView = fun(a:Route) {}
+
+    // Called when the map should not display any routes at all
+    var _clearMapView = fun() {}
 }

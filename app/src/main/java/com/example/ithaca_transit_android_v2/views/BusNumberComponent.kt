@@ -19,6 +19,7 @@ class BusNumberComponent(context: Context): FrameLayout(context){
         busImg = findViewById(R.id.bus_image)
         busNumber = findViewById(R.id.bus_number)
 
+
     }
 
     fun setBusNumber(number: Int) {

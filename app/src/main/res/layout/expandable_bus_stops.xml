@@ -13,9 +13,10 @@
     </LinearLayout>
 
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/exapnded_stops"
+        android:id="@+id/expanded_stops"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:visibility="gone">
 
     </androidx.recyclerview.widget.RecyclerView>
 

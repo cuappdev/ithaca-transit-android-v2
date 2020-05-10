@@ -2,6 +2,7 @@ package com.example.ithaca_transit_android_v2.views
 
 import android.content.Context
 import android.media.Image
+import android.util.Log
 import android.view.Gravity
 import android.view.View
 import android.view.ViewGroup
@@ -30,13 +31,13 @@ class BusExpandable(context: Context, direction: Direction) : LinearLayout(conte
     val WALKING_ICON_LEFT_MARGIN = 92
     val DESCRIPTION_LEFT_MARGIN = 60
     val DISTANCE_TOP_MARGIN = 5
-    val BUS_LEFT_MARGIN = TIME_LEFT_MARGIN + TIME_RIGHT_MARGIN + 167
+    val BUS_LEFT_MARGIN = TIME_LEFT_MARGIN + TIME_RIGHT_MARGIN + 155
     val SMALLDOT_LEFT_MARGIN = TIME_LEFT_MARGIN + TIME_RIGHT_MARGIN + 165
     val SMALLDOT_TOP_MARGIN = 20
     var detailedContext = context
 
     private var expandableTop: LinearLayout
-    private var expandableRecycler : RecyclerView
+    private var expandableLinearLayout : LinearLayout
     private var direction = direction
     private var trimmedStops = direction.busStops.subList(1,direction.busStops.size-1)
 
@@ -54,22 +55,34 @@ class BusExpandable(context: Context, direction: Direction) : LinearLayout(conte
 
         expandableTop.addView(expandedTop)
 
-        expandableRecycler = findViewById(R.id.expanded_stops)
-        expandableRecycler.apply {
-            layoutManager = LinearLayoutManager(detailedContext)
-            adapter = ExpandedStopsAdapter(detailedContext, trimmedStops)
+        expandableLinearLayout = findViewById(R.id.expandedstops_layout)
+
+        for(i in 0 until trimmedStops.size){
+            Log.d("Run", ""+i)
+            val stop = createStops(i)
+            expandableLinearLayout.addView(stop)
         }
+
 
         expandableTop.setOnClickListener{
-            if(expandableRecycler.visibility == View.VISIBLE){
-                expandableRecycler.visibility = View.GONE
+            if(expandableLinearLayout.visibility == View.VISIBLE){
+                expandableLinearLayout.visibility = View.GONE
             }
             else{
-                expandableRecycler.visibility = View.VISIBLE
+                expandableLinearLayout.visibility = View.VISIBLE
             }
 
 
         }
+
+
+
+
+        //        expandableRecycler.apply {
+//            layoutManager = LinearLayoutManager(detailedContext)
+//            adapter = ExpandedStopsAdapter(detailedContext, trimmedStops)
+//        }
+
 //        val expandableRecyclerParams = ViewGroup.MarginLayoutParams(
 //            RecyclerView.LayoutParams.MATCH_PARENT,
 //            RecyclerView.LayoutParams.WRAP_CONTENT
@@ -77,6 +90,78 @@ class BusExpandable(context: Context, direction: Direction) : LinearLayout(conte
 //        expandableRecyclerParams.leftMargin = BUS_LEFT_MARGIN
 //
 //        expandableRecycler.layoutParams = expandableRecyclerParams
+
+
+    }
+
+    private fun createStops(position : Int) : LinearLayout {
+        val expandedHolder = LinearLayout(detailedContext)
+        expandedHolder.orientation = LinearLayout.VERTICAL
+        expandedHolder.gravity = Gravity.CENTER_VERTICAL
+        val holderParams: ViewGroup.MarginLayoutParams = ViewGroup.MarginLayoutParams(
+            ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT
+        )
+        holderParams.leftMargin = BUS_LEFT_MARGIN
+        expandedHolder.layoutParams = holderParams
+
+        //Create Dot
+        val dotDirectionLayout = LinearLayout(detailedContext)
+        dotDirectionLayout.orientation = LinearLayout.HORIZONTAL
+        dotDirectionLayout.gravity = Gravity.CENTER_VERTICAL
+        val params: ViewGroup.MarginLayoutParams = ViewGroup.MarginLayoutParams(
+            ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT
+        )
+        dotDirectionLayout.layoutParams = params
+
+        var radius = 16f
+
+        val size: Int = (radius * 2).toInt()
+
+        val verticalPadding = 10f
+
+        //TODO FIX DOT PARAMETERS
+        val dot = DirectionDot(
+            detailedContext, "blue", true, true,
+            true, radius, 8f, verticalPadding
+        )
+
+        val canvasParams: ViewGroup.LayoutParams =
+            ViewGroup.LayoutParams(size, size + 2 * verticalPadding.toInt())
+        dot.layoutParams = canvasParams
+
+        dotDirectionLayout.addView(dot)
+
+        //Stop Name
+        val stopNameText = trimmedStops.get(position).name
+        val stopName = TextView(detailedContext)
+        stopName.text = stopNameText
+        stopName.setTextColor(ContextCompat.getColor(detailedContext, R.color.gray))
+        val stopNameParams: ViewGroup.MarginLayoutParams = ViewGroup.MarginLayoutParams(
+            ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT
+        )
+        stopNameParams.leftMargin = DESCRIPTION_LEFT_MARGIN
+        stopName.layoutParams = stopNameParams
+
+        dotDirectionLayout.addView(stopName)
+
+        //Add DirectionLine
+        val directionLineParams = ViewGroup.MarginLayoutParams(
+            10,
+            50
+        )
+        //directionLineParams.leftMargin = BUS_LEFT_MARGIN
+        val directionLine = DirectionLine(detailedContext, "blue", 50f, 8f)
+        directionLineParams.leftMargin = 12
+
+        directionLine.layoutParams = directionLineParams
+
+        expandedHolder.addView(dotDirectionLayout)
+        expandedHolder.addView(directionLine)
+
+        return expandedHolder
+        //expandableLinearLayout.addView(expandedHolder)
+
+
 
 
     }

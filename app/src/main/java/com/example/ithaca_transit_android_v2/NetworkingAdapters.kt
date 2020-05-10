@@ -3,6 +3,7 @@ package com.example.ithaca_transit_android_v2
 import android.util.Log
 import com.example.ithaca_transit_android_v2.models.*
 import com.squareup.moshi.*
+import java.lang.Exception
 import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.collections.ArrayList
@@ -130,9 +131,20 @@ class CustomDateAdapter {
     @FromJson
     fun fromJson(date: String): Date {
 
-        val formatter = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'", Locale.getDefault())
-        formatter.timeZone = TimeZone.getTimeZone("UTC")
-        val result = formatter.parse(date)
+        var result : Date
+        try{
+            val formatter = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'", Locale.getDefault())
+            formatter.timeZone = TimeZone.getTimeZone("UTC")
+            result = formatter.parse(date)
+        }
+        catch(e: Exception){
+            val formatter = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ", Locale.getDefault())
+            formatter.timeZone = TimeZone.getTimeZone("UTC")
+            result = formatter.parse(date)
+        }
+
+
+
 
         return result
     }

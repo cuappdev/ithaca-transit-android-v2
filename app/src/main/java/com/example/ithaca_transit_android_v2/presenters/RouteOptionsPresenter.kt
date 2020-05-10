@@ -120,7 +120,10 @@ class RouteOptionsPresenter(
                     }
                     is RouteListState -> {
                         // Display the first routeOptions route on the map
-                        if (state.routeOptions == null) {
+                        if (state.routeOptions?.boardingSoon == null
+                            || state.routeOptions.fromStop == null
+                            || state.routeOptions.walking == null) {
+                            Repository._clearMapView();
                             return@subscribe
                         }
                         if (state.routeOptions.boardingSoon.isNotEmpty()) {

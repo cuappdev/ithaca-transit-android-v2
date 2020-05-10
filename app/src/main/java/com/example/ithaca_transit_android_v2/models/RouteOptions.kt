@@ -9,7 +9,7 @@ import com.squareup.moshi.JsonClass
  */
 @JsonClass(generateAdapter = true)
 data class RouteOptions (
-    val boardingSoon: List<Route>,
-    val fromStop: List<Route>,
-    val walking: List<Route>
+    val boardingSoon: List<Route>?,
+    val fromStop: List<Route>?,
+    val walking: List<Route>?
 )

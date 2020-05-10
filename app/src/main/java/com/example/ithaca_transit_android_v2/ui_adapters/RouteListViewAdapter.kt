@@ -294,7 +294,6 @@ class RouteListViewAdapter(context: Context, var userList: ArrayList<RouteListAd
                     ) + " mi"
                     walkingImageView = createWalkingComponent(distanceWalking, true)
                 }
-
                 p0.routeDynamicList.addView(walkingImageView)
             }
         }

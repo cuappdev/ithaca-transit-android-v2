@@ -68,7 +68,6 @@ class ExpandedStopsAdapter(context: Context, var busStops: List<Stop>) :
     private fun drawStops(p0: ViewHolder, p1: Int) {
         p0.layoutHolder.removeAllViews()
 
-
         val expandedHolder = LinearLayout(expandedContext)
         expandedHolder.orientation = LinearLayout.VERTICAL
         expandedHolder.gravity = Gravity.CENTER_VERTICAL

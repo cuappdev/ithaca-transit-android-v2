@@ -231,6 +231,11 @@ class SearchPresenter(
      */
     fun initSearchView(): Disposable {
         val observable = createSearchObservable()
+        try {
+            var a = NetworkUtils()
+        } catch (e: Exception) {
+            Log.w("qwerty", e.stackTrace.toString())
+        }
 
         return observable
             .observeOn(Schedulers.io())

@@ -224,8 +224,22 @@ class RouteListViewAdapter(context: Context, var userList: ArrayList<RouteListAd
             return
         }
 
-        val boardMins = routeObj.boardInMin.toString()
-        p0.description?.text = routeCardContext.getString(R.string.board_in_mins, boardMins)
+        val boardHours = routeObj.boardInMin / 60
+        val boardMins = routeObj.boardInMin % 60
+        var timeString = "in "
+        if(boardHours >= 1) {
+            timeString += "$boardHours hr"
+        }
+        if(boardHours >= 1 && boardHours >= 1) {
+            timeString += " "
+        }
+        if(boardMins >= 0) {
+            timeString += "$boardMins min"
+        }
+        if(boardMins == 0 && boardHours == 0) {
+            timeString = "now"
+        }
+        p0.description?.text = routeCardContext.getString(R.string.board_in_mins, timeString)
         p0.delay.text = routeCardContext.getString(R.string.on_time)
 
         val sdf = SimpleDateFormat("h:mm a", Locale.US)

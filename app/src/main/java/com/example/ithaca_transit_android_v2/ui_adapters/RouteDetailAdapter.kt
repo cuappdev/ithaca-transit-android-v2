@@ -52,29 +52,6 @@ class RouteDetailAdapter(var context: Context, _routeDetail: View) {
         routeDetail.route_detail_header.text = headerText
 
         detailedLayout.removeAllViews()
-        if (route.routeSummary == null) {
-            return
-        }
-
-        val stopNames: List<String> =
-            route.routeSummary.map { summaryObj -> summaryObj.stopName ?: "" }
-
-        if (!stopNames.contains(Repository.startLocation?.name)) {
-            val walkingToLine = createDirectionLinearLayout("3:52 PM",
-                "Walk to",
-                route.directions[0].name,
-                route.directions[0].type,
-                drawSegmentAbove = false,
-                drawSegmentBelow = false,
-                isFinalDestination = false)
-
-            detailedLayout.addView(walkingToLine)
-            val smallerDotsArea = createWalkingComponent("200");
-            detailedLayout.addView(smallerDotsArea)
-        }
-        for(direction in route.directions) {
-
-        }
     }
 
     //Creates views for times, dots and stop names

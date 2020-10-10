@@ -1,5 +1,5 @@
 <resources>
     <string name="app_name">Ithaca Transit</string>
-    <string name="board_in_mins">Board %1$s</string>
+    <string name="board_in_mins">Board in %1$s</string>
     <string name="on_time">On Time</string>
 </resources>

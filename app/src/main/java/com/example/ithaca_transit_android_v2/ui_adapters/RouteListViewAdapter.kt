@@ -220,13 +220,10 @@ class RouteListViewAdapter(context: Context, var userList: ArrayList<RouteListAd
     private fun drawRouteCard(p0: ViewHolder, p1: Int) {
         p0.routeDynamicList.removeAllViews()
         val routeObj: Route = userList[p1].data as Route
-        if (routeObj.routeSummary == null) {
-            return
-        }
 
         val boardHours = routeObj.boardInMin / 60
         val boardMins = routeObj.boardInMin % 60
-        var timeString = "in "
+        var timeString = ""
         if(boardHours >= 1) {
             timeString += "$boardHours hr"
         }
@@ -252,6 +249,7 @@ class RouteListViewAdapter(context: Context, var userList: ArrayList<RouteListAd
         for(i in routeObj.directions.indices) {
             val direction = routeObj.directions[i]
             if(direction.type == DirectionType.WALK) {
+                //Adds a walking component given whatever distance is in the direction object
                 var distance = "" + direction.distance.toInt() + " ft"
                 if(isOnlyWalking) {
                     distance = "" + BigDecimal(routeObj.traveldistance).setScale(
@@ -260,6 +258,8 @@ class RouteListViewAdapter(context: Context, var userList: ArrayList<RouteListAd
                     ) + " mi"
                 }
                 val walkingImageView = createWalkingComponent(distance, true)
+                //Only considers drawing a direction linear layout from whatever starting location if
+                //the destination is at the start / is only walking
                 if(i == 0 || isOnlyWalking) {
                     Repository.startLocation?.name?.let {
                         val directionLayout = createDirectionLinearLayout(
@@ -274,7 +274,7 @@ class RouteListViewAdapter(context: Context, var userList: ArrayList<RouteListAd
                 }
                 p0.routeDynamicList.addView(walkingImageView)
             }
-            if(i > 0) {
+            if (i > 0) {
                 val stopName = direction.name
                 val isBusRoute = direction.type == DirectionType.BUS
                 val prevIsBusRoute =
@@ -293,6 +293,8 @@ class RouteListViewAdapter(context: Context, var userList: ArrayList<RouteListAd
                 }
                 if(direction.busStops.isNotEmpty()) {
                     val busStop = direction.busStops.last()
+                    //Only considers adding a bus stop to the view if it isn't the name of the next
+                    //direction
                     if(isBeforeDestination && busStop.name != routeObj.directions[i+1].name) {
                         p0.routeDynamicList.addView(
                             createDirectionLinearLayout(
@@ -303,6 +305,8 @@ class RouteListViewAdapter(context: Context, var userList: ArrayList<RouteListAd
                                 isDestination = false
                             )
                         )
+                    //This considers if the destination happens to be the last stop of the current
+                    //direction
                     } else if (i == routeObj.directions.lastIndex) {
                         p0.routeDynamicList.addView(
                             createDirectionLinearLayout(

@@ -246,51 +246,90 @@ class RouteListViewAdapter(context: Context, var userList: ArrayList<RouteListAd
         val routeInterval: String =
             sdf.format(routeObj.depart) + " - " + sdf.format(routeObj.arrival)
         p0.routeDuration.text = routeInterval
-        p0.routeDuration.setTypeface(null, Typeface.BOLD);
+        p0.routeDuration.setTypeface(null, Typeface.BOLD)
 
-        //Handles cases when user must first walk to their bus stop
-        val stopNames: List<String> =
-            routeObj.routeSummary.map { summaryObj -> summaryObj.stopName ?: "" }
-
-        val routeDirection = routeObj.directions[routeObj.directions.size-1]
-        if(routeDirection.busStops.isEmpty() && routeDirection.type == DirectionType.WALK) {
-            val distanceWalking = "" + BigDecimal(routeObj.traveldistance).setScale(
-                2,
-                RoundingMode.HALF_EVEN
-            ) + " mi"
-            val walkingImageView = createWalkingComponent(distanceWalking, true)
-            Repository.startLocation?.name?.let {
-                val directionLayout = createDirectionLinearLayout(
-                    it,
-                    isBusStop = false,
-                    drawSegmentAbove = false,
-                    drawSegmentBelow = false,
-                    isDestination = false
-                )
-                p0.routeDynamicList.addView(directionLayout)
+        val isOnlyWalking = routeObj.directions.size == 1
+        for(i in routeObj.directions.indices) {
+            val direction = routeObj.directions[i]
+            if(direction.type == DirectionType.WALK) {
+                var distance = "" + direction.distance.toInt() + " ft"
+                if(isOnlyWalking) {
+                    distance = "" + BigDecimal(routeObj.traveldistance).setScale(
+                        2,
+                        RoundingMode.HALF_EVEN
+                    ) + " mi"
+                }
+                val walkingImageView = createWalkingComponent(distance, true)
+                if(i == 0 || isOnlyWalking) {
+                    Repository.startLocation?.name?.let {
+                        val directionLayout = createDirectionLinearLayout(
+                            it,
+                            isBusStop = false,
+                            drawSegmentAbove = false,
+                            drawSegmentBelow = false,
+                            isDestination = false
+                        )
+                        p0.routeDynamicList.addView(directionLayout)
+                    }
+                }
                 p0.routeDynamicList.addView(walkingImageView)
             }
+            if(i > 0) {
+                val stopName = direction.name
+                val isBusRoute = direction.type == DirectionType.BUS
+                val prevIsBusRoute =
+                    routeObj.directions[i - 1].type == DirectionType.BUS
+                val isBeforeDestination = i == routeObj.directions.lastIndex - 1
+                val directionLayout = createDirectionLinearLayout(
+                    stopName,
+                    isBusStop = isBusRoute,
+                    drawSegmentAbove = prevIsBusRoute && stopName != routeObj.endDestination,
+                    drawSegmentBelow = isBusRoute,
+                    isDestination = stopName == routeObj.endDestination)
+                p0.routeDynamicList.addView(directionLayout)
+                if (isBusRoute && direction.routeNumber != null) {
+                    val busImageView = createBusIconComponent(direction.routeNumber)
+                    p0.routeDynamicList.addView(busImageView)
+                }
+                if(direction.busStops.isNotEmpty()) {
+                    val busStop = direction.busStops.last()
+                    if(isBeforeDestination && busStop.name != routeObj.directions[i+1].name) {
+                        p0.routeDynamicList.addView(
+                            createDirectionLinearLayout(
+                                busStop.name,
+                                isBusStop = true,
+                                drawSegmentAbove = true,
+                                drawSegmentBelow = true,
+                                isDestination = false
+                            )
+                        )
+                    } else if (i == routeObj.directions.lastIndex) {
+                        p0.routeDynamicList.addView(
+                            createDirectionLinearLayout(
+                                busStop.name,
+                                isBusStop = true,
+                                drawSegmentAbove = true,
+                                drawSegmentBelow = false,
+                                isDestination = true
+                            )
+                        )
+                    }
+                }
+            }
+        }
+
+        // Creates end destination layout for route that's just walking, hides boarding text
+        if(isOnlyWalking) {
             val directionLayout = createDirectionLinearLayout(
                 routeObj.endDestination,
                 isBusStop = false,
                 drawSegmentAbove = false,
                 drawSegmentBelow = false,
-                isDestination = true)
+                isDestination = true
+            )
             p0.routeDynamicList.addView(directionLayout)
             p0.description.visibility = View.GONE
             p0.delay.visibility = View.GONE
-        }
-
-                //Walking only routes will have size <=2
-                if (routeObj.routeSummary.size <= 2) {
-                    val distanceWalking = "" + BigDecimal(routeObj.traveldistance).setScale(
-                        2,
-                        RoundingMode.HALF_EVEN
-                    ) + " mi"
-                    walkingImageView = createWalkingComponent(distanceWalking, true)
-                }
-                p0.routeDynamicList.addView(walkingImageView)
-            }
         }
     }
 

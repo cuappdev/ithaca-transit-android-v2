@@ -22,7 +22,9 @@ data class Route (
     val routeSummary: List<RouteSummary>?,
     val boardInMin: Int,
     val delay: Int?,
-    val traveldistance : Double
+    val traveldistance : Double,
+    @Json(name = "endName")
+    val endDestination: String
 
 ) {
     companion object {

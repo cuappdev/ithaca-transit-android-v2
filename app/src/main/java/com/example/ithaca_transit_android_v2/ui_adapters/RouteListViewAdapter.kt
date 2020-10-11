@@ -277,12 +277,11 @@ class RouteListViewAdapter(context: Context, var userList: ArrayList<RouteListAd
             if (i > 0) {
                 val stopName = direction.name
                 val isBusRoute = direction.type == DirectionType.BUS
-                val prevIsBusRoute =
-                    routeObj.directions[i - 1].type == DirectionType.BUS
                 val directionLayout = createDirectionLinearLayout(
                     stopName,
                     isBusStop = isBusRoute,
-                    drawSegmentAbove = prevIsBusRoute && stopName != routeObj.endDestination,
+                    drawSegmentAbove =
+                        routeObj.directions[i - 1].type == DirectionType.BUS && stopName != routeObj.endDestination,
                     drawSegmentBelow = isBusRoute,
                     isDestination = stopName == routeObj.endDestination)
                 p0.routeDynamicList.addView(directionLayout)

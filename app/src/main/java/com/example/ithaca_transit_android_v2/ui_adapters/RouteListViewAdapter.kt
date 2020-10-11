@@ -223,7 +223,7 @@ class RouteListViewAdapter(context: Context, var userList: ArrayList<RouteListAd
 
         val boardHours = routeObj.boardInMin / 60
         val boardMins = routeObj.boardInMin % 60
-        var timeString = ""
+        var timeString = "in "
         if(boardHours >= 1) {
             timeString += "$boardHours hr"
         }
@@ -279,7 +279,6 @@ class RouteListViewAdapter(context: Context, var userList: ArrayList<RouteListAd
                 val isBusRoute = direction.type == DirectionType.BUS
                 val prevIsBusRoute =
                     routeObj.directions[i - 1].type == DirectionType.BUS
-                val isBeforeDestination = i == routeObj.directions.lastIndex - 1
                 val directionLayout = createDirectionLinearLayout(
                     stopName,
                     isBusStop = isBusRoute,
@@ -293,15 +292,15 @@ class RouteListViewAdapter(context: Context, var userList: ArrayList<RouteListAd
                 }
                 if(direction.busStops.isNotEmpty()) {
                     val busStop = direction.busStops.last()
-                    //Only considers adding a bus stop to the view if it isn't the name of the next
-                    //direction
-                    if(isBeforeDestination && busStop.name != routeObj.directions[i+1].name) {
+                    //Only considers adding the last bus stop to the view if it isn't the name
+                    //of the next direction / isn't the end destination
+                    if(i < routeObj.directions.lastIndex && busStop.name != routeObj.directions[i+1].name) {
                         p0.routeDynamicList.addView(
                             createDirectionLinearLayout(
                                 busStop.name,
                                 isBusStop = true,
                                 drawSegmentAbove = true,
-                                drawSegmentBelow = true,
+                                drawSegmentBelow = i != routeObj.directions.lastIndex - 1,
                                 isDestination = false
                             )
                         )

@@ -226,9 +226,9 @@ class RouteListViewAdapter(context: Context, var userList: ArrayList<RouteListAd
         var timeString = "in "
         if(boardHours >= 1) {
             timeString += "$boardHours hr"
-        }
-        if(boardHours >= 1 && boardHours >= 1) {
-            timeString += " "
+            if(boardMins >= 0) {
+                timeString += " "
+            }
         }
         if(boardMins >= 0) {
             timeString += "$boardMins min"

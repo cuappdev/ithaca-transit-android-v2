@@ -45,7 +45,7 @@ class RouteListViewAdapter(context: Context, var userList: ArrayList<RouteListAd
     override fun onCreateViewHolder(p0: ViewGroup, viewType: Int): ViewHolder {
         val v = LayoutInflater.from(p0.context).inflate(viewType, p0, false)
         v.invalidate()
-        return ViewHolder(v);
+        return ViewHolder(v)
     }
 
     override fun getItemCount(): Int {
@@ -252,7 +252,7 @@ class RouteListViewAdapter(context: Context, var userList: ArrayList<RouteListAd
                 //Adds a walking component given whatever distance is in the direction object
                 var distance = "" + direction.distance.toInt() + " ft"
                 if(isOnlyWalking) {
-                    distance = "" + BigDecimal(routeObj.traveldistance).setScale(
+                    distance = "" + BigDecimal(routeObj.travelDistance).setScale(
                         2,
                         RoundingMode.HALF_EVEN
                     ) + " mi"
@@ -312,7 +312,7 @@ class RouteListViewAdapter(context: Context, var userList: ArrayList<RouteListAd
                                 isBusStop = true,
                                 drawSegmentAbove = true,
                                 drawSegmentBelow = false,
-                                isDestination = true
+                                isDestination = i == routeObj.directions.lastIndex
                             )
                         )
                     }

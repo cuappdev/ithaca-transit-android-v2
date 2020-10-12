@@ -20,7 +20,7 @@ data class Route (
     val depart: Date,
     val boardInMin: Int,
     val delay: Int?,
-    val traveldistance : Double,
+    val travelDistance : Double,
     @Json(name = "endName")
     val endDestination: String
 

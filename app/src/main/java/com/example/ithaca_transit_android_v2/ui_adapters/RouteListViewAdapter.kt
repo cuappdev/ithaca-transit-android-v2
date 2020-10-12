@@ -274,14 +274,14 @@ class RouteListViewAdapter(context: Context, var userList: ArrayList<RouteListAd
                 }
                 p0.routeDynamicList.addView(walkingImageView)
             }
-            if (i > 0) {
+            if (i > 0 || direction.type == DirectionType.BUS) {
                 val stopName = direction.name
                 val isBusRoute = direction.type == DirectionType.BUS
                 val directionLayout = createDirectionLinearLayout(
                     stopName,
                     isBusStop = isBusRoute,
                     drawSegmentAbove =
-                        routeObj.directions[i - 1].type == DirectionType.BUS && stopName != routeObj.endDestination,
+                        i > 0 && routeObj.directions[i - 1].type == DirectionType.BUS && stopName != routeObj.endDestination,
                     drawSegmentBelow = isBusRoute,
                     isDestination = stopName == routeObj.endDestination)
                 p0.routeDynamicList.addView(directionLayout)
@@ -305,7 +305,7 @@ class RouteListViewAdapter(context: Context, var userList: ArrayList<RouteListAd
                         )
                     //This considers if the destination happens to be the last stop of the current
                     //direction
-                    } else if (i == routeObj.directions.lastIndex) {
+                    } else if (busStop.name == routeObj.endDestination) {
                         p0.routeDynamicList.addView(
                             createDirectionLinearLayout(
                                 busStop.name,

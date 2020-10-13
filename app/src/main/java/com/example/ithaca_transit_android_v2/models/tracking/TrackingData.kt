@@ -2,7 +2,6 @@ package com.example.ithaca_transit_android_v2.models.tracking
 
 import com.example.ithaca_transit_android_v2.models.Coordinate
 import com.example.ithaca_transit_android_v2.models.Direction
-import com.example.ithaca_transit_android_v2.models.RouteSummary
 import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
 import java.util.*

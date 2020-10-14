@@ -246,6 +246,7 @@ class RouteListViewAdapter(context: Context, var userList: ArrayList<RouteListAd
         p0.routeDuration.setTypeface(null, Typeface.BOLD)
 
         val isOnlyWalking = routeObj.directions.size == 1
+        var isStopDestinationName = true
         for(i in routeObj.directions.indices) {
             val direction = routeObj.directions[i]
             if(direction.type == DirectionType.WALK) {
@@ -308,20 +309,23 @@ class RouteListViewAdapter(context: Context, var userList: ArrayList<RouteListAd
                     } else if (i == routeObj.directions.lastIndex) {
                         p0.routeDynamicList.addView(
                             createDirectionLinearLayout(
-                                routeObj.endDestination,
+                                busStop.name,
                                 isBusStop = true,
                                 drawSegmentAbove = true,
                                 drawSegmentBelow = false,
                                 isDestination = i == routeObj.directions.lastIndex
                             )
                         )
+                        if(busStop.name != routeObj.endDestination) isStopDestinationName = false
                     }
                 }
             }
         }
 
-        // Creates end destination layout for route that's just walking, hides boarding text
-        if(isOnlyWalking) {
+        // Creates end destination layout for route that's just walking, hides boarding text if so
+        // Also creates an empty walking component to the destination if last stop wasn't destination
+        if(isOnlyWalking || !isStopDestinationName) {
+            if(!isStopDestinationName) createWalkingComponent("", false)
             val directionLayout = createDirectionLinearLayout(
                 routeObj.endDestination,
                 isBusStop = false,
@@ -329,9 +333,11 @@ class RouteListViewAdapter(context: Context, var userList: ArrayList<RouteListAd
                 drawSegmentBelow = false,
                 isDestination = true
             )
-            p0.routeDynamicList.addView(directionLayout)
-            p0.description.visibility = View.GONE
-            p0.delay.visibility = View.GONE
+            if(isOnlyWalking) {
+                p0.routeDynamicList.addView(directionLayout)
+                p0.description.visibility = View.GONE
+                p0.delay.visibility = View.GONE
+            }
         }
     }
 

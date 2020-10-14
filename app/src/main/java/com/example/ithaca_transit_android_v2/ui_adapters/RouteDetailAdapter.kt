@@ -51,9 +51,9 @@ class RouteDetailAdapter(var context: Context, _routeDetail: View) {
         routeDetail.route_detail_header.text = headerText
 
         detailedLayout.removeAllViews()
-        if (route.routeSummary == null) {
-            return
-        }
+
+        val directions = route.directions
+
         //List of bus numbers
         val busNums : List<Int> =
             route.routeSummary.map { summaryObj -> summaryObj.direction?.busNumber ?: "" } as List<Int>
@@ -62,9 +62,6 @@ class RouteDetailAdapter(var context: Context, _routeDetail: View) {
 
         val stopNames: List<String> =
             route.routeSummary.map { summaryObj -> summaryObj.stopName ?: "" }
-
-        val directions = route.directions
-
 
         for( d in 0..directions.size-1){
             val direction = directions[d]

@@ -286,7 +286,7 @@ class RouteListViewAdapter(context: Context, var userList: ArrayList<RouteListAd
                     drawSegmentBelow = isBusRoute,
                     isDestination = stopName == routeObj.endDestination)
                 p0.routeDynamicList.addView(directionLayout)
-                if (isBusRoute && direction.routeNumber != null) {
+                if(isBusRoute && direction.routeNumber != null) {
                     val busImageView = createBusIconComponent(direction.routeNumber)
                     p0.routeDynamicList.addView(busImageView)
                 }
@@ -306,26 +306,25 @@ class RouteListViewAdapter(context: Context, var userList: ArrayList<RouteListAd
                         )
                     //This considers if the destination happens to be the last stop of the current
                     //direction
-                    } else if (i == routeObj.directions.lastIndex) {
+                    } else if(i == routeObj.directions.lastIndex) {
+                        if(busStop.name != routeObj.endDestination) isStopDestinationName = false
                         p0.routeDynamicList.addView(
                             createDirectionLinearLayout(
                                 busStop.name,
                                 isBusStop = true,
                                 drawSegmentAbove = true,
                                 drawSegmentBelow = false,
-                                isDestination = i == routeObj.directions.lastIndex
+                                isDestination = i == routeObj.directions.lastIndex && isStopDestinationName
                             )
                         )
-                        if(busStop.name != routeObj.endDestination) isStopDestinationName = false
                     }
                 }
             }
         }
-
         // Creates end destination layout for route that's just walking, hides boarding text if so
         // Also creates an empty walking component to the destination if last stop wasn't destination
         if(isOnlyWalking || !isStopDestinationName) {
-            if(!isStopDestinationName) createWalkingComponent("", false)
+            if(!isStopDestinationName) p0.routeDynamicList.addView(createWalkingComponent("", false))
             val directionLayout = createDirectionLinearLayout(
                 routeObj.endDestination,
                 isBusStop = false,
@@ -333,8 +332,8 @@ class RouteListViewAdapter(context: Context, var userList: ArrayList<RouteListAd
                 drawSegmentBelow = false,
                 isDestination = true
             )
+            p0.routeDynamicList.addView(directionLayout)
             if(isOnlyWalking) {
-                p0.routeDynamicList.addView(directionLayout)
                 p0.description.visibility = View.GONE
                 p0.delay.visibility = View.GONE
             }

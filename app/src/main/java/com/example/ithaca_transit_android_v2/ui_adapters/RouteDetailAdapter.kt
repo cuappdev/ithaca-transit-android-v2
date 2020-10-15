@@ -7,6 +7,7 @@ import android.text.style.StyleSpan
 import android.view.Gravity
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.RelativeLayout
 import android.widget.TextView
@@ -45,6 +46,8 @@ class RouteDetailAdapter(var context: Context, _routeDetail: View) {
     val SMALLDOT_TOP_MARGIN = 20
     var detailedContext = context
 
+    val sdf = SimpleDateFormat("h:mm a", Locale.getDefault())
+
     fun updateRouteDetail(route: Route) {
 
         val headerText = "Leaving in " + route.boardInMin.toString() // placeholder for now
@@ -52,28 +55,59 @@ class RouteDetailAdapter(var context: Context, _routeDetail: View) {
 
         detailedLayout.removeAllViews()
 
+        val isOnlyWalking = route.directions.size == 1
         val directions = route.directions
+        val busNums: MutableList<Int> = mutableListOf()
+
+        for(direction in directions) {
+            if(direction.routeNumber != null) busNums.add(direction.routeNumber)
+        }
 
         //List of bus numbers
-        val busNums : List<Int> =
-            route.routeSummary.map { summaryObj -> summaryObj.direction?.busNumber ?: "" } as List<Int>
-
         val busIterator = busNums.iterator()
+//        val stopNames: List<String> =
+//            route.routeSummary.map { summaryObj -> summaryObj.stopName ?: "" }
 
-        val stopNames: List<String> =
-            route.routeSummary.map { summaryObj -> summaryObj.stopName ?: "" }
-
-        for( d in 0..directions.size-1){
-            val direction = directions[d]
-            if(direction.type == DirectionType.WALK){
-                walkingDirection(direction, false)
+        for( i in route.directions.indices) {
+            val direction = directions[i]
+            //Walking component go before or after?
+            if(direction.type == DirectionType.WALK && !isOnlyWalking) {
+                val distance = "" + direction.distance.toInt() + " ft"
+                detailedLayout.addView(createWalkingComponent(distance))
+                val time = if(i != route.directions.lastIndex) {
+                    sdf.format(direction.startTime)
+                } else {
+                    sdf.format(direction.endTime)
+                }
+                detailedLayout.addView(createDirectionLinearLayout(
+                    time,
+                    "Walk to",
+                    direction.name,
+                    direction.type,
+                    drawSegmentAbove = false,
+                    drawSegmentBelow = false,
+                    isFinalDestination = i == route.directions.lastIndex
+                ))
             }
-            else if (direction.type == DirectionType.BUS){
-                busDirection(direction, busIterator.next())
-            }
+            //if (i > 0 || direction.type == DirectionType.BUS) {
 
+//            else if (direction.type == DirectionType.BUS){
+//                busDirection(direction, busIterator.next())
+//            }
         }
-        walkingDirection(directions[directions.size-1], true)
+        //Handle c
+        if(isOnlyWalking) {
+            val directionLayout = createDirectionLinearLayout(
+                sdf.format(route.arrival),
+                "Walk to",
+                route.endDestination,
+                directionType = DirectionType.WALK,
+                drawSegmentAbove = false,
+                drawSegmentBelow = false,
+                isFinalDestination = true
+            )
+            detailedLayout.addView(directionLayout)
+        }
 
 //
 //        if (!stopNames.contains(Repository.startLocation?.name)) {
@@ -130,41 +164,13 @@ class RouteDetailAdapter(var context: Context, _routeDetail: View) {
 //        )
 //
 //        detailedLayout.addView(bottomExpanded)
-
-
-
-
-
-
-        for (direction in route.directions) {
-
-        }
-    }
-
-    private fun walkingDirection(direction: Direction, isFinal: Boolean) {
-
-        val walkingToLine = createDirectionLinearLayout(
-            "3:52 PM",
-            "Walk to",
-            direction.name,
-            direction.type,
-            drawSegmentAbove = false,
-            drawSegmentBelow = false,
-            isFinalDestination = isFinal
-        )
-
-
-        detailedLayout.addView(walkingToLine)
-        val smallerDotsArea = createWalkingComponent("" + direction.distance.toInt());
-        detailedLayout.addView(smallerDotsArea)
-
     }
 
     private fun busDirection(direction: Direction, busNum : Int) {
 
         val walkingToLine =
             createDirectionLinearLayout(
-                "3:52 PM",
+                sdf.format(direction.startTime),
                 "Board",
                 direction.name,
                 direction.type,
@@ -188,7 +194,7 @@ class RouteDetailAdapter(var context: Context, _routeDetail: View) {
         detailedLayout.addView(expandedTop)
 
         val bottomExpanded = createDirectionLinearLayout(
-            "3:52 PM",
+            sdf.format(direction.startTime),
             "Board",
             direction.name,
             direction.type,
@@ -197,11 +203,7 @@ class RouteDetailAdapter(var context: Context, _routeDetail: View) {
             isFinalDestination = true,
             expandedBottom = true
         )
-
         detailedLayout.addView(bottomExpanded)
-
-
-
     }
 
     //Create Views for Times
@@ -448,9 +450,33 @@ class RouteDetailAdapter(var context: Context, _routeDetail: View) {
     private fun createWalkingComponent(distance: String): LinearLayout {
         val walkingHolder = LinearLayout(detailedContext)
         walkingHolder.orientation = LinearLayout.HORIZONTAL
+
+        val walkingIconParams = ViewGroup.MarginLayoutParams(
+            LinearLayout.LayoutParams.WRAP_CONTENT,
+            LinearLayout.LayoutParams.WRAP_CONTENT
+        )
+        walkingIconParams.leftMargin = WALKING_ICON_LEFT_MARGIN
+        val walkingView = ImageView(detailedContext)
+        walkingView.setImageDrawable(
+            ContextCompat.getDrawable(detailedContext, R.drawable.walking_vector)
+        )
+        walkingView.layoutParams = walkingIconParams
+
+        val walkingMarginHolder = LinearLayout(detailedContext)
+        val walkingMarginHolderParams = ViewGroup.LayoutParams(
+            DOTS_LEFT_MARGIN,
+            LinearLayout.LayoutParams.WRAP_CONTENT
+        )
+        walkingMarginHolder.gravity = Gravity.START
+        walkingMarginHolder.layoutParams = walkingMarginHolderParams
+        walkingMarginHolder.addView(walkingView)
+        walkingHolder.addView(walkingMarginHolder)
+
+
         val dotHolderparams: ViewGroup.MarginLayoutParams = ViewGroup.MarginLayoutParams(
             ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT
         )
+
         dotHolderparams.leftMargin = SMALLDOT_LEFT_MARGIN
         dotHolderparams.topMargin = SMALLDOT_TOP_MARGIN
         val dotsHolder = LinearLayout(detailedContext)

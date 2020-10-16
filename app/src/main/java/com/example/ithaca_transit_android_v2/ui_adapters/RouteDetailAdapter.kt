@@ -4,6 +4,7 @@ import android.content.Context
 import android.text.Spannable
 import android.text.SpannableStringBuilder
 import android.text.style.StyleSpan
+import android.util.Log
 import android.view.Gravity
 import android.view.View
 import android.view.ViewGroup
@@ -43,6 +44,7 @@ class RouteDetailAdapter(var context: Context, _routeDetail: View) {
     val DISTANCE_TOP_MARGIN = 5
     val BUS_LEFT_MARGIN = TIME_LEFT_MARGIN + TIME_RIGHT_MARGIN + 167
     val SMALLDOT_LEFT_MARGIN = TIME_LEFT_MARGIN + TIME_RIGHT_MARGIN + 165
+    val DIRECTION_LINE_MARGIN = TIME_LEFT_MARGIN + TIME_RIGHT_MARGIN + 165
     val SMALLDOT_TOP_MARGIN = 20
     var detailedContext = context
 
@@ -73,11 +75,12 @@ class RouteDetailAdapter(var context: Context, _routeDetail: View) {
             //Walking component go before or after?
             if(direction.type == DirectionType.WALK && !isOnlyWalking) {
                 val distance = "" + direction.distance.toInt() + " ft"
-                detailedLayout.addView(createWalkingComponent(distance))
-                val time = if(i != route.directions.lastIndex) {
-                    sdf.format(direction.startTime)
+                val time: String
+                if(i != route.directions.lastIndex) {
+                    time = sdf.format(direction.startTime)
                 } else {
-                    sdf.format(direction.endTime)
+                    time = sdf.format(direction.endTime)
+                    detailedLayout.addView(createWalkingComponent(distance))
                 }
                 detailedLayout.addView(createDirectionLinearLayout(
                     time,
@@ -88,8 +91,61 @@ class RouteDetailAdapter(var context: Context, _routeDetail: View) {
                     drawSegmentBelow = false,
                     isFinalDestination = i == route.directions.lastIndex
                 ))
+                if(i!=route.directions.lastIndex) detailedLayout.addView(createWalkingComponent(distance))
             }
-            //if (i > 0 || direction.type == DirectionType.BUS) {
+            if (direction.type == DirectionType.BUS) {
+                if(direction.busStops.isNotEmpty()) {
+                    val walkingToLine =
+                        direction.routeNumber?.let {
+                            createDirectionLinearLayout(
+                                sdf.format(direction.startTime),
+                                "Board",
+                                direction.name,
+                                direction.type,
+                                drawSegmentAbove = false,
+                                drawSegmentBelow = true,
+                                isFinalDestination = false,
+                                busNumber = it
+                            )
+                        }
+                    detailedLayout.addView(walkingToLine)
+                    if(direction.busStops.size > 2) {
+                        val expandedTop = BusExpandable(detailedContext, direction)
+
+                        val expandedTopParams = ViewGroup.MarginLayoutParams(
+                            LinearLayout.LayoutParams.WRAP_CONTENT,
+                            LinearLayout.LayoutParams.WRAP_CONTENT
+                        )
+                        expandedTop.layoutParams = expandedTopParams
+
+                        detailedLayout.addView(expandedTop)
+                    } else {
+                        //Add DirectionLine
+                        val directionLineParams = ViewGroup.MarginLayoutParams(
+                            10,
+                            50
+                        )
+                        directionLineParams.leftMargin = DIRECTION_LINE_MARGIN
+                        val directionLine = DirectionLine(detailedContext, "blue", 50f, 8f)
+
+                        directionLine.layoutParams = directionLineParams
+
+                        detailedLayout.addView(directionLine)
+                    }
+
+                    val bottomExpanded = createDirectionLinearLayout(
+                        sdf.format(direction.endTime),
+                        "Get off",
+                        direction.busStops.last().name,
+                        direction.type,
+                        drawSegmentAbove = true,
+                        drawSegmentBelow = false,
+                        isFinalDestination = i == route.directions.lastIndex,
+                        expandedBottom = true
+                    )
+                    detailedLayout.addView(bottomExpanded)
+                }
+            }
 
 //            else if (direction.type == DirectionType.BUS){
 //                busDirection(direction, busIterator.next())
@@ -166,45 +222,46 @@ class RouteDetailAdapter(var context: Context, _routeDetail: View) {
 //        detailedLayout.addView(bottomExpanded)
     }
 
-    private fun busDirection(direction: Direction, busNum : Int) {
-
-        val walkingToLine =
-            createDirectionLinearLayout(
-                sdf.format(direction.startTime),
-                "Board",
-                direction.name,
-                direction.type,
-                drawSegmentAbove = false,
-                drawSegmentBelow = true,
-                isFinalDestination = false,
-                busNumber = busNum.toInt()
-            )
-
-
-        detailedLayout.addView(walkingToLine)
-
-        val expandedTop = BusExpandable(detailedContext, direction)
-
-        val expandedTopParams = ViewGroup.MarginLayoutParams(
-            LinearLayout.LayoutParams.WRAP_CONTENT,
-            LinearLayout.LayoutParams.WRAP_CONTENT
-        )
-        expandedTop.layoutParams = expandedTopParams
-
-        detailedLayout.addView(expandedTop)
-
-        val bottomExpanded = createDirectionLinearLayout(
-            sdf.format(direction.startTime),
-            "Board",
-            direction.name,
-            direction.type,
-            drawSegmentAbove = true,
-            drawSegmentBelow = false,
-            isFinalDestination = true,
-            expandedBottom = true
-        )
-        detailedLayout.addView(bottomExpanded)
-    }
+//    private fun busDirection(direction: Direction, busNum : Int) {
+//
+//        val walkingToLine =
+//            createDirectionLinearLayout(
+//                sdf.format(direction.startTime),
+//                "Board",
+//                direction.name,
+//                direction.type,
+//                drawSegmentAbove = false,
+//                drawSegmentBelow = true,
+//                isFinalDestination = false,
+//                busNumber = busNum
+//            )
+//
+//        detailedLayout.addView(walkingToLine)
+//
+//        if(direction.busStops.isNotEmpty()) {
+//            val expandedTop = BusExpandable(detailedContext, direction)
+//
+//            val expandedTopParams = ViewGroup.MarginLayoutParams(
+//                LinearLayout.LayoutParams.WRAP_CONTENT,
+//                LinearLayout.LayoutParams.WRAP_CONTENT
+//            )
+//            expandedTop.layoutParams = expandedTopParams
+//
+//            detailedLayout.addView(expandedTop)
+//
+//            val bottomExpanded = createDirectionLinearLayout(
+//                sdf.format(direction.endTime),
+//                "Get off",
+//                direction.busStops.last().name,
+//                direction.type,
+//                drawSegmentAbove = true,
+//                drawSegmentBelow = false,
+//                isFinalDestination = i == route.d,
+//                expandedBottom = false
+//            )
+//            detailedLayout.addView(bottomExpanded)
+//        }
+//    }
 
     //Create Views for Times
     private fun createTimeText(time: String): TextView {
@@ -368,7 +425,7 @@ class RouteDetailAdapter(var context: Context, _routeDetail: View) {
             //Second Part of text
             val secondDescription = TextView(detailedContext)
 
-            secondDescription.text = destination
+            secondDescription.text = "at $destination"
 
             secondDescription.setTextColor(ContextCompat.getColor(detailedContext, R.color.black))
             val descriptionParams2: ViewGroup.MarginLayoutParams = ViewGroup.MarginLayoutParams(
@@ -451,30 +508,6 @@ class RouteDetailAdapter(var context: Context, _routeDetail: View) {
         val walkingHolder = LinearLayout(detailedContext)
         walkingHolder.orientation = LinearLayout.HORIZONTAL
 
-        val walkingIconParams = ViewGroup.MarginLayoutParams(
-            LinearLayout.LayoutParams.WRAP_CONTENT,
-            LinearLayout.LayoutParams.WRAP_CONTENT
-        )
-        walkingIconParams.leftMargin = WALKING_ICON_LEFT_MARGIN
-        val walkingView = ImageView(detailedContext)
-        walkingView.setImageDrawable(
-            ContextCompat.getDrawable(detailedContext, R.drawable.walking_vector)
-        )
-        walkingView.layoutParams = walkingIconParams
-
-        val walkingMarginHolder = LinearLayout(detailedContext)
-        val walkingMarginHolderParams = ViewGroup.LayoutParams(
-            DOTS_LEFT_MARGIN,
-            LinearLayout.LayoutParams.WRAP_CONTENT
-        )
-        walkingMarginHolder.gravity = Gravity.START
-        walkingMarginHolder.layoutParams = walkingMarginHolderParams
-        walkingMarginHolder.addView(walkingView)
-        walkingHolder.addView(walkingMarginHolder)
-
-        Log.d("walkingView", walkingView.toString())
-
-
         val dotHolderparams: ViewGroup.MarginLayoutParams = ViewGroup.MarginLayoutParams(
             ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT
         )
@@ -511,14 +544,4 @@ class RouteDetailAdapter(var context: Context, _routeDetail: View) {
 
         return walkingHolder
     }
-
-    //Just pass in the specific direction
-    private fun createBusIconComponent(direction: Direction) {
-
-        val busNum: Int? = direction.busNumber
-        val startTime = direction.startTime
-        val endTime = direction.endTime
-
-    }
-
 }

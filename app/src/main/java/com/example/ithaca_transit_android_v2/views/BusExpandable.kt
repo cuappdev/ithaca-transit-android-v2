@@ -45,11 +45,9 @@ class BusExpandable(context: Context, direction: Direction) : LinearLayout(conte
     val diffTimeMins = TimeUnit.MINUTES.convert(diffTimeMillis, TimeUnit.MILLISECONDS).toInt()
 
     init {
-        LinearLayout.inflate(context, R.layout.expandable_bus_stops, this)
+        inflate(context, R.layout.expandable_bus_stops, this)
 
-        expandableTop = findViewById(com.example.ithaca_transit_android_v2.R.id.expanded_top)
-
-
+        expandableTop = findViewById(R.id.expanded_top)
 
         val expandedTop = createExpandableTop()
 
@@ -58,11 +56,11 @@ class BusExpandable(context: Context, direction: Direction) : LinearLayout(conte
         expandableLinearLayout = findViewById(R.id.expandedstops_layout)
 
         for(i in 0 until trimmedStops.size){
-            Log.d("Run", ""+i)
             val stop = createStops(i)
             expandableLinearLayout.addView(stop)
         }
 
+        expandableLinearLayout.visibility = View.GONE
 
         expandableTop.setOnClickListener{
             if(expandableLinearLayout.visibility == View.VISIBLE){
@@ -71,13 +69,7 @@ class BusExpandable(context: Context, direction: Direction) : LinearLayout(conte
             else{
                 expandableLinearLayout.visibility = View.VISIBLE
             }
-
-
         }
-
-
-
-
         //        expandableRecycler.apply {
 //            layoutManager = LinearLayoutManager(detailedContext)
 //            adapter = ExpandedStopsAdapter(detailedContext, trimmedStops)
@@ -90,15 +82,13 @@ class BusExpandable(context: Context, direction: Direction) : LinearLayout(conte
 //        expandableRecyclerParams.leftMargin = BUS_LEFT_MARGIN
 //
 //        expandableRecycler.layoutParams = expandableRecyclerParams
-
-
     }
 
     private fun createStops(position : Int) : LinearLayout {
         val expandedHolder = LinearLayout(detailedContext)
-        expandedHolder.orientation = LinearLayout.VERTICAL
+        expandedHolder.orientation = VERTICAL
         expandedHolder.gravity = Gravity.CENTER_VERTICAL
-        val holderParams: ViewGroup.MarginLayoutParams = ViewGroup.MarginLayoutParams(
+        val holderParams = MarginLayoutParams(
             ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT
         )
         holderParams.leftMargin = BUS_LEFT_MARGIN
@@ -106,14 +96,14 @@ class BusExpandable(context: Context, direction: Direction) : LinearLayout(conte
 
         //Create Dot
         val dotDirectionLayout = LinearLayout(detailedContext)
-        dotDirectionLayout.orientation = LinearLayout.HORIZONTAL
+        dotDirectionLayout.orientation = HORIZONTAL
         dotDirectionLayout.gravity = Gravity.CENTER_VERTICAL
-        val params: ViewGroup.MarginLayoutParams = ViewGroup.MarginLayoutParams(
+        val params = MarginLayoutParams(
             ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT
         )
         dotDirectionLayout.layoutParams = params
 
-        var radius = 16f
+        val radius = 16f
 
         val size: Int = (radius * 2).toInt()
 
@@ -160,10 +150,6 @@ class BusExpandable(context: Context, direction: Direction) : LinearLayout(conte
 
         return expandedHolder
         //expandableLinearLayout.addView(expandedHolder)
-
-
-
-
     }
 
 

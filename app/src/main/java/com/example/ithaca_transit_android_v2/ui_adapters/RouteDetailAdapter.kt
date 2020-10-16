@@ -472,6 +472,8 @@ class RouteDetailAdapter(var context: Context, _routeDetail: View) {
         walkingMarginHolder.addView(walkingView)
         walkingHolder.addView(walkingMarginHolder)
 
+        Log.d("walkingView", walkingView.toString())
+
 
         val dotHolderparams: ViewGroup.MarginLayoutParams = ViewGroup.MarginLayoutParams(
             ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT
@@ -511,7 +513,7 @@ class RouteDetailAdapter(var context: Context, _routeDetail: View) {
     }
 
     //Just pass in the specific direction
-    private fun createBusComponent(direction: Direction) {
+    private fun createBusIconComponent(direction: Direction) {
 
         val busNum: Int? = direction.busNumber
         val startTime = direction.startTime

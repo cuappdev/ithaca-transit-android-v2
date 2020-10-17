@@ -38,12 +38,10 @@ class RouteDetailAdapter(var context: Context, _routeDetail: View) {
     val TIME_LEFT_MARGIN = 50
     val TIME_RIGHT_MARGIN = 50
     val DOTS_LEFT_MARGIN = 25
-    val BUS_ICON_LEFT_MARGIN = 50
-    val WALKING_ICON_LEFT_MARGIN = 92
     val DESCRIPTION_LEFT_MARGIN = 60
-    val DISTANCE_TOP_MARGIN = 5
-    val BUS_LEFT_MARGIN = TIME_LEFT_MARGIN + TIME_RIGHT_MARGIN + 167
-    val SMALLDOT_LEFT_MARGIN = TIME_LEFT_MARGIN + TIME_RIGHT_MARGIN + 165
+    val DISTANCE_TOP_MARGIN = 30
+    val SMALLDOT_LEFT_MARGIN = TIME_LEFT_MARGIN + TIME_RIGHT_MARGIN + 215
+    //val SMALLDOT_LEFT_MARGIN = TIME_LEFT_MARGIN + TIME_RIGHT_MARGIN + 165
     val DIRECTION_LINE_MARGIN = TIME_LEFT_MARGIN + TIME_RIGHT_MARGIN + 165
     val SMALLDOT_TOP_MARGIN = 20
     var detailedContext = context
@@ -64,11 +62,6 @@ class RouteDetailAdapter(var context: Context, _routeDetail: View) {
         for(direction in directions) {
             if(direction.routeNumber != null) busNums.add(direction.routeNumber)
         }
-
-        //List of bus numbers
-        val busIterator = busNums.iterator()
-//        val stopNames: List<String> =
-//            route.routeSummary.map { summaryObj -> summaryObj.stopName ?: "" }
 
         for( i in route.directions.indices) {
             val direction = directions[i]
@@ -95,7 +88,7 @@ class RouteDetailAdapter(var context: Context, _routeDetail: View) {
             }
             if (direction.type == DirectionType.BUS) {
                 if(direction.busStops.isNotEmpty()) {
-                    val walkingToLine =
+                    val busLinearLayout =
                         direction.routeNumber?.let {
                             createDirectionLinearLayout(
                                 sdf.format(direction.startTime),
@@ -108,7 +101,7 @@ class RouteDetailAdapter(var context: Context, _routeDetail: View) {
                                 busNumber = it
                             )
                         }
-                    detailedLayout.addView(walkingToLine)
+                    detailedLayout.addView(busLinearLayout)
                     if(direction.busStops.size > 2) {
                         val expandedTop = BusExpandable(detailedContext, direction)
 
@@ -123,13 +116,11 @@ class RouteDetailAdapter(var context: Context, _routeDetail: View) {
                         //Add DirectionLine
                         val directionLineParams = ViewGroup.MarginLayoutParams(
                             10,
-                            50
+                            100
                         )
                         directionLineParams.leftMargin = DIRECTION_LINE_MARGIN
-                        val directionLine = DirectionLine(detailedContext, "blue", 50f, 8f)
-
+                        val directionLine = DirectionLine(detailedContext, "blue", 100f, 8f)
                         directionLine.layoutParams = directionLineParams
-
                         detailedLayout.addView(directionLine)
                     }
 
@@ -146,10 +137,6 @@ class RouteDetailAdapter(var context: Context, _routeDetail: View) {
                     detailedLayout.addView(bottomExpanded)
                 }
             }
-
-//            else if (direction.type == DirectionType.BUS){
-//                busDirection(direction, busIterator.next())
-//            }
         }
         //Handle c
         if(isOnlyWalking) {

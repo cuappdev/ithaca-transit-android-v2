@@ -16,6 +16,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.ithaca_transit_android_v2.R
 import com.example.ithaca_transit_android_v2.models.Direction
 import com.example.ithaca_transit_android_v2.ui_adapters.ExpandedStopsAdapter
+import kotlinx.android.synthetic.main.item_searchview.view.*
 import java.text.SimpleDateFormat
 import java.util.*
 import java.util.concurrent.TimeUnit
@@ -23,17 +24,11 @@ import kotlin.math.exp
 
 class BusExpandable(context: Context, direction: Direction) : LinearLayout(context) {
 
-    val TOP_MARGIN = 15
     val TIME_LEFT_MARGIN = 50
     val TIME_RIGHT_MARGIN = 50
-    val DOTS_LEFT_MARGIN = 25
-    val BUS_ICON_LEFT_MARGIN = 50
-    val WALKING_ICON_LEFT_MARGIN = 92
     val DESCRIPTION_LEFT_MARGIN = 60
-    val DISTANCE_TOP_MARGIN = 5
-    val BUS_LEFT_MARGIN = TIME_LEFT_MARGIN + TIME_RIGHT_MARGIN + 155
-    val SMALLDOT_LEFT_MARGIN = TIME_LEFT_MARGIN + TIME_RIGHT_MARGIN + 165
-    val SMALLDOT_TOP_MARGIN = 20
+    val BUS_LEFT_MARGIN = TIME_LEFT_MARGIN + TIME_RIGHT_MARGIN + 165
+    val DIRECTION_LINE_ID = View.generateViewId()
     var detailedContext = context
 
     private var expandableTop: LinearLayout
@@ -55,6 +50,18 @@ class BusExpandable(context: Context, direction: Direction) : LinearLayout(conte
 
         expandableLinearLayout = findViewById(R.id.expandedstops_layout)
 
+        //Add DirectionLine
+        val directionLineParams = ViewGroup.MarginLayoutParams(
+            10,
+            50
+        )
+        val directionLine = DirectionLine(detailedContext, "blue", 50f, 8f)
+        directionLineParams.leftMargin = BUS_LEFT_MARGIN + 12
+
+        directionLine.layoutParams = directionLineParams
+
+        expandableLinearLayout.addView(directionLine)
+
         for(i in 0 until trimmedStops.size){
             val stop = createStops(i)
             expandableLinearLayout.addView(stop)
@@ -65,9 +72,11 @@ class BusExpandable(context: Context, direction: Direction) : LinearLayout(conte
         expandableTop.setOnClickListener{
             if(expandableLinearLayout.visibility == View.VISIBLE){
                 expandableLinearLayout.visibility = View.GONE
+                expandableTop.findViewById<View>(DIRECTION_LINE_ID).visibility = View.VISIBLE
             }
             else{
                 expandableLinearLayout.visibility = View.VISIBLE
+                expandableTop.findViewById<View>(DIRECTION_LINE_ID).visibility = View.GONE
             }
         }
         //        expandableRecycler.apply {
@@ -139,7 +148,6 @@ class BusExpandable(context: Context, direction: Direction) : LinearLayout(conte
             10,
             50
         )
-        //directionLineParams.leftMargin = BUS_LEFT_MARGIN
         val directionLine = DirectionLine(detailedContext, "blue", 50f, 8f)
         directionLineParams.leftMargin = 12
 
@@ -149,9 +157,7 @@ class BusExpandable(context: Context, direction: Direction) : LinearLayout(conte
         expandedHolder.addView(directionLine)
 
         return expandedHolder
-        //expandableLinearLayout.addView(expandedHolder)
     }
-
 
     private fun createExpandableTop(): LinearLayout {
 
@@ -170,7 +176,7 @@ class BusExpandable(context: Context, direction: Direction) : LinearLayout(conte
 
         //Add line to top
         //Adding set params because line seems to stretch forever
-        val directionLineParams = ViewGroup.MarginLayoutParams(
+        val directionLineParams = MarginLayoutParams(
             10,
             100
         )
@@ -178,6 +184,7 @@ class BusExpandable(context: Context, direction: Direction) : LinearLayout(conte
         val directionLine = DirectionLine(detailedContext, "blue", 100f, 8f)
 
         directionLine.layoutParams = directionLineParams
+        directionLine.id = DIRECTION_LINE_ID
 
         //Add Stops Top
         val stopsText = LinearLayout(detailedContext)
@@ -243,7 +250,7 @@ class BusExpandable(context: Context, direction: Direction) : LinearLayout(conte
         smallDownArrowParams.leftMargin = 12
         smallDownArrowParams.topMargin = 20
 
-        val smallDownArrow: ImageView = ImageView(detailedContext)
+        val smallDownArrow = ImageView(detailedContext)
         smallDownArrow.setImageResource(R.drawable.ic_downarrow)
 
         smallDownArrow.layoutParams = smallDownArrowParams

@@ -36,14 +36,15 @@ class RouteDetailAdapter(var context: Context, _routeDetail: View) {
 
     val TOP_MARGIN = 15
     val TIME_LEFT_MARGIN = 50
+    //Time starts at the same place but does not end at the same plce, the margins off set the dots :(
     val TIME_RIGHT_MARGIN = 50
     val DOTS_LEFT_MARGIN = 25
     val DESCRIPTION_LEFT_MARGIN = 60
-    val DISTANCE_TOP_MARGIN = 30
-    val SMALLDOT_LEFT_MARGIN = TIME_LEFT_MARGIN + TIME_RIGHT_MARGIN + 215
-    //val SMALLDOT_LEFT_MARGIN = TIME_LEFT_MARGIN + TIME_RIGHT_MARGIN + 165
-    val DIRECTION_LINE_MARGIN = TIME_LEFT_MARGIN + TIME_RIGHT_MARGIN + 165
-    val SMALLDOT_TOP_MARGIN = 20
+    //Controls top margin of distance text in walking component
+    val DISTANCE_TOP_MARGIN = 20
+    val SMALLDOT_LEFT_MARGIN = TIME_LEFT_MARGIN + TIME_RIGHT_MARGIN + 215 //165
+    val DIRECTION_LINE_MARGIN = TIME_LEFT_MARGIN + TIME_RIGHT_MARGIN + 215
+    val SMALLDOT_TOP_MARGIN = 5
     var detailedContext = context
 
     val sdf = SimpleDateFormat("h:mm a", Locale.getDefault())
@@ -136,6 +137,9 @@ class RouteDetailAdapter(var context: Context, _routeDetail: View) {
                     )
                     detailedLayout.addView(bottomExpanded)
                 }
+//                if(i < route.directions.lastIndex - 1 || i == route.directions.lastIndex) {
+//                    detailedLayout.addView(createWalkingComponent(""))
+//                }
             }
         }
         //Handle c
@@ -428,7 +432,7 @@ class RouteDetailAdapter(var context: Context, _routeDetail: View) {
         } else if (expandedBottom) {
             val descriptionView = TextView(detailedContext)
 
-            val infoText = String.format("%s %s", "Get off at ", destination)
+            val infoText = String.format("%s %s", "Get off at", destination)
             val sb = SpannableStringBuilder(infoText)
             val bss = StyleSpan(android.graphics.Typeface.BOLD)
             sb.setSpan(

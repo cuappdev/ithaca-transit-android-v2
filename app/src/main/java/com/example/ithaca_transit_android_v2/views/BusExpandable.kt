@@ -27,7 +27,7 @@ class BusExpandable(context: Context, direction: Direction) : LinearLayout(conte
     val TIME_LEFT_MARGIN = 50
     val TIME_RIGHT_MARGIN = 50
     val DESCRIPTION_LEFT_MARGIN = 60
-    val BUS_LEFT_MARGIN = TIME_LEFT_MARGIN + TIME_RIGHT_MARGIN + 165
+    val BUS_LEFT_MARGIN = TIME_LEFT_MARGIN + TIME_RIGHT_MARGIN + 215 //165
     val DIRECTION_LINE_ID = View.generateViewId()
     var detailedContext = context
 
@@ -56,7 +56,7 @@ class BusExpandable(context: Context, direction: Direction) : LinearLayout(conte
             50
         )
         val directionLine = DirectionLine(detailedContext, "blue", 50f, 8f)
-        directionLineParams.leftMargin = BUS_LEFT_MARGIN + 12
+        directionLineParams.leftMargin = BUS_LEFT_MARGIN
 
         directionLine.layoutParams = directionLineParams
 
@@ -93,6 +93,7 @@ class BusExpandable(context: Context, direction: Direction) : LinearLayout(conte
 //        expandableRecycler.layoutParams = expandableRecyclerParams
     }
 
+    //Stop dots offset by 12, idk why, big gap, idk why.
     private fun createStops(position : Int) : LinearLayout {
         val expandedHolder = LinearLayout(detailedContext)
         expandedHolder.orientation = VERTICAL
@@ -149,7 +150,6 @@ class BusExpandable(context: Context, direction: Direction) : LinearLayout(conte
             50
         )
         val directionLine = DirectionLine(detailedContext, "blue", 50f, 8f)
-        directionLineParams.leftMargin = 12
 
         directionLine.layoutParams = directionLineParams
 
@@ -220,7 +220,7 @@ class BusExpandable(context: Context, direction: Direction) : LinearLayout(conte
         )
         smallSpaceDot.leftMargin = 10
         smallSpaceDot.rightMargin = 10
-        smallSpaceDot.topMargin = 20
+        smallSpaceDot.topMargin = 25
 
         val smallDot: ImageView = ImageView(detailedContext)
         smallDot.setImageResource(R.drawable.ic_oval5)

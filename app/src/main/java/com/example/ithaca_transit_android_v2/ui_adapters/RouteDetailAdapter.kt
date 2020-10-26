@@ -55,11 +55,12 @@ class RouteDetailAdapter(var context: Context, _routeDetail: View) {
 
         detailedLayout.removeAllViews()
 
-        val isOnlyWalking = route.directions.size == 1
+        val isOnlyWalking = route.directions.size == 1 && route.directions[0].type == DirectionType.WALK
         val directions = route.directions
 
         for( i in route.directions.indices) {
             val direction = directions[i]
+            Log.i("adapter4",i.toString())
             //Walking component go before or after?
             if(direction.type == DirectionType.WALK && !isOnlyWalking) {
                 val distance = "" + direction.distance.toInt() + " ft"
@@ -123,7 +124,7 @@ class RouteDetailAdapter(var context: Context, _routeDetail: View) {
                     }
                     val bottomExpanded = createDirectionLinearLayout(
                         sdf.format(direction.endTime),
-                        "Get off",
+                        "Get off at",
                         direction.busStops.last().name,
                         direction.type,
                         drawSegmentAbove = true,
@@ -132,6 +133,22 @@ class RouteDetailAdapter(var context: Context, _routeDetail: View) {
                         expandedBottom = true
                     )
                     detailedLayout.addView(bottomExpanded)
+                    if(i < route.directions.lastIndex && route.directions[i+1].type == DirectionType.BUS) {
+//                        //Add DirectionLine
+//                        val directionLineParams = ViewGroup.MarginLayoutParams(
+//                            8,
+//                            100
+//                        )
+//                        directionLineParams.leftMargin = DIRECTION_LINE_MARGIN
+//                        directionLineParams.topMargin = 0
+//                        val directionLine = DirectionLine(detailedContext, "gray", 100f, 8f)
+//                        directionLine.layoutParams = directionLineParams
+                        detailedLayout.addView(createWalkingComponent("", "blue"))
+                     //Does a route direction like this exist? A string of buses then an intermediary walk?
+                    } else if(i < route.directions.lastIndex - 1 && route.directions[i+1].type == DirectionType.WALK) {
+                        detailedLayout.addView(createWalkingComponent(""))
+                    }
+                    //mitchell @ college
                 }
             }
         }
@@ -201,7 +218,7 @@ class RouteDetailAdapter(var context: Context, _routeDetail: View) {
         var radius = 16f
         if (isFinalDestination) {
             radius = 20f
-            params.leftMargin = params.leftMargin - 4
+            //(? what does this do?) params.leftMargin = params.leftMargin - 4
         }
 
         val colorStr: String = if (directionType == DirectionType.BUS) {
@@ -272,7 +289,6 @@ class RouteDetailAdapter(var context: Context, _routeDetail: View) {
             val descriptionParams: ViewGroup.MarginLayoutParams = ViewGroup.MarginLayoutParams(
                 ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT
             )
-            //descriptionParams.leftMargin = DESCRIPTION_LEFT_MARGIN
             firstDescription.layoutParams = descriptionParams
 
             busTextLayout.addView(firstDescription)
@@ -309,17 +325,19 @@ class RouteDetailAdapter(var context: Context, _routeDetail: View) {
             val descriptionParams2: ViewGroup.MarginLayoutParams = ViewGroup.MarginLayoutParams(
                 ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT
             )
-            //descriptionParams.leftMargin = DESCRIPTION_LEFT_MARGIN
             secondDescription.layoutParams = descriptionParams2
 
             busTextLayout.addView(secondDescription)
+            Log.d("adapter",busTextLayout.measuredHeight.toString())
+            Log.d("adapter2", descriptionParams2.height.toString())
+            Log.d("adapter3",secondDescription.measuredHeight.toString())
 
             dotDirectionLayout.addView(busTextLayout)
 
         } else if (expandedBottom) {
             val descriptionView = TextView(detailedContext)
 
-            val infoText = String.format("%s %s", "Get off at", destination)
+            val infoText = String.format("%s %s", movementDescription, destination)
             val sb = SpannableStringBuilder(infoText)
             val bss = StyleSpan(android.graphics.Typeface.BOLD)
             sb.setSpan(
@@ -339,17 +357,15 @@ class RouteDetailAdapter(var context: Context, _routeDetail: View) {
 
             dotDirectionLayout.addView(descriptionView)
         }
-
-
         return dotDirectionLayout
     }
 
-    private fun makeSmallGrayDot(): View {
-        val grayDotParams = ViewGroup.MarginLayoutParams(32, 27)
-        grayDotParams.topMargin = 6
-        val grayDot = DirectionDot(
+    private fun makeSmallDot(color: String): View {
+        val dotParams = ViewGroup.MarginLayoutParams(32, 27)
+        dotParams.topMargin = 6
+        val dot = DirectionDot(
             context = detailedContext,
-            colorStr = "gray",
+            colorStr = color,
             useNestedCircles = false,
             drawSegmentBelow = false,
             drawSegmentAbove = false,
@@ -357,11 +373,11 @@ class RouteDetailAdapter(var context: Context, _routeDetail: View) {
             lineWidth = 0f,
             verticalPadding = 0f
         )
-        grayDot.layoutParams = grayDotParams
-        return grayDot
+        dot.layoutParams = dotParams
+        return dot
     }
 
-    private fun createWalkingComponent(distance: String): LinearLayout {
+    private fun createWalkingComponent(distance: String, color: String = "gray"): LinearLayout {
         val walkingHolder = LinearLayout(detailedContext)
         walkingHolder.orientation = LinearLayout.HORIZONTAL
 
@@ -375,9 +391,9 @@ class RouteDetailAdapter(var context: Context, _routeDetail: View) {
         dotsHolder.orientation = LinearLayout.VERTICAL
         dotsHolder.layoutParams = dotHolderparams
 
-        val grayDot1 = makeSmallGrayDot()
-        val grayDot2 = makeSmallGrayDot()
-        val grayDot3 = makeSmallGrayDot()
+        val grayDot1 = makeSmallDot(color)
+        val grayDot2 = makeSmallDot(color)
+        val grayDot3 = makeSmallDot(color)
         dotsHolder.addView(grayDot1)
         dotsHolder.addView(grayDot2)
         dotsHolder.addView(grayDot3)

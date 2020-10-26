@@ -245,7 +245,8 @@ class RouteListViewAdapter(context: Context, var userList: ArrayList<RouteListAd
         p0.routeDuration.text = routeInterval
         p0.routeDuration.setTypeface(null, Typeface.BOLD)
 
-        val isOnlyWalking = routeObj.directions.size == 1
+        val isOnlyWalking =
+            routeObj.directions.size == 1 && routeObj.directions[0].type == DirectionType.WALK
         var isStopDestinationName = true
         for(i in routeObj.directions.indices) {
             val direction = routeObj.directions[i]

@@ -22,7 +22,7 @@ import java.util.*
 import java.util.concurrent.TimeUnit
 import kotlin.math.exp
 
-class BusExpandable(context: Context, direction: Direction) : LinearLayout(context) {
+class BusExpandable(context: Context, direction: Direction, timeMargin: Int) : LinearLayout(context) {
 
     val TIME_LEFT_MARGIN = 50
     val TIME_TEXT_WIDTH = 200
@@ -61,9 +61,7 @@ class BusExpandable(context: Context, direction: Direction) : LinearLayout(conte
         expandableTop.setOnClickListener{
             if(expandableLinearLayout.visibility == View.VISIBLE){
                 expandableLinearLayout.visibility = View.GONE
-                //expandableTop.findViewById<View>(DIRECTION_LINE_ID).visibility = View.VISIBLE
-            }
-            else{
+            } else{
                 expandableLinearLayout.visibility = View.VISIBLE
             }
         }

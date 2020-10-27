@@ -119,7 +119,6 @@ class RouteDetailAdapter(var context: Context, _routeDetail: View) {
         dotDirectionLayout.addView(dot)
 
         dot.measure(ViewGroup.MarginLayoutParams.WRAP_CONTENT, ViewGroup.MarginLayoutParams.WRAP_CONTENT)
-        Log.d("adapter1", dot.measuredWidth.toString())
 
         //Stop Name
         if (directionType == DirectionType.WALK) {
@@ -411,6 +410,24 @@ class RouteDetailAdapter(var context: Context, _routeDetail: View) {
                 detailedLayout.addView(createWalkingComponent(""))
             }
             //mitchell @ college
+
+            // Setting Dot Radius
+            var radius = 16f
+            val colorStr: String = "blue"
+            val verticalPadding = 18f
+
+            //Initialize Dots (Done indiviudally)
+            val dot = DirectionDot(
+                detailedContext, colorStr, true, true,
+                true, radius, 8f, verticalPadding
+            )
+            val size: Int = (radius * 2).toInt()
+            //Create layout params for dots
+            val canvasParams: ViewGroup.LayoutParams =
+                ViewGroup.LayoutParams(size, size + 2 * verticalPadding.toInt())
+            dot.layoutParams = canvasParams
+            dot.measure(ViewGroup.MarginLayoutParams.WRAP_CONTENT, ViewGroup.MarginLayoutParams.WRAP_CONTENT)
+            Log.d("adapter1", dot.measuredWidth.toString())
         }
     }
 

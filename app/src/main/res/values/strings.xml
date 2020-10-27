@@ -1,5 +1,8 @@
 <resources>
     <string name="app_name">Ithaca Transit</string>
     <string name="board_in_mins">Board %1$s</string>
+    <string name="depart_at">Depart at %1$s from &lt;b>%2$s&lt;/b></string>
+    <string name="trip_duration">Trip Duration: %1$s</string>
+    <string name="walk_to">Walk to &lt;b>%1$s&lt;/b></string>
     <string name="on_time">On Time</string>
 </resources>

@@ -1,8 +1,12 @@
 package com.example.ithaca_transit_android_v2.ui_adapters
 
 import android.content.Context
+import android.text.Html
+import android.text.Html.FROM_HTML_MODE_LEGACY
+import android.text.Html.fromHtml
 import android.text.Spannable
 import android.text.SpannableStringBuilder
+import android.text.TextUtils
 import android.text.style.StyleSpan
 import android.util.Log
 import android.view.Gravity
@@ -12,6 +16,7 @@ import android.widget.LinearLayout
 import android.widget.RelativeLayout
 import android.widget.TextView
 import androidx.core.content.ContextCompat
+import androidx.core.text.HtmlCompat
 import com.example.ithaca_transit_android_v2.R
 import com.example.ithaca_transit_android_v2.models.Direction
 import com.example.ithaca_transit_android_v2.models.DirectionType
@@ -23,6 +28,7 @@ import com.example.ithaca_transit_android_v2.views.DirectionLine
 import kotlinx.android.synthetic.main.route_detailed_holder.view.*
 import java.text.SimpleDateFormat
 import java.util.*
+import java.util.concurrent.TimeUnit
 
 class RouteDetailAdapter(var context: Context, _routeDetail: View) {
 
@@ -118,8 +124,6 @@ class RouteDetailAdapter(var context: Context, _routeDetail: View) {
 
         dotDirectionLayout.addView(dot)
 
-        dot.measure(ViewGroup.MarginLayoutParams.WRAP_CONTENT, ViewGroup.MarginLayoutParams.WRAP_CONTENT)
-
         //Stop Name
         if (directionType == DirectionType.WALK) {
             val descriptionView = TextView(detailedContext)
@@ -178,7 +182,7 @@ class RouteDetailAdapter(var context: Context, _routeDetail: View) {
             busIconParams.leftMargin = 7
             busIconParams.rightMargin = 7
 
-            val busNumberView = BusNumberComponent(detailedContext)
+            val busNumberView = BusNumberComponent(detailedContext, R.layout.bus_image)
             busNumberView.setBusNumber(busNumber)
             busNumberView.layoutParams = busIconParams
 
@@ -206,8 +210,14 @@ class RouteDetailAdapter(var context: Context, _routeDetail: View) {
             )
             secondDescription.layoutParams = descriptionParams2
 
+            secondDescription.maxLines = 1
+            secondDescription.isSingleLine = true
+            secondDescription.ellipsize = TextUtils.TruncateAt.MARQUEE
+            secondDescription.marqueeRepeatLimit = -1
+            secondDescription.isFocusableInTouchMode = true
+            secondDescription.isSelected = true
+
             busTextLayout.addView(secondDescription)
-            busTextLayout.measure(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT)
             dotDirectionLayout.addView(busTextLayout)
         } else if (expandedBottom) {
             val descriptionView = TextView(detailedContext)
@@ -310,6 +320,30 @@ class RouteDetailAdapter(var context: Context, _routeDetail: View) {
         TIME_TEXT_WIDTH = timeMarginView.measuredWidth
         SMALLDOT_LEFT_MARGIN += TIME_TEXT_WIDTH + TIME_TEXT_WIDTH/5
         DIRECTION_LINE_MARGIN += TIME_TEXT_WIDTH + TIME_TEXT_WIDTH/5
+
+
+        var radius = 16f
+        val colorStr: String = "blue"
+        val verticalPadding = 18f
+
+        //Initialize Dots (Done indiviudally)
+        val dot = DirectionDot(
+            detailedContext, colorStr, true, true,
+            true, radius, 8f, verticalPadding
+        )
+        val size: Int = (radius * 2).toInt()
+        //Create layout params for dots
+        val canvasParams: ViewGroup.LayoutParams =
+            ViewGroup.LayoutParams(size, size + 2 * verticalPadding.toInt())
+        dot.layoutParams = canvasParams
+
+        dot.post {
+            Log.d("adapterDot", dot.measuredWidth.toString())
+        }
+//        val viewTree = dot.viewTreeObserver
+//        if(viewTree.isAlive) {
+//        dot.measure(ViewGroup.MarginLayoutParams.WRAP_CONTENT, ViewGroup.MarginLayoutParams.WRAP_CONTENT)
+//        Log.d("adapter1", dot.measuredWidth.toString())
     }
 
     private fun updateTypeIsWalking(direction: Direction, route: Route, i: Int) {
@@ -335,7 +369,7 @@ class RouteDetailAdapter(var context: Context, _routeDetail: View) {
         if(i!=route.directions.lastIndex) detailedLayout.addView(createWalkingComponent(distance))
     }
 
-    private fun updateTypeIsBus(direction: Direction, route: Route, i: Int){
+    private fun updateTypeIsBus(direction: Direction, route: Route, i: Int) {
         if(direction.busStops.isNotEmpty()) {
             val busLinearLayout =
                 direction.routeNumber?.let {
@@ -363,25 +397,11 @@ class RouteDetailAdapter(var context: Context, _routeDetail: View) {
 
                 detailedLayout.addView(expandedTop)
             } else {
-                val tv = detailedLayout.findViewById<TextView>(stopTextViewId)
-                Log.d("adapterLineCount", tv.toString())
-                if(tv != null) {
-                    Log.d("adapterLineCount", tv.text.toString() + tv.lineCount.toString())
-                    //Add DirectionLine
-                    val directionLineParams = ViewGroup.MarginLayoutParams(
-                        8,
-                        100
-                    )
-                    directionLineParams.leftMargin = DIRECTION_LINE_MARGIN
-                    //If the stop text from createDirectionLayout is multi-lined, we must
-                    //base some negative top margin off of that or else there's some awkward gap
-                    if(tv.lineCount > 1) {
-                        directionLineParams.topMargin = -tv.measuredHeight / 4
-                    }
-                    val directionLine = DirectionLine(detailedContext, "blue", 100f, 8f)
-                    directionLine.layoutParams = directionLineParams
-                    detailedLayout.addView(directionLine)
-                }
+                val directionLineParams = ViewGroup.MarginLayoutParams(8, 100)
+                directionLineParams.leftMargin = DIRECTION_LINE_MARGIN
+                val directionLine = DirectionLine(detailedContext, "blue", 100f, 8f)
+                directionLine.layoutParams = directionLineParams
+                detailedLayout.addView(directionLine)
             }
             val bottomExpanded = createDirectionLinearLayout(
                 sdf.format(direction.endTime),
@@ -410,36 +430,88 @@ class RouteDetailAdapter(var context: Context, _routeDetail: View) {
                 detailedLayout.addView(createWalkingComponent(""))
             }
             //mitchell @ college
+        }
+    }
 
-            // Setting Dot Radius
-            var radius = 16f
-            val colorStr: String = "blue"
-            val verticalPadding = 18f
+    private fun createHeader(route: Route) {
+        val directions = route.directions
+        val iconView = routeDetail.findViewById<LinearLayout>(R.id.route_detail_icon_holder)
+        val routeDetailHeader = routeDetail.findViewById<TextView>(R.id.route_detail_header)
+        val tripDurationTextView = routeDetail.findViewById<TextView>(R.id.route_detail_trip_duration)
+        iconView.removeAllViews()
 
-            //Initialize Dots (Done indiviudally)
-            val dot = DirectionDot(
-                detailedContext, colorStr, true, true,
-                true, radius, 8f, verticalPadding
-            )
-            val size: Int = (radius * 2).toInt()
-            //Create layout params for dots
-            val canvasParams: ViewGroup.LayoutParams =
-                ViewGroup.LayoutParams(size, size + 2 * verticalPadding.toInt())
-            dot.layoutParams = canvasParams
-            dot.measure(ViewGroup.MarginLayoutParams.WRAP_CONTENT, ViewGroup.MarginLayoutParams.WRAP_CONTENT)
-            Log.d("adapter1", dot.measuredWidth.toString())
+        val tripDuration = route.arrival.time - route.depart.time
+        val hours = TimeUnit.MILLISECONDS.toHours(tripDuration).toInt()
+        val minutes = (TimeUnit.MILLISECONDS.toMinutes(tripDuration) - TimeUnit.HOURS.toMinutes(TimeUnit.MILLISECONDS.toHours(tripDuration))).toInt()
+
+        Log.d("timeRoute", hours.toString())
+        Log.d("timeRoute", minutes.toString())
+        Log.d("timeRoute", sdf.format(route.arrival))
+        Log.d("timeRoute", sdf.format(route.depart))
+        var durationString = ""
+        if(hours >= 1) {
+            durationString += "$hours hr"
+            if(hours > 1) {
+                durationString += "s"
+            }
+            if(minutes >= 0) {
+                durationString += " and "
+            }
+        }
+        if(minutes >= 0) {
+            durationString += "$minutes min"
+        }
+        if(minutes != 1) {
+            durationString += "s"
+        }
+        if(minutes == 0 && hours == 0) {
+            durationString = "0 minutes"
+        }
+        Log.d("timeRoute", durationString)
+        tripDurationTextView.text = context.getString(R.string.trip_duration, durationString)
+
+        if(directions.size == 1 && directions[0].type == DirectionType.WALK) {
+            return
+        } else {
+            var firstBusDirection: Direction? = null
+            for(direction in directions) {
+                if(direction.type == DirectionType.BUS) {
+                    firstBusDirection = direction
+                    break
+                }
+            }
+            if(firstBusDirection?.routeNumber != null) {
+                //Bus image in text
+                val busIconParams = ViewGroup.MarginLayoutParams(
+                    LinearLayout.LayoutParams.WRAP_CONTENT,
+                    LinearLayout.LayoutParams.WRAP_CONTENT
+                )
+                val busNumberView = BusNumberComponent(detailedContext, R.layout.bus_image_route_detail)
+                busNumberView.setBusNumber(firstBusDirection.routeNumber!!)
+                busNumberView.layoutParams = busIconParams
+                iconView.addView(busNumberView)
+                routeDetailHeader.text = HtmlCompat.fromHtml(
+                    context.getString(
+                    R.string.depart_at,
+                    sdf.format(firstBusDirection.startTime),
+                    firstBusDirection.name
+                    ),
+                    HtmlCompat.FROM_HTML_MODE_LEGACY
+                )
+            }
         }
     }
 
     fun updateRouteDetail(route: Route) {
-        //Header with icon and first inital sto p?
-        val headerText = "Leaving in " + route.boardInMin.toString() // placeholder for now
-        routeDetail.route_detail_header.text = headerText
+//        val headerText = "Leaving in " + route.boardInMin.toString() // placeholder for now
+//        routeDetail.route_detail_header.text = headerText
 
         detailedLayout.removeAllViews()
 
         val isOnlyWalking = route.directions.size == 1 && route.directions[0].type == DirectionType.WALK
         val directions = route.directions
+
+        createHeader(route)
 
         adjustTimeMargin(sdf.format(directions[0].startTime))
 

@@ -6,6 +6,7 @@ import android.util.TypedValue
 import android.view.View
 import android.widget.LinearLayout
 import androidx.annotation.NonNull
+import androidx.core.widget.NestedScrollView
 import com.example.ithaca_transit_android_v2.NetworkUtils
 import com.example.ithaca_transit_android_v2.Repository
 import com.example.ithaca_transit_android_v2.models.Route
@@ -206,7 +207,7 @@ class RouteOptionsPresenter(
     }
 
     fun setBottomSheetCallback(
-        bottom_sheet: LinearLayout
+        bottom_sheet: NestedScrollView
     ) {
         val bottomSheetBehavior = BottomSheetBehavior.from(bottom_sheet)
         var slideState = BottomSheetBehavior.STATE_COLLAPSED

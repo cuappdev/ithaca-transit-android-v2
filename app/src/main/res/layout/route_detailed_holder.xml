@@ -11,9 +11,8 @@
         android:id="@+id/route_detail_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:paddingBottom="40dp"
+        android:paddingBottom="20dp"
         android:background="@color/routeDetailsHeader">
-
         <RelativeLayout
             android:id="@+id/detail_fab"
             android:layout_width="40dp"
@@ -23,39 +22,34 @@
             android:layout_marginStart="15dp"
             android:layout_marginTop="8dp"
             android:background="@drawable/fab">
-
         </RelativeLayout>
-
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:layout_marginTop="20dp"
+        <RelativeLayout
             android:layout_width="300dp"
             android:layout_height="wrap_content"
+            android:layout_marginTop="30dp"
             android:layout_centerInParent="true">
             <LinearLayout
                 android:layout_width="100dp"
                 android:layout_height="50dp"
-                app:layout_constraintRight_toLeftOf="@id/route_detail_header"
-                app:layout_constraintTop_toTopOf="@id/route_detail_header"
                 android:id="@+id/route_detail_icon_holder"
-                android:orientation="horizontal">
+                android:orientation="horizontal"
+                android:layout_alignParentStart="true"
+                android:layout_marginEnd="20dp"
+                android:layout_centerVertical="true">
             </LinearLayout>
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:id="@+id/route_detail_header"
-                android:layout_marginStart="30dp"
-                android:scrollHorizontally="false"
-                android:gravity="fill"
-                android:includeFontPadding="false"
-                app:layout_constraintLeft_toRightOf="@id/route_detail_icon_holder"
-                app:layout_constraintTop_toTopOf="@id/route_detail_icon_holder" />
+                android:layout_toEndOf="@id/route_detail_icon_holder"
+                android:layout_alignParentTop="true"/>
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:id="@+id/route_detail_trip_duration"
-                app:layout_constraintTop_toBottomOf="@id/route_detail_header"
-                app:layout_constraintLeft_toLeftOf="@id/route_detail_header"/>
-        </androidx.constraintlayout.widget.ConstraintLayout>
+                android:layout_below="@id/route_detail_header"
+                android:layout_alignStart="@id/route_detail_header"/>
+        </RelativeLayout>
     </RelativeLayout>
 
     <androidx.core.widget.NestedScrollView

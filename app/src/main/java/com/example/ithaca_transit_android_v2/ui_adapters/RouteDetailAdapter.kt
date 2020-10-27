@@ -21,10 +21,7 @@ import com.example.ithaca_transit_android_v2.R
 import com.example.ithaca_transit_android_v2.models.Direction
 import com.example.ithaca_transit_android_v2.models.DirectionType
 import com.example.ithaca_transit_android_v2.models.Route
-import com.example.ithaca_transit_android_v2.views.BusExpandable
-import com.example.ithaca_transit_android_v2.views.BusNumberComponent
-import com.example.ithaca_transit_android_v2.views.DirectionDot
-import com.example.ithaca_transit_android_v2.views.DirectionLine
+import com.example.ithaca_transit_android_v2.views.*
 import kotlinx.android.synthetic.main.route_detailed_holder.view.*
 import java.text.SimpleDateFormat
 import java.util.*
@@ -127,7 +124,6 @@ class RouteDetailAdapter(var context: Context, _routeDetail: View) {
         //Stop Name
         if (directionType == DirectionType.WALK) {
             val descriptionView = TextView(detailedContext)
-
             val infoText = String.format("%s %s", movementDescription, destination)
             val sb = SpannableStringBuilder(infoText)
             val bss = StyleSpan(android.graphics.Typeface.BOLD)
@@ -378,7 +374,7 @@ class RouteDetailAdapter(var context: Context, _routeDetail: View) {
                         "Board",
                         direction.name,
                         direction.type,
-                        drawSegmentAbove = false,
+                        drawSegmentAbove = i > 0 && route.directions[i-1].type == DirectionType.BUS,
                         drawSegmentBelow = true,
                         isFinalDestination = false,
                         busNumber = it
@@ -409,22 +405,23 @@ class RouteDetailAdapter(var context: Context, _routeDetail: View) {
                 direction.busStops.last().name,
                 direction.type,
                 drawSegmentAbove = true,
-                drawSegmentBelow = false,
+                drawSegmentBelow = i < route.directions.lastIndex && route.directions[i+1].type == DirectionType.BUS,
                 isFinalDestination = i == route.directions.lastIndex,
                 expandedBottom = true
             )
             detailedLayout.addView(bottomExpanded)
             if(i < route.directions.lastIndex && route.directions[i+1].type == DirectionType.BUS) {
-//                        //Add DirectionLine
-//                        val directionLineParams = ViewGroup.MarginLayoutParams(
-//                            8,
-//                            100
-//                        )
-//                        directionLineParams.leftMargin = DIRECTION_LINE_MARGIN
-//                        directionLineParams.topMargin = 0
-//                        val directionLine = DirectionLine(detailedContext, "gray", 100f, 8f)
-//                        directionLine.layoutParams = directionLineParams
-                detailedLayout.addView(createWalkingComponent("", "blue"))
+                //Add DirectionLine
+                val directionLineParams = ViewGroup.MarginLayoutParams(
+                    8,
+                    100
+                )
+                directionLineParams.leftMargin = DIRECTION_LINE_MARGIN
+                directionLineParams.topMargin = 0
+                val directionLine = DirectionLine(detailedContext, "blue", 100f, 8f)
+                directionLine.layoutParams = directionLineParams
+                detailedLayout.addView(directionLine)
+                //detailedLayout.addView(createWalkingComponent("", "blue"))
                 //Does a route direction like this exist? A string of buses then an intermediary walk?
             } else if(i < route.directions.lastIndex - 1 && route.directions[i+1].type == DirectionType.WALK) {
                 detailedLayout.addView(createWalkingComponent(""))
@@ -471,7 +468,20 @@ class RouteDetailAdapter(var context: Context, _routeDetail: View) {
         tripDurationTextView.text = context.getString(R.string.trip_duration, durationString)
 
         if(directions.size == 1 && directions[0].type == DirectionType.WALK) {
-            return
+            val busIconParams = ViewGroup.MarginLayoutParams(
+                LinearLayout.LayoutParams.WRAP_CONTENT,
+                LinearLayout.LayoutParams.WRAP_CONTENT
+            )
+            val walkingView = WalkingManComponent(detailedContext, R.layout.walking_image)
+            walkingView.layoutParams = busIconParams
+            iconView.addView(walkingView)
+            routeDetailHeader.text = HtmlCompat.fromHtml(
+                context.getString(
+                    R.string.walk_to,
+                    route.endDestination
+                ),
+                HtmlCompat.FROM_HTML_MODE_LEGACY
+            )
         } else {
             var firstBusDirection: Direction? = null
             for(direction in directions) {
@@ -481,7 +491,7 @@ class RouteDetailAdapter(var context: Context, _routeDetail: View) {
                 }
             }
             if(firstBusDirection?.routeNumber != null) {
-                //Bus image in text
+                //Bus image
                 val busIconParams = ViewGroup.MarginLayoutParams(
                     LinearLayout.LayoutParams.WRAP_CONTENT,
                     LinearLayout.LayoutParams.WRAP_CONTENT

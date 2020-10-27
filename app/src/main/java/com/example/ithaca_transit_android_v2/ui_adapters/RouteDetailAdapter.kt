@@ -8,25 +8,19 @@ import android.util.Log
 import android.view.Gravity
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.RelativeLayout
 import android.widget.TextView
 import androidx.core.content.ContextCompat
-import androidx.core.view.marginLeft
 import com.example.ithaca_transit_android_v2.R
-import com.example.ithaca_transit_android_v2.Repository
 import com.example.ithaca_transit_android_v2.models.Direction
 import com.example.ithaca_transit_android_v2.models.DirectionType
 import com.example.ithaca_transit_android_v2.models.Route
-import com.example.ithaca_transit_android_v2.models.Stop
 import com.example.ithaca_transit_android_v2.views.BusExpandable
 import com.example.ithaca_transit_android_v2.views.BusNumberComponent
 import com.example.ithaca_transit_android_v2.views.DirectionDot
 import com.example.ithaca_transit_android_v2.views.DirectionLine
 import kotlinx.android.synthetic.main.route_detailed_holder.view.*
-import java.math.BigDecimal
-import java.math.RoundingMode
 import java.text.SimpleDateFormat
 import java.util.*
 

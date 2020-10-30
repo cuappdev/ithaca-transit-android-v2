@@ -6,11 +6,9 @@ import android.util.Log
 import android.view.Gravity
 import android.view.View
 import android.view.ViewGroup
-import android.widget.FrameLayout
-import android.widget.ImageView
-import android.widget.LinearLayout
-import android.widget.TextView
+import android.widget.*
 import androidx.core.content.ContextCompat
+import androidx.core.view.marginLeft
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.ithaca_transit_android_v2.R
@@ -24,12 +22,8 @@ import kotlin.math.exp
 
 class BusExpandable(context: Context, direction: Direction, timeMargin: Int) : LinearLayout(context) {
 
-    val TIME_LEFT_MARGIN = 50
-    val TIME_TEXT_WIDTH = 200
-    val DOTS_LEFT_MARGIN = 25
     val DESCRIPTION_LEFT_MARGIN = 60
-    val EXPANDABLE_MARGIN = TIME_LEFT_MARGIN + DOTS_LEFT_MARGIN + TIME_TEXT_WIDTH + 10
-    val DIRECTION_LINE_ID = View.generateViewId()
+    var EXPANDABLE_MARGIN: Int = 0
     var detailedContext = context
 
     private var expandableTop: LinearLayout
@@ -42,6 +36,8 @@ class BusExpandable(context: Context, direction: Direction, timeMargin: Int) : L
 
     init {
         inflate(context, R.layout.expandable_bus_stops, this)
+
+        EXPANDABLE_MARGIN = timeMargin
 
         expandableTop = findViewById(R.id.expanded_top)
 
@@ -75,7 +71,7 @@ class BusExpandable(context: Context, direction: Direction, timeMargin: Int) : L
         val holderParams = MarginLayoutParams(
             ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT
         )
-        holderParams.leftMargin = EXPANDABLE_MARGIN
+        holderParams.leftMargin = EXPANDABLE_MARGIN - 12
         expandedHolder.layoutParams = holderParams
 
         //Create Dot
@@ -85,7 +81,6 @@ class BusExpandable(context: Context, direction: Direction, timeMargin: Int) : L
         val params = MarginLayoutParams(
             ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT
         )
-        params.leftMargin = -12
         dotDirectionLayout.layoutParams = params
         val radius = 16f
 
@@ -110,6 +105,8 @@ class BusExpandable(context: Context, direction: Direction, timeMargin: Int) : L
             ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT
         )
         stopNameParams.leftMargin = DESCRIPTION_LEFT_MARGIN
+//        stopName.setLineSpacing(0f, 0f)
+//        stopName.includeFontPadding = false
         stopName.layoutParams = stopNameParams
 
         dotDirectionLayout.addView(stopName)
@@ -119,8 +116,8 @@ class BusExpandable(context: Context, direction: Direction, timeMargin: Int) : L
             10,
             50
         )
+        directionLineParams.leftMargin = 12
         val directionLine = DirectionLine(detailedContext, "blue", 50f, 8f)
-
         directionLine.layoutParams = directionLineParams
 
         expandedHolder.addView(dotDirectionLayout)

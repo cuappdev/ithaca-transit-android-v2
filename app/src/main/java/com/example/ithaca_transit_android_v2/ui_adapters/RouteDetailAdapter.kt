@@ -1,9 +1,12 @@
 package com.example.ithaca_transit_android_v2.ui_adapters
 
+import CenterSpan
 import android.content.Context
 import android.text.Spannable
 import android.text.SpannableString
 import android.text.SpannableStringBuilder
+import android.text.TextUtils
+import android.text.style.DynamicDrawableSpan
 import android.text.style.ImageSpan
 import android.text.style.StyleSpan
 import android.util.Log
@@ -146,7 +149,6 @@ class RouteDetailAdapter(var context: Context, _routeDetail: View) {
         }
         //Add an image of the bus
         else if (directionType == DirectionType.BUS && !expandedBottom) {
-
             val busTextLayout = LinearLayout(detailedContext)
             busTextLayout.orientation = LinearLayout.HORIZONTAL
             busTextLayout.gravity = Gravity.CENTER_VERTICAL
@@ -156,108 +158,77 @@ class RouteDetailAdapter(var context: Context, _routeDetail: View) {
             paramsBus.leftMargin = DESCRIPTION_LEFT_MARGIN
             busTextLayout.layoutParams = paramsBus
 
-            val stopText = TextView(detailedContext)
-            val descriptionParams: ViewGroup.MarginLayoutParams = ViewGroup.MarginLayoutParams(
-                ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT
-            )
-            stopText.layoutParams = descriptionParams
 
-//            val busIconParams = ViewGroup.MarginLayoutParams(
-//                LinearLayout.LayoutParams.WRAP_CONTENT,
-//                LinearLayout.LayoutParams.WRAP_CONTENT
-//            )
-//            busIconParams.leftMargin = 7
-//            busIconParams.rightMargin = 7
-//
-//            val busNumberView = BusNumberComponent(detailedContext, R.layout.bus_image)
-//            busNumberView.setBusNumber(busNumber)
-//            busNumberView.layoutParams = busIconParams
-//
-//            val busIconHolder = LinearLayout(detailedContext)
-//            val busIconHolderParams = ViewGroup.LayoutParams(
-//                LinearLayout.LayoutParams.WRAP_CONTENT,
-//                LinearLayout.LayoutParams.WRAP_CONTENT
-//            )
-//            busIconHolder.layoutParams = busIconHolderParams
-//            busIconHolder.addView(busNumberView)
-
-            val spanString: Spannable = SpannableString("$movementDescription  at $destination")
-            val busImage: ImageSpan? =
-                ContextCompat.getDrawable(context, R.drawable.bus_vector)?.let { ImageSpan(
-                    it,
-                    ImageSpan.ALIGN_BOTTOM
-                ) }
-            Log.d("spanAdapter", busImage.toString())
-            Log.d("spanAdapter", spanString.toString())
-            spanString.setSpan(
-                busImage,
-                movementDescription.length,
-                movementDescription.length + 1,
-                Spannable.SPAN_INCLUSIVE_INCLUSIVE
-            )
-            stopText.text = spanString
-            busTextLayout.addView(stopText)
-            Log.d("spanAdapter", stopText.lineCount.toString())
-            Log.d("spanAdapter", spanString.lines().size.toString())
-//
-//            //First Text
-//            //TODO Add spannable elements
-//            val firstDescription = TextView(detailedContext)
-//
-//            firstDescription.text = movementDescription
-//
-//            firstDescription.setTextColor(ContextCompat.getColor(detailedContext, R.color.black))
+//            //Use spannable to see how many lines is spanned by text.
+//            val spanString: Spannable = SpannableString("$movementDescription   at $destination")
+//            spanString.setSpan(ImageSpan(detailedContext, R.drawable.bus_vector), movementDescription.length + 1,
+//                movementDescription.length + 2, DynamicDrawableSpan.ALIGN_BOTTOM)
+//            val stopText = TextView(detailedContext)
+//            stopText.text = spanString
 //            val descriptionParams: ViewGroup.MarginLayoutParams = ViewGroup.MarginLayoutParams(
 //                ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT
 //            )
-//            firstDescription.layoutParams = descriptionParams
-//
-//            busTextLayout.addView(firstDescription)
-//
-//            //Bus image in text
-//            val busIconParams = ViewGroup.MarginLayoutParams(
-//                LinearLayout.LayoutParams.WRAP_CONTENT,
-//                LinearLayout.LayoutParams.WRAP_CONTENT
-//            )
-//            busIconParams.leftMargin = 7
-//            busIconParams.rightMargin = 7
-//
-//            val busNumberView = BusNumberComponent(detailedContext, R.layout.bus_image)
-//            busNumberView.setBusNumber(busNumber)
-//            busNumberView.layoutParams = busIconParams
-//
-//            val busIconHolder = LinearLayout(detailedContext)
-//            val busIconHolderParams = ViewGroup.LayoutParams(
-//                LinearLayout.LayoutParams.WRAP_CONTENT,
-//                LinearLayout.LayoutParams.WRAP_CONTENT
-//            )
-//
-//            busIconHolder.layoutParams = busIconHolderParams
-//            busIconHolder.addView(busNumberView)
-//
-//            busTextLayout.addView(busIconHolder)
-//
-//            //Second Part of text
-//            stopTextViewId = View.generateViewId()
-//            val secondDescription = TextView(detailedContext)
-//            secondDescription.id = stopTextViewId
-//
-//            secondDescription.text = "at $destination"
-//
-//            secondDescription.setTextColor(ContextCompat.getColor(detailedContext, R.color.black))
-//            val descriptionParams2: ViewGroup.MarginLayoutParams = ViewGroup.MarginLayoutParams(
-//                ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT
-//            )
-//            secondDescription.layoutParams = descriptionParams2
-//
+//            stopText.layoutParams = descriptionParams
+//            busTextLayout.addView(stopText)
+//            Log.d("spanAdapter", stopText.lineCount.toString())
+//            Log.d("spanAdapter", spanString.lines().size.toString())
+
+            val firstDescription = TextView(detailedContext)
+
+            firstDescription.text = movementDescription
+
+            firstDescription.setTextColor(ContextCompat.getColor(detailedContext, R.color.black))
+            val descriptionParams: ViewGroup.MarginLayoutParams = ViewGroup.MarginLayoutParams(
+                ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT
+            )
+            firstDescription.layoutParams = descriptionParams
+
+            busTextLayout.addView(firstDescription)
+
+            //Bus image in text
+            val busIconParams = ViewGroup.MarginLayoutParams(
+                LinearLayout.LayoutParams.WRAP_CONTENT,
+                LinearLayout.LayoutParams.WRAP_CONTENT
+            )
+            busIconParams.leftMargin = 7
+            busIconParams.rightMargin = 7
+
+            val busNumberView = BusNumberComponent(detailedContext, R.layout.bus_image)
+            busNumberView.setBusNumber(busNumber)
+            busNumberView.layoutParams = busIconParams
+
+            val busIconHolder = LinearLayout(detailedContext)
+            val busIconHolderParams = ViewGroup.LayoutParams(
+                LinearLayout.LayoutParams.WRAP_CONTENT,
+                LinearLayout.LayoutParams.WRAP_CONTENT
+            )
+
+            busIconHolder.layoutParams = busIconHolderParams
+            busIconHolder.addView(busNumberView)
+
+            busTextLayout.addView(busIconHolder)
+
+            //Second Part of text
+            stopTextViewId = View.generateViewId()
+            val secondDescription = TextView(detailedContext)
+            secondDescription.id = stopTextViewId
+
+            secondDescription.text = "at $destination"
+
+            secondDescription.setTextColor(ContextCompat.getColor(detailedContext, R.color.black))
+            val descriptionParams2: ViewGroup.MarginLayoutParams = ViewGroup.MarginLayoutParams(
+                ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT
+            )
+            secondDescription.layoutParams = descriptionParams2
+
 //            secondDescription.maxLines = 1
 //            secondDescription.isSingleLine = true
 //            secondDescription.ellipsize = TextUtils.TruncateAt.MARQUEE
 //            secondDescription.marqueeRepeatLimit = -1
 //            secondDescription.isFocusableInTouchMode = true
 //            secondDescription.isSelected = true
-//
-//            busTextLayout.addView(secondDescription)
+
+            busTextLayout.addView(secondDescription)
             dotDirectionLayout.addView(busTextLayout)
         } else if (expandedBottom) {
             val descriptionView = TextView(detailedContext)

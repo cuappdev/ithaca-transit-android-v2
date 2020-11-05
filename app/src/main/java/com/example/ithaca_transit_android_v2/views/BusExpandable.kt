@@ -1,24 +1,26 @@
 package com.example.ithaca_transit_android_v2.views
 
+import CenterSpan
+import android.R.color
+import android.R.string
 import android.content.Context
-import android.media.Image
-import android.util.Log
+import android.text.Spannable
+import android.text.SpannableString
+import android.text.Spanned
+import android.text.style.BulletSpan
+import android.text.style.DynamicDrawableSpan
+import android.text.style.ImageSpan
 import android.view.Gravity
 import android.view.View
 import android.view.ViewGroup
-import android.widget.*
+import android.widget.ImageView
+import android.widget.LinearLayout
+import android.widget.TextView
 import androidx.core.content.ContextCompat
-import androidx.core.view.marginLeft
-import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import com.example.ithaca_transit_android_v2.R
 import com.example.ithaca_transit_android_v2.models.Direction
-import com.example.ithaca_transit_android_v2.ui_adapters.ExpandedStopsAdapter
-import kotlinx.android.synthetic.main.item_searchview.view.*
-import java.text.SimpleDateFormat
-import java.util.*
 import java.util.concurrent.TimeUnit
-import kotlin.math.exp
+
 
 class BusExpandable(context: Context, direction: Direction, timeMargin: Int) : LinearLayout(context) {
 
@@ -29,7 +31,7 @@ class BusExpandable(context: Context, direction: Direction, timeMargin: Int) : L
     private var expandableTop: LinearLayout
     private var expandableLinearLayout : LinearLayout
     private var direction = direction
-    private var trimmedStops = direction.busStops.subList(1,direction.busStops.size-1)
+    private var trimmedStops = direction.busStops.subList(1, direction.busStops.size - 1)
 
     val diffTimeMillis = direction.endTime.time - direction.startTime.time
     val diffTimeMins = TimeUnit.MINUTES.convert(diffTimeMillis, TimeUnit.MILLISECONDS).toInt()
@@ -64,13 +66,14 @@ class BusExpandable(context: Context, direction: Direction, timeMargin: Int) : L
     }
 
     //Stop dots offset by 12, idk why, big gap, idk why.
-    private fun createStops(position : Int) : LinearLayout {
+    private fun createStops(position: Int) : LinearLayout {
         val expandedHolder = LinearLayout(detailedContext)
         expandedHolder.orientation = VERTICAL
         expandedHolder.gravity = Gravity.CENTER_VERTICAL
         val holderParams = MarginLayoutParams(
             ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT
         )
+        //Stop dots are offset by 12, seems universal across different systems
         holderParams.leftMargin = EXPANDABLE_MARGIN - 12
         expandedHolder.layoutParams = holderParams
 
@@ -88,8 +91,14 @@ class BusExpandable(context: Context, direction: Direction, timeMargin: Int) : L
 
         val verticalPadding = 10f
         val dot = DirectionDot(
-            detailedContext, colorStr = "blue", useNestedCircles = true, drawSegmentAbove = true,
-            drawSegmentBelow = true, radius = radius, lineWidth = 8f, verticalPadding = verticalPadding
+            detailedContext,
+            colorStr = "blue",
+            useNestedCircles = true,
+            drawSegmentAbove = true,
+            drawSegmentBelow = true,
+            radius = radius,
+            lineWidth = 8f,
+            verticalPadding = verticalPadding
         )
         val canvasParams: ViewGroup.LayoutParams =
             ViewGroup.LayoutParams(size, size + 2 * verticalPadding.toInt())
@@ -116,6 +125,7 @@ class BusExpandable(context: Context, direction: Direction, timeMargin: Int) : L
             10,
             50
         )
+        //Have to makeup for the 12 leftMargin in the holderParams
         directionLineParams.leftMargin = 12
         val directionLine = DirectionLine(detailedContext, "blue", 50f, 8f)
         directionLine.layoutParams = directionLineParams
@@ -132,7 +142,6 @@ class BusExpandable(context: Context, direction: Direction, timeMargin: Int) : L
         val topHolder = LinearLayout(detailedContext)
         topHolder.orientation = LinearLayout.HORIZONTAL
 
-
         val topHolderParams = ViewGroup.MarginLayoutParams(
             LinearLayout.LayoutParams.MATCH_PARENT,
             LinearLayout.LayoutParams.WRAP_CONTENT
@@ -147,11 +156,9 @@ class BusExpandable(context: Context, direction: Direction, timeMargin: Int) : L
             10,
             100
         )
-        //directionLineParams.leftMargin = BUS_LEFT_MARGIN
         val directionLine = DirectionLine(detailedContext, "blue", 100f, 8f)
 
         directionLine.layoutParams = directionLineParams
-        //directionLine.id = DIRECTION_LINE_ID
 
         //Add Stops Top
         val stopsText = LinearLayout(detailedContext)
@@ -164,54 +171,27 @@ class BusExpandable(context: Context, direction: Direction, timeMargin: Int) : L
         stopsTextParams.topMargin = 20
         stopsText.layoutParams = stopsTextParams
 
+        //Subtract first and last
         val numStops = direction.busStops.size - 2
-
-        //First Text
-        //TODO Add spannable elements
-        val firstDescription = TextView(detailedContext)
-
-        firstDescription.text = "" + numStops + " stops"
-
-        firstDescription.setTextColor(ContextCompat.getColor(detailedContext, R.color.gray))
-        val descriptionParams: ViewGroup.MarginLayoutParams = ViewGroup.MarginLayoutParams(
+        val numStopsText: String = if(numStops != 1) {
+            "$numStops stops"
+        } else {
+            "$numStops stop"
+        }
+        val spanString: Spannable = SpannableString("$numStopsText   $diffTimeMins min")
+        spanString.setSpan(CenterSpan(detailedContext, R.drawable.ic_oval5), numStopsText.length + 1,
+            numStopsText.length + 2, DynamicDrawableSpan.ALIGN_BASELINE)
+        val tripSummary = TextView(detailedContext)
+        val descriptionParams = MarginLayoutParams(
             ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT
         )
         descriptionParams.leftMargin = 10
-        firstDescription.layoutParams = descriptionParams
+        tripSummary.layoutParams = descriptionParams
+        tripSummary.text = spanString
+        tripSummary.setTextColor(ContextCompat.getColor(detailedContext, R.color.gray))
+        stopsText.addView(tripSummary)
 
-        stopsText.addView(firstDescription)
-
-        //SmallGray dot
-        val smallSpaceDot: ViewGroup.MarginLayoutParams = ViewGroup.MarginLayoutParams(
-            ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT
-        )
-        smallSpaceDot.leftMargin = 10
-        smallSpaceDot.rightMargin = 10
-        smallSpaceDot.topMargin = 25
-
-        val smallDot: ImageView = ImageView(detailedContext)
-        smallDot.setImageResource(R.drawable.ic_oval5)
-
-        smallDot.layoutParams = smallSpaceDot
-
-        stopsText.addView(smallDot)
-
-        //Second Part of text
-        val secondDescription = TextView(detailedContext)
-
-        secondDescription.text = "" + diffTimeMins + " mins"
-
-        secondDescription.setTextColor(ContextCompat.getColor(detailedContext, R.color.gray))
-        val descriptionParams2: ViewGroup.MarginLayoutParams = ViewGroup.MarginLayoutParams(
-            ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT
-        )
-        //descriptionParams2.leftMargin = 10
-        //descriptionParams2.topMargin =
-        secondDescription.layoutParams = descriptionParams2
-
-        stopsText.addView(secondDescription)
-
-        val smallDownArrowParams: ViewGroup.MarginLayoutParams = ViewGroup.MarginLayoutParams(
+        val smallDownArrowParams: MarginLayoutParams = MarginLayoutParams(
             ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT
         )
         smallDownArrowParams.leftMargin = 12
@@ -223,8 +203,6 @@ class BusExpandable(context: Context, direction: Direction, timeMargin: Int) : L
         smallDownArrow.layoutParams = smallDownArrowParams
 
         stopsText.addView(smallDownArrow)
-
-        //lineHolder.setBackgroundColor(ContextCompat.getColor(detailedContext, R.color.gray))
 
         topHolder.addView(directionLine)
         topHolder.addView(stopsText)

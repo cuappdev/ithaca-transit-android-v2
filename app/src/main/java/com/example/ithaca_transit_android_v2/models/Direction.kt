@@ -17,10 +17,10 @@ data class Direction(
     val endCoords: Coordinate,
     @Json(name = "stops")
     val busStops: List<Stop>,
-    @Json(name = "routeNumber")
-    val routeNumber: Int?,
-    @Json(name = "tripIdentifiers")
-    val tripIdentifiers: List<String>?,
+    @Json(name = "routeId")
+    val routeId: Int?,
+    @Json(name = "tripIds")
+    val tripIds: List<String>,
     //val delay: Int
     val busNumber: Int?,
     val distance: Double

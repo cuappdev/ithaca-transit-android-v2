@@ -99,10 +99,10 @@ class NetworkUtils {
     fun getBusCoords(busDataList: List<BusInformation>) {
         val busJsonArr = JSONArray()
         for(busInfo in busDataList) {
-            if (busInfo.tripId != null && busInfo.routeNumber != null) {
+            if (busInfo.tripId != null && busInfo.routeId != null) {
                 val busJson = JSONObject()
                 busJson.put("tripID", busInfo.tripId)
-                busJson.put("routeNumber", busInfo.routeNumber)
+                busJson.put("routeId", busInfo.routeId)
                 busJsonArr.put(busJson)
             }
         }
@@ -125,22 +125,22 @@ class NetworkUtils {
     // Returns an updated list of routes containing delays
     fun applyDelayRoutes(routes: List<Route>): List<Route>{
         // pulling out stopIds and routeIds for the first direction that is not a walking direction
-        val stopIDs = ArrayList<String>()
+        val stopIds = ArrayList<String>()
         val tripIDs = ArrayList<String>()
         for(route in routes) {
             for (i in route.directions) {
                 if (i.type != DirectionType.WALK) {
-                    stopIDs.add(i.busStops[0].stopID)
-                    tripIDs.add(i.tripIdentifiers?.get(0) ?: "")
+                    stopIds.add(i.busStops[0].stopId)
+                    tripIDs.add(i.tripIds[0])
                 }
             }
         }
 
         val arr = JSONArray()
-        for(i in 0 until stopIDs.size) {
+        for(i in 0 until stopIds.size) {
             if (tripIDs.get(i) != "") {
                 val delayInfo = JSONObject()
-                delayInfo.put("stopID", stopIDs.get(i))
+                delayInfo.put("stopID", stopIds.get(i))
                 delayInfo.put("tripID", tripIDs.get(i))
                 arr.put(delayInfo)
             }

@@ -21,8 +21,8 @@ class BusNumberComponent(context: Context): FrameLayout(context){
 
     }
 
-    fun setBusNumber(number: Int) {
-        busNumber.text = number.toString()
+    fun setBusNumber(number: String) {
+        busNumber.text = number
     }
 
 }

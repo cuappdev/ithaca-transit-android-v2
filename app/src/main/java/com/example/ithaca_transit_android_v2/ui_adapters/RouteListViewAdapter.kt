@@ -182,7 +182,7 @@ class RouteListViewAdapter(context: Context, var userList: ArrayList<RouteListAd
         return walkingHolder
     }
 
-    private fun createBusIconComponent(busNumber: Int): View {
+    private fun createBusIconComponent(busNumber: String): View {
 
         val busHolder = LinearLayout(routeCardContext)
         busHolder.orientation = LinearLayout.HORIZONTAL

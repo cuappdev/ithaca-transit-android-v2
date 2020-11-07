@@ -64,10 +64,9 @@ class MapPresenter() {
     fun liveTrackingTEST(route: Route) {
         Thread(Runnable {
             for(direction in route.directions) {
-                Log.i("qwertyio", (direction.routeId ?: "null").toString())
                 if (direction.tripIds.isNotEmpty()) {
                     val busInfo = BusInformation(
-                        direction.tripIds[0],
+                        direction.tripIds.first(),
                         direction.routeId.toString()
                     )
                     NetworkUtils().getBusCoords(listOf(busInfo))

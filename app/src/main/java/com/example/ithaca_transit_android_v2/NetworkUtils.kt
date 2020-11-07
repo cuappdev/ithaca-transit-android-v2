@@ -28,7 +28,7 @@ class NetworkUtils {
         .writeTimeout(15, TimeUnit.SECONDS) // write timeout
         .readTimeout(15, TimeUnit.SECONDS) // read timeout
         .build()
-    val url = "https://transit-testflight.cornellappdev.com/api/v2/"
+    val url = "https://transit-testflight.cornellappdev.com/api/v3/"
     val mediaType = ("application/json; charset=utf-8").toMediaType()
 
     // Function that takes in query and returns list of Locations

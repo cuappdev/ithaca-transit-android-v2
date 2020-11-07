@@ -49,7 +49,7 @@ class BusExpandable(context: Context, direction: Direction, timeMargin: Int) : L
 
         expandableLinearLayout = findViewById(R.id.expandedstops_layout)
 
-        for(i in 0 until trimmedStops.size){
+        for(i in trimmedStops.indices){
             val stop = createStops(i)
             expandableLinearLayout.addView(stop)
         }
@@ -65,7 +65,6 @@ class BusExpandable(context: Context, direction: Direction, timeMargin: Int) : L
         }
     }
 
-    //Stop dots offset by 12, idk why, big gap, idk why.
     private fun createStops(position: Int) : LinearLayout {
         val expandedHolder = LinearLayout(detailedContext)
         expandedHolder.orientation = VERTICAL
@@ -73,7 +72,7 @@ class BusExpandable(context: Context, direction: Direction, timeMargin: Int) : L
         val holderParams = MarginLayoutParams(
             ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT
         )
-        //Stop dots are offset by 12, seems universal across different systems
+        //Stop dots are offset by 12, seems universal across systems
         holderParams.leftMargin = EXPANDABLE_MARGIN - 12
         expandedHolder.layoutParams = holderParams
 
@@ -98,7 +97,8 @@ class BusExpandable(context: Context, direction: Direction, timeMargin: Int) : L
             drawSegmentBelow = true,
             radius = radius,
             lineWidth = 8f,
-            verticalPadding = verticalPadding
+            verticalPadding = verticalPadding,
+            drawOutline = true
         )
         val canvasParams: ViewGroup.LayoutParams =
             ViewGroup.LayoutParams(size, size + 2 * verticalPadding.toInt())

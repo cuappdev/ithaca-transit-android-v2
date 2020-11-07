@@ -49,7 +49,7 @@ class CenterSpan(context: Context?, drawableRes: Int) :
 
     // Redefined locally because it is a private member from DynamicDrawableSpan
     private val cachedDrawable: Drawable?
-        private get() {
+        get() {
             val wr: WeakReference<Drawable>? = mDrawableRef
             var d: Drawable? = null
             if (wr != null) d = wr.get()

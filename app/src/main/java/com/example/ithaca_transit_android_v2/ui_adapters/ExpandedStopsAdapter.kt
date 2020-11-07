@@ -95,7 +95,7 @@ class ExpandedStopsAdapter(context: Context, var busStops: List<Stop>) :
         //TODO FIX DOT PARAMETERS
         val dot = DirectionDot(
             expandedContext, "blue", true, true,
-            true, radius, 8f, verticalPadding
+            true, radius, 8f, verticalPadding, false
         )
 
         val canvasParams: ViewGroup.LayoutParams =

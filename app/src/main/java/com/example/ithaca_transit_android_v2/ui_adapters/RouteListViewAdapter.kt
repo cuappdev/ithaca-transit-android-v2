@@ -90,7 +90,7 @@ class RouteListViewAdapter(context: Context, var userList: ArrayList<RouteListAd
         //Initialize Dots (Done indiviudally)
         val dot = DirectionDot(
             routeCardContext, colorStr, isDestination, drawSegmentAbove,
-            drawSegmentBelow, radius, 8f, verticalPadding
+            drawSegmentBelow, radius, 8f, verticalPadding, false
         )
         val size: Int = (radius * 2).toInt()
 
@@ -150,13 +150,13 @@ class RouteListViewAdapter(context: Context, var userList: ArrayList<RouteListAd
         grayDotParams.leftMargin = 10
         grayDotParams.topMargin = 6
 
-        val grayDot1 = DirectionDot(routeCardContext, "gray", false, false, false, 6f, 0f, 0f)
+        val grayDot1 = DirectionDot(routeCardContext, "gray", false, false, false, 6f, 0f, 0f, false)
         grayDot1.layoutParams = grayDotParams
         dotsHolder.addView(grayDot1)
 
         val grayDot2 = DirectionDot(
             routeCardContext, "gray", false,
-            false, false, 6f, 0f, 0f
+            false, false, 6f, 0f, 0f, false
         )
         grayDot2.layoutParams = grayDotParams
         dotsHolder.addView(grayDot2)

@@ -1,19 +1,13 @@
 package com.example.ithaca_transit_android_v2.ui_adapters
 
-import CenterSpan
 import android.content.Context
 import android.text.Spannable
-import android.text.SpannableString
 import android.text.SpannableStringBuilder
-import android.text.TextUtils
-import android.text.style.DynamicDrawableSpan
-import android.text.style.ImageSpan
 import android.text.style.StyleSpan
 import android.util.Log
 import android.view.Gravity
 import android.view.View
 import android.view.ViewGroup
-import android.view.ViewTreeObserver.OnGlobalLayoutListener
 import android.widget.LinearLayout
 import android.widget.RelativeLayout
 import android.widget.TextView
@@ -42,7 +36,6 @@ class RouteDetailAdapter(var context: Context, _routeDetail: View) {
     val DISTANCE_TOP_MARGIN = 20
     val SMALLDOT_TOP_MARGIN = 5
     var TIME_TEXT_WIDTH = 0
-    //How can we generalize this arbitrary 12?
     var SMALLDOT_LEFT_MARGIN = TIME_LEFT_MARGIN + DOTS_LEFT_MARGIN + 12
     var DIRECTION_LINE_MARGIN = TIME_LEFT_MARGIN + DOTS_LEFT_MARGIN + 12
     var stopTextViewId = View.generateViewId()
@@ -113,7 +106,7 @@ class RouteDetailAdapter(var context: Context, _routeDetail: View) {
         //Initialize Dots (Done indiviudally)
         val dot = DirectionDot(
             detailedContext, colorStr, isFinalDestination, drawSegmentAbove,
-            drawSegmentBelow, radius, 8f, verticalPadding
+            drawSegmentBelow, radius, 8f, verticalPadding, false
         )
         val size: Int = (radius * 2).toInt()
 
@@ -221,6 +214,8 @@ class RouteDetailAdapter(var context: Context, _routeDetail: View) {
             )
             secondDescription.layoutParams = descriptionParams2
 
+            secondDescription.measure(View.MeasureSpec.EXACTLY, View.MeasureSpec.EXACTLY)
+
 //            secondDescription.maxLines = 1
 //            secondDescription.isSingleLine = true
 //            secondDescription.ellipsize = TextUtils.TruncateAt.MARQUEE
@@ -265,6 +260,7 @@ class RouteDetailAdapter(var context: Context, _routeDetail: View) {
             useNestedCircles = false,
             drawSegmentBelow = false,
             drawSegmentAbove = false,
+            drawOutline = false,
             radius = 6f,
             lineWidth = 0f,
             verticalPadding = 0f
@@ -314,8 +310,15 @@ class RouteDetailAdapter(var context: Context, _routeDetail: View) {
         return walkingHolder
     }
 
-    // Bases the rest of the time margins off of the width of the first time in the direction
-    private fun adjustTimeMargin(time: String) {
+    // Bases the rest of the time margins off of the width of the longest time in the directions
+    private fun adjustTimeMargin(directions: List<Direction>) {
+        var time: String = sdf.format(directions.first().startTime)
+        for (direction in directions) {
+            val tempTime = sdf.format(direction.startTime)
+            if(tempTime.length > time.length) {
+                time = tempTime
+            }
+        }
         val timeMarginView = TextView(detailedContext)
         timeMarginView.text = time
         val timeParams: ViewGroup.MarginLayoutParams =
@@ -415,6 +418,9 @@ class RouteDetailAdapter(var context: Context, _routeDetail: View) {
                         busNumber = it
                     )
                 }
+            if(detailedLayout.findViewById<TextView>(stopTextViewId) != null) {
+                Log.d("heyD", detailedLayout.findViewById<TextView>(stopTextViewId).text as String)
+            }
             detailedLayout.addView(busLinearLayout)
             // Only create bus expandable if there isn't just a start and stop destination
             if(direction.busStops.size > 2) {
@@ -444,6 +450,10 @@ class RouteDetailAdapter(var context: Context, _routeDetail: View) {
                 isFinalDestination = i == route.directions.lastIndex,
                 expandedBottom = true
             )
+            if(detailedLayout.findViewById<TextView>(stopTextViewId) != null) {
+                Log.d("hey", detailedLayout.findViewById<TextView>(stopTextViewId).text as String)
+                Log.d("hey",detailedLayout.findViewById<TextView>(stopTextViewId).text.contains("\n").toString())
+            }
             detailedLayout.addView(bottomExpanded)
             if(i < route.directions.lastIndex && route.directions[i + 1].type == DirectionType.BUS) {
                 //Add DirectionLine
@@ -456,8 +466,6 @@ class RouteDetailAdapter(var context: Context, _routeDetail: View) {
                 val directionLine = DirectionLine(detailedContext, "blue", 100f, 8f)
                 directionLine.layoutParams = directionLineParams
                 detailedLayout.addView(directionLine)
-                //detailedLayout.addView(createWalkingComponent("", "blue"))
-                //Does a route direction like this exist? A string of buses then an intermediary walk?
             } else if(i < route.directions.lastIndex - 1 && route.directions[i + 1].type == DirectionType.WALK) {
                 detailedLayout.addView(createWalkingComponent(""))
             }
@@ -555,8 +563,7 @@ class RouteDetailAdapter(var context: Context, _routeDetail: View) {
         val directions = route.directions
 
         createHeader(route)
-
-        adjustTimeMargin(sdf.format(directions[0].startTime))
+        adjustTimeMargin(directions)
 
         for( i in route.directions.indices) {
             val direction = directions[i]

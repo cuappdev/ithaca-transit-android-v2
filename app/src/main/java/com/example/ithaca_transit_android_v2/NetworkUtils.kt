@@ -126,22 +126,22 @@ class NetworkUtils {
     fun applyDelayRoutes(routes: List<Route>): List<Route>{
         // pulling out stopIds and routeIds for the first direction that is not a walking direction
         val stopIds = ArrayList<String>()
-        val tripIDs = ArrayList<String>()
+        val tripIds = ArrayList<String>()
         for(route in routes) {
             for (i in route.directions) {
                 if (i.type != DirectionType.WALK) {
                     stopIds.add(i.busStops[0].stopId)
-                    tripIDs.add(i.tripIds[0])
+                    tripIds.add(i.tripIds[0])
                 }
             }
         }
 
         val arr = JSONArray()
         for(i in 0 until stopIds.size) {
-            if (tripIDs.get(i) != "") {
+            if (tripIds[i].isNotEmpty()) {
                 val delayInfo = JSONObject()
-                delayInfo.put("stopID", stopIds.get(i))
-                delayInfo.put("tripID", tripIDs.get(i))
+                delayInfo.put("stopID", stopIds[i])
+                delayInfo.put("tripID", tripIds[i])
                 arr.put(delayInfo)
             }
         }

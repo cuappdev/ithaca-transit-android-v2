@@ -182,7 +182,7 @@ class RouteListViewAdapter(context: Context, var userList: ArrayList<RouteListAd
         return walkingHolder
     }
 
-    private fun createBusIconComponent(busNumber: Int): View {
+    private fun createBusIconComponent(busNumber: String): View {
 
         val busHolder = LinearLayout(routeCardContext)
         busHolder.orientation = LinearLayout.HORIZONTAL
@@ -287,8 +287,8 @@ class RouteListViewAdapter(context: Context, var userList: ArrayList<RouteListAd
                     drawSegmentBelow = isBusRoute,
                     isDestination = stopName == routeObj.endDestination)
                 p0.routeDynamicList.addView(directionLayout)
-                if(isBusRoute && direction.routeNumber != null) {
-                    val busImageView = createBusIconComponent(direction.routeNumber)
+                if(isBusRoute && direction.routeId != null) {
+                    val busImageView = createBusIconComponent(direction.routeId)
                     p0.routeDynamicList.addView(busImageView)
                 }
                 if(direction.busStops.isNotEmpty()) {

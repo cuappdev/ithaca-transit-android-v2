@@ -24,7 +24,7 @@ class DirectionDot(context: Context) : View(context) {
                 radius: Float,
                 lineWidth: Float,
                 verticalPadding:Float,
-                drawOutline: Boolean):this(context) {
+                drawOutline: Boolean = false):this(context) {
         val paint = Paint(Paint.ANTI_ALIAS_FLAG)
         when (colorStr) {
             "blue" -> paint.setARGB(255, 7, 157, 220)

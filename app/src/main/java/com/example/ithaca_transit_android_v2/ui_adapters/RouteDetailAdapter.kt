@@ -67,7 +67,7 @@ class RouteDetailAdapter(var context: Context, _routeDetail: View) {
         //Boolean to handle textview distance
         isFinalDestination: Boolean,
         //Default Bus Value
-        busNumber: Int = 0,
+        busNumber: String = "",
         expandedBottom: Boolean = false
     ): LinearLayout {
         //Layout that holds dots and stop names
@@ -106,7 +106,7 @@ class RouteDetailAdapter(var context: Context, _routeDetail: View) {
         //Initialize Dots (Done indiviudally)
         val dot = DirectionDot(
             detailedContext, colorStr, isFinalDestination, drawSegmentAbove,
-            drawSegmentBelow, radius, 8f, verticalPadding, false
+            drawSegmentBelow, radius, 8f, verticalPadding
         )
         val size: Int = (radius * 2).toInt()
 
@@ -406,7 +406,7 @@ class RouteDetailAdapter(var context: Context, _routeDetail: View) {
     private fun updateTypeIsBus(direction: Direction, route: Route, i: Int) {
         if(direction.busStops.isNotEmpty()) {
             val busLinearLayout =
-                direction.routeNumber?.let {
+                direction.routeId?.let {
                     createDirectionLinearLayout(
                         sdf.format(direction.startTime),
                         "Board",
@@ -531,7 +531,7 @@ class RouteDetailAdapter(var context: Context, _routeDetail: View) {
                     break
                 }
             }
-            if(firstBusDirection?.routeNumber != null) {
+            if(firstBusDirection?.routeId != null) {
                 //Bus image
                 val busIconParams = ViewGroup.MarginLayoutParams(
                     LinearLayout.LayoutParams.WRAP_CONTENT,
@@ -541,7 +541,7 @@ class RouteDetailAdapter(var context: Context, _routeDetail: View) {
                     detailedContext,
                     R.layout.bus_image_route_detail
                 )
-                busNumberView.setBusNumber(firstBusDirection.routeNumber!!)
+                busNumberView.setBusNumber(firstBusDirection.routeId!!)
                 busNumberView.layoutParams = busIconParams
                 iconView.addView(busNumberView)
                 routeDetailHeader.text = HtmlCompat.fromHtml(

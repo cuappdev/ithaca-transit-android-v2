@@ -192,7 +192,7 @@ class RouteListViewAdapter(context: Context, var userList: ArrayList<RouteListAd
             LinearLayout.LayoutParams.WRAP_CONTENT
         )
         busIconParams.leftMargin = BUS_ICON_LEFT_MARGIN
-        val busNumberView = BusNumberComponent(routeCardContext)
+        val busNumberView = BusNumberComponent(routeCardContext, R.layout.bus_image)
         busNumberView.setBusNumber(busNumber)
         busNumberView.layoutParams = busIconParams
 

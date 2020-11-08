@@ -103,6 +103,12 @@ class RouteOptionsPresenter(
                         false,
                         state.destLocation.name
                     )
+                    if(routeOptions.boardingSoon != null && routeOptions.boardingSoon.isNotEmpty()) {
+                        NetworkUtils().applyDelayRoutes(routeOptions.boardingSoon)
+                    }
+                    if(routeOptions.fromStop != null && routeOptions.fromStop.isNotEmpty()) {
+                        NetworkUtils().applyDelayRoutes(routeOptions.fromStop)
+                    }
                     RouteListState(state.startLocation, state.destLocation, routeOptions)
                 } else {
                     state

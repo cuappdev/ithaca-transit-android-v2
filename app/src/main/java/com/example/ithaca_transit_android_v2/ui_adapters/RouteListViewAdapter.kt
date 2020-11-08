@@ -293,18 +293,24 @@ class RouteListViewAdapter(context: Context, var userList: ArrayList<RouteListAd
                 }
                 if(direction.busStops.isNotEmpty()) {
                     val busStop = direction.busStops.last()
-                    //Only considers adding the last bus stop to the view if it isn't the name
-                    //of the next direction / isn't the end destination
-                    if(i < routeObj.directions.lastIndex && busStop.name != routeObj.directions[i+1].name) {
-                        p0.routeDynamicList.addView(
-                            createDirectionLinearLayout(
-                                busStop.name,
-                                isBusStop = true,
-                                drawSegmentAbove = true,
-                                drawSegmentBelow = i != routeObj.directions.lastIndex - 1,
-                                isDestination = false
-                            )
-                        )
+                    /**
+                     * Only considers adding the last bus stop to the view if it isn't the name
+                     * of the next direction / isn't the end destination. Prevents extra direction layout
+                     * drawn for the same stop. Still considers drawing direction layout if last bus stop has same
+                     * name as end direction, but end direction is some walking direction?
+                     */
+                    if(i < routeObj.directions.lastIndex &&
+                        (busStop.name != routeObj.directions[i+1].name ||
+                                i == routeObj.directions.lastIndex - 1)) {
+                                    p0.routeDynamicList.addView(
+                                        createDirectionLinearLayout(
+                                            busStop.name,
+                                            isBusStop = true,
+                                            drawSegmentAbove = true,
+                                            drawSegmentBelow = i != routeObj.directions.lastIndex - 1,
+                                            isDestination = false
+                                        )
+                                    )
                     //This considers if the destination happens to be the last stop of the current
                     //direction
                     } else if(i == routeObj.directions.lastIndex) {

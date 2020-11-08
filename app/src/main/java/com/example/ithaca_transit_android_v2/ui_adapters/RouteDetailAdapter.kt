@@ -1,8 +1,12 @@
 package com.example.ithaca_transit_android_v2.ui_adapters
 
 import android.content.Context
+import android.graphics.Typeface.BOLD
 import android.text.Spannable
+import android.text.SpannableString
 import android.text.SpannableStringBuilder
+import android.text.SpannedString
+import android.text.style.ForegroundColorSpan
 import android.text.style.StyleSpan
 import android.util.Log
 import android.view.Gravity
@@ -544,14 +548,41 @@ class RouteDetailAdapter(var context: Context, _routeDetail: View) {
                 busNumberView.setBusNumber(firstBusDirection.routeId!!)
                 busNumberView.layoutParams = busIconParams
                 iconView.addView(busNumberView)
-                routeDetailHeader.text = HtmlCompat.fromHtml(
-                    context.getString(
-                        R.string.depart_at,
-                        sdf.format(firstBusDirection.startTime),
-                        firstBusDirection.name
-                    ),
-                    HtmlCompat.FROM_HTML_MODE_LEGACY
-                )
+                val departureDate = if (route.delay != null && route.delay != 0) {
+                    sdf.format(Date(firstBusDirection.startTime.time + (route.delay * 60000)))
+                } else {
+                    sdf.format(firstBusDirection.startTime)
+                }
+
+                val spannable = SpannableString("Depart at $departureDate from ${firstBusDirection.name}")
+                if (route.delay != null && route.delay != 0) {
+                    spannable.setSpan(
+                        ForegroundColorSpan(detailedContext.getColor(R.color.delay)),
+                        9,
+                        spannable.indexOf("from"),
+                        Spannable.SPAN_EXCLUSIVE_INCLUSIVE
+                    )
+                }
+                spannable.setSpan(
+                    StyleSpan(BOLD),
+                    9,
+                    spannable.indexOf("from"),
+                    Spannable.SPAN_EXCLUSIVE_INCLUSIVE)
+                spannable.setSpan(
+                    StyleSpan(BOLD),
+                    spannable.indexOf("from") + 4,
+                    spannable.length,
+                    Spannable.SPAN_EXCLUSIVE_INCLUSIVE)
+
+                routeDetailHeader.text = spannable
+//                routeDetailHeader.text =
+//                    HtmlCompat.fromHtml(
+//                        context.getString(
+//                            R.string.depart_at,
+//                            departureDate,
+//                            firstBusDirection.name
+//                        ),
+//                        HtmlCompat.FROM_HTML_MODE_LEGACY)
             }
         }
     }

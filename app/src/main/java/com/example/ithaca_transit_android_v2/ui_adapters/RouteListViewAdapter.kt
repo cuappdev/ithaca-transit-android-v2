@@ -90,7 +90,7 @@ class RouteListViewAdapter(context: Context, var userList: ArrayList<RouteListAd
         //Initialize Dots (Done indiviudally)
         val dot = DirectionDot(
             routeCardContext, colorStr, isDestination, drawSegmentAbove,
-            drawSegmentBelow, radius, 8f, verticalPadding, false
+            drawSegmentBelow, radius, 8f, verticalPadding
         )
         val size: Int = (radius * 2).toInt()
 
@@ -150,13 +150,13 @@ class RouteListViewAdapter(context: Context, var userList: ArrayList<RouteListAd
         grayDotParams.leftMargin = 10
         grayDotParams.topMargin = 6
 
-        val grayDot1 = DirectionDot(routeCardContext, "gray", false, false, false, 6f, 0f, 0f, false)
+        val grayDot1 = DirectionDot(routeCardContext, "gray", false, false, false, 6f, 0f, 0f)
         grayDot1.layoutParams = grayDotParams
         dotsHolder.addView(grayDot1)
 
         val grayDot2 = DirectionDot(
             routeCardContext, "gray", false,
-            false, false, 6f, 0f, 0f, false
+            false, false, 6f, 0f, 0f
         )
         grayDot2.layoutParams = grayDotParams
         dotsHolder.addView(grayDot2)
@@ -182,7 +182,7 @@ class RouteListViewAdapter(context: Context, var userList: ArrayList<RouteListAd
         return walkingHolder
     }
 
-    private fun createBusIconComponent(busNumber: Int): View {
+    private fun createBusIconComponent(busNumber: String): View {
 
         val busHolder = LinearLayout(routeCardContext)
         busHolder.orientation = LinearLayout.HORIZONTAL
@@ -192,7 +192,7 @@ class RouteListViewAdapter(context: Context, var userList: ArrayList<RouteListAd
             LinearLayout.LayoutParams.WRAP_CONTENT
         )
         busIconParams.leftMargin = BUS_ICON_LEFT_MARGIN
-        val busNumberView = BusNumberComponent(routeCardContext, R.layout.bus_image)
+        val busNumberView = BusNumberComponent(routeCardContext)
         busNumberView.setBusNumber(busNumber)
         busNumberView.layoutParams = busIconParams
 
@@ -245,7 +245,9 @@ class RouteListViewAdapter(context: Context, var userList: ArrayList<RouteListAd
         p0.routeDuration.text = routeInterval
         p0.routeDuration.setTypeface(null, Typeface.BOLD)
 
-        val isOnlyWalking = routeObj.directions.size == 1
+        val isOnlyWalking =
+            routeObj.directions.size == 1 && routeObj.directions[0].type == DirectionType.WALK
+        var isStopDestinationName = true
         for(i in routeObj.directions.indices) {
             val direction = routeObj.directions[i]
             if(direction.type == DirectionType.WALK) {
@@ -281,12 +283,12 @@ class RouteListViewAdapter(context: Context, var userList: ArrayList<RouteListAd
                     stopName,
                     isBusStop = isBusRoute,
                     drawSegmentAbove =
-                    i > 0 && routeObj.directions[i - 1].type == DirectionType.BUS && stopName != routeObj.endDestination,
+                        i > 0 && routeObj.directions[i - 1].type == DirectionType.BUS && stopName != routeObj.endDestination,
                     drawSegmentBelow = isBusRoute,
                     isDestination = stopName == routeObj.endDestination)
                 p0.routeDynamicList.addView(directionLayout)
-                if (isBusRoute && direction.routeNumber != null) {
-                    val busImageView = createBusIconComponent(direction.routeNumber)
+                if(isBusRoute && direction.routeId != null) {
+                    val busImageView = createBusIconComponent(direction.routeId)
                     p0.routeDynamicList.addView(busImageView)
                 }
                 if(direction.busStops.isNotEmpty()) {
@@ -303,25 +305,27 @@ class RouteListViewAdapter(context: Context, var userList: ArrayList<RouteListAd
                                 isDestination = false
                             )
                         )
-                        //This considers if the destination happens to be the last stop of the current
-                        //direction
-                    } else if (busStop.name == routeObj.endDestination) {
+                    //This considers if the destination happens to be the last stop of the current
+                    //direction
+                    } else if(i == routeObj.directions.lastIndex) {
+                        if(busStop.name != routeObj.endDestination) isStopDestinationName = false
                         p0.routeDynamicList.addView(
                             createDirectionLinearLayout(
                                 busStop.name,
                                 isBusStop = true,
                                 drawSegmentAbove = true,
                                 drawSegmentBelow = false,
-                                isDestination = i == routeObj.directions.lastIndex
+                                isDestination = i == routeObj.directions.lastIndex && isStopDestinationName
                             )
                         )
                     }
                 }
             }
         }
-
-        // Creates end destination layout for route that's just walking, hides boarding text
-        if(isOnlyWalking) {
+        // Creates end destination layout for route that's just walking, hides boarding text if so
+        // Also creates an empty walking component to the destination if last stop wasn't destination
+        if(isOnlyWalking || !isStopDestinationName) {
+            if(!isStopDestinationName) p0.routeDynamicList.addView(createWalkingComponent("", false))
             val directionLayout = createDirectionLinearLayout(
                 routeObj.endDestination,
                 isBusStop = false,
@@ -330,8 +334,10 @@ class RouteListViewAdapter(context: Context, var userList: ArrayList<RouteListAd
                 isDestination = true
             )
             p0.routeDynamicList.addView(directionLayout)
-            p0.description.visibility = View.GONE
-            p0.delay.visibility = View.GONE
+            if(isOnlyWalking) {
+                p0.description.visibility = View.GONE
+                p0.delay.visibility = View.GONE
+            }
         }
     }
 

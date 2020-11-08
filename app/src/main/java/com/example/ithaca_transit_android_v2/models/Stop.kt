@@ -3,7 +3,7 @@ import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
 @JsonClass(generateAdapter = true)
 data class Stop(
-    val stopID: String,
+    val stopId: String,
     val lat: Double,
     val long: Double,
     val name: String

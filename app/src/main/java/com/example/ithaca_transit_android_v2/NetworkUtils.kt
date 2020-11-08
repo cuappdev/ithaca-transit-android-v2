@@ -28,7 +28,7 @@ class NetworkUtils {
         .writeTimeout(15, TimeUnit.SECONDS) // write timeout
         .readTimeout(15, TimeUnit.SECONDS) // read timeout
         .build()
-    val url = "https://transit-testflight.cornellappdev.com/api/v2/"
+    val url = "https://transit-testflight.cornellappdev.com/api/v3/"
     val mediaType = ("application/json; charset=utf-8").toMediaType()
 
     // Function that takes in query and returns list of Locations
@@ -99,10 +99,10 @@ class NetworkUtils {
     fun getBusCoords(busDataList: List<BusInformation>) {
         val busJsonArr = JSONArray()
         for(busInfo in busDataList) {
-            if (busInfo.tripId != null && busInfo.routeNumber != null) {
+            if (busInfo.tripId != null && busInfo.routeId != null) {
                 val busJson = JSONObject()
                 busJson.put("tripID", busInfo.tripId)
-                busJson.put("routeNumber", busInfo.routeNumber)
+                busJson.put("routeId", busInfo.routeId)
                 busJsonArr.put(busJson)
             }
         }
@@ -125,23 +125,23 @@ class NetworkUtils {
     // Returns an updated list of routes containing delays
     fun applyDelayRoutes(routes: List<Route>): List<Route>{
         // pulling out stopIds and routeIds for the first direction that is not a walking direction
-        val stopIDs = ArrayList<String>()
-        val tripIDs = ArrayList<String>()
+        val stopIds = ArrayList<String>()
+        val tripIds = ArrayList<String>()
         for(route in routes) {
             for (i in route.directions) {
                 if (i.type != DirectionType.WALK) {
-                    stopIDs.add(i.busStops[0].stopID)
-                    tripIDs.add(i.tripIdentifiers?.get(0) ?: "")
+                    stopIds.add(i.busStops[0].stopId)
+                    tripIds.add(i.tripIds[0])
                 }
             }
         }
 
         val arr = JSONArray()
-        for(i in 0 until stopIDs.size) {
-            if (tripIDs.get(i) != "") {
+        for(i in 0 until stopIds.size) {
+            if (tripIds[i].isNotEmpty()) {
                 val delayInfo = JSONObject()
-                delayInfo.put("stopID", stopIDs.get(i))
-                delayInfo.put("tripID", tripIDs.get(i))
+                delayInfo.put("stopID", stopIds[i])
+                delayInfo.put("tripID", tripIds[i])
                 arr.put(delayInfo)
             }
         }

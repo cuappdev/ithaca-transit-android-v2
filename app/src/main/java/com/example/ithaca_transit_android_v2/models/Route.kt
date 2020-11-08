@@ -23,7 +23,6 @@ data class Route (
     val travelDistance : Double,
     @Json(name = "endName")
     val endDestination: String
-
 ) {
     companion object {
         fun computeBoardInMin(firstBusDirection: Direction): Int {

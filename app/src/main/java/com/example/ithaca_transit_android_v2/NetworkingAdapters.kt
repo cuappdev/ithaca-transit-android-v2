@@ -89,16 +89,17 @@ class RouteAdapter {
 
     @FromJson
     private fun fromJson(json: JsonRoute): Route {
-        val firstBus = if (json.directions[0].type == DirectionType.BUS) 0 else 1
-        val boardInMins: Int =
-            if (json.directions.size != 1) Route.computeBoardInMin(json.directions[firstBus]) else 0
+        val boardInMinIndex = if (json.directions[0].type == DirectionType.BUS ||
+            (json.directions.size == 1 && json.directions[0].type == DirectionType.WALK)) {
+            0
+        } else 1
         return Route(
             json.directions,
             json.startCoords,
             json.endCoords,
             json.arrival,
             json.depart,
-            boardInMins,
+            Route.computeBoardInMin(json.directions[boardInMinIndex]),
             null,
             json.travelDistance,
             json.endDestination

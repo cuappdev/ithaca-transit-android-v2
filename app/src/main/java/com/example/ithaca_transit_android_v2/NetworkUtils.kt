@@ -2,11 +2,7 @@ package com.example.ithaca_transit_android_v2
 import android.util.Log
 import com.example.ithaca_transit_android_v2.models.*
 import com.example.ithaca_transit_android_v2.models.tracking.BusInformation
-import com.example.ithaca_transit_android_v2.models.Coordinate
-import com.example.ithaca_transit_android_v2.models.Location
-import com.example.ithaca_transit_android_v2.models.RouteOptions
 import com.squareup.moshi.JsonAdapter
-import com.squareup.moshi.JsonReader
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.Types.newParameterizedType
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
@@ -16,6 +12,7 @@ import okhttp3.Request
 import okhttp3.RequestBody.Companion.toRequestBody
 import org.json.JSONArray
 import org.json.JSONObject
+import java.nio.Buffer
 import java.util.concurrent.TimeUnit
 
 /*
@@ -87,7 +84,7 @@ class NetworkUtils {
 
         val adapter: JsonAdapter<RouteOptions> = moshi.adapter(type)
 
-        Log.d("Route", ""+adapter.fromJson(arr.toString()));
+        Log.d("Route", "" + adapter.fromJson(arr.toString()));
         return adapter.fromJson(arr.toString()) ?: RouteOptions(
             emptyList(),
             emptyList(),
@@ -119,7 +116,7 @@ class NetworkUtils {
         val body = client.newCall(request).execute().body?.string()
         val response = JSONObject(body!!)
         val arr = response.get("data")
-        Log.i("qwerty", "The server returns: "+response.toString())
+        Log.i("qwerty", "The server returns: " + response.toString())
     }
 
     // Returns an updated list of routes containing delays
@@ -149,17 +146,25 @@ class NetworkUtils {
         json.put("data", arr)
 
         val requestBody = json.toString().toRequestBody(mediaType)
+
+        val buffer = okio.Buffer()
+        requestBody.writeTo(buffer)
+        Log.d("delay-info", buffer.readUtf8())
+
         val request: Request = Request.Builder()
             .url(url + "delays")
             .post(requestBody)
             .build()
         val body = client.newCall(request).execute().body?.string()
+        Log.d("delay-info", body.toString()) //Why does response give null for data. Sucess is true but data returned is null?
         val response = JSONObject(body!!)
+        Log.d("delay-info", response.toString()) //Why does response give null for data. Sucess is true but data returned is null?
         val data:JSONArray = response.getJSONArray("data")
         Log.i("delays_from_server", data.toString())
 
         return routes.mapIndexed { index, route ->
             val delay = data.getJSONObject(index).getString("delay")
+            Log.d("timeDelayNetwork", delay)
             if (delay.equals("null")) {
                 route
             } else {

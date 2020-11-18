@@ -2,6 +2,7 @@ package com.example.ithaca_transit_android_v2.ui_adapters
 
 import android.content.Context
 import android.graphics.Typeface
+import android.util.Log
 import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
@@ -21,6 +22,7 @@ import java.math.RoundingMode
 import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.collections.ArrayList
+import kotlin.math.abs
 
 // Recycler view adapter that fills each route card with the list of Route objects that is returned by our RouteOptions networking call.
 class RouteListViewAdapter(context: Context, var userList: ArrayList<RouteListAdapterObject>) :
@@ -217,12 +219,16 @@ class RouteListViewAdapter(context: Context, var userList: ArrayList<RouteListAd
         return busHolder
     }
 
+    //If there's a delay, Board in is negative
     private fun drawRouteCard(p0: ViewHolder, p1: Int) {
         p0.routeDynamicList.removeAllViews()
         val routeObj: Route = userList[p1].data as Route
+        val sdf = SimpleDateFormat("h:mm a", Locale.US)
 
         val boardHours = routeObj.boardInMin / 60
         val boardMins = routeObj.boardInMin % 60
+
+        Log.d("timeDelayBoard", routeObj.boardInMin.toString() + " " + sdf.format(routeObj.depart))
         var timeString = "in "
         if(boardHours >= 1) {
             timeString += "$boardHours hr"
@@ -238,8 +244,13 @@ class RouteListViewAdapter(context: Context, var userList: ArrayList<RouteListAd
         }
         p0.description?.text = routeCardContext.getString(R.string.board_in_mins, timeString)
         p0.delay.text = routeCardContext.getString(R.string.on_time)
+        if(routeObj.delay != null && abs(routeObj.delay) >= 60) { //
+            Log.d("timeDelay", routeObj.delay.toString())
+            p0.delay.text =
+                routeCardContext.getString(R.string.delay, sdf.format(Date(routeObj.depart.time + routeObj.delay*1000)))
+            p0.delay.setTextColor(routeCardContext.getColor(R.color.delay))
+        }
 
-        val sdf = SimpleDateFormat("h:mm a", Locale.US)
         val routeInterval: String =
             sdf.format(routeObj.depart) + " - " + sdf.format(routeObj.arrival)
         p0.routeDuration.text = routeInterval
@@ -250,8 +261,11 @@ class RouteListViewAdapter(context: Context, var userList: ArrayList<RouteListAd
         var isStopDestinationName = true
         for(i in routeObj.directions.indices) {
             val direction = routeObj.directions[i]
+            if(direction.delay != null) {
+                Log.d("timeDelayDirection", direction.delay.toString())
+            }
             if(direction.type == DirectionType.WALK) {
-                //Adds a walking component given whatever distance is in the direction object
+                // Adds a walking component given whatever distance is in the direction object
                 var distance = "" + direction.distance.toInt() + " ft"
                 if(isOnlyWalking) {
                     distance = "" + BigDecimal(routeObj.travelDistance).setScale(
@@ -260,8 +274,8 @@ class RouteListViewAdapter(context: Context, var userList: ArrayList<RouteListAd
                     ) + " mi"
                 }
                 val walkingImageView = createWalkingComponent(distance, true)
-                //Only considers drawing a direction linear layout from whatever starting location if
-                //the destination is at the start / is only walking
+                // Only considers drawing a direction linear layout from whatever starting location if
+                // the destination is at the start / is only walking
                 if(i == 0 || isOnlyWalking) {
                     Repository.startLocation?.name?.let {
                         val directionLayout = createDirectionLinearLayout(
@@ -297,7 +311,7 @@ class RouteListViewAdapter(context: Context, var userList: ArrayList<RouteListAd
                      * Only considers adding the last bus stop to the view if it isn't the name
                      * of the next direction / isn't the end destination. Prevents extra direction layout
                      * drawn for the same stop. Still considers drawing direction layout if last bus stop has same
-                     * name as end direction, but end direction is some walking direction?
+                     * name as end direction, but end direction is some walking direction.
                      */
                     if(i < routeObj.directions.lastIndex &&
                         (busStop.name != routeObj.directions[i+1].name ||
@@ -341,6 +355,7 @@ class RouteListViewAdapter(context: Context, var userList: ArrayList<RouteListAd
             )
             p0.routeDynamicList.addView(directionLayout)
             if(isOnlyWalking) {
+                Log.d("timeDelayBoard", "Hi" + " " + sdf.format(routeObj.depart))
                 p0.description.visibility = View.GONE
                 p0.delay.visibility = View.GONE
             }

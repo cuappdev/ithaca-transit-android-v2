@@ -156,11 +156,11 @@ class NetworkUtils {
             .post(requestBody)
             .build()
         val body = client.newCall(request).execute().body?.string()
-        Log.d("delay-info", body.toString()) //Why does response give null for data. Sucess is true but data returned is null?
+        Log.d("delay-info-body", body.toString()) //Why does response give null for data. Sucess is true but data returned is null?
         val response = JSONObject(body!!)
-        Log.d("delay-info", response.toString()) //Why does response give null for data. Sucess is true but data returned is null?
+        Log.d("delay-info-response", response.toString()) //Why does response give null for data. Sucess is true but data returned is null?
         val data:JSONArray = response.getJSONArray("data")
-        Log.i("delays_from_server", data.toString())
+        Log.i("delay-info-from-server", data.toString())
 
         return routes.mapIndexed { index, route ->
             val delay = data.getJSONObject(index).getString("delay")

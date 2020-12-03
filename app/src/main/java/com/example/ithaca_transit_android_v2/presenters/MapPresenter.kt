@@ -64,7 +64,7 @@ class MapPresenter() {
     fun liveTrackingTEST(route: Route) {
         Thread(Runnable {
             for(direction in route.directions) {
-                if (direction.tripIds.isNotEmpty()) {
+                if (direction.tripIds != null && direction.tripIds.isNotEmpty()) {
                     val busInfo = BusInformation(
                         direction.tripIds.first(),
                         direction.routeId

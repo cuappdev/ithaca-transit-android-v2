@@ -12,6 +12,7 @@ import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.example.ithaca_transit_android_v2.R
 import com.example.ithaca_transit_android_v2.Repository
+import com.example.ithaca_transit_android_v2.models.Direction
 import com.example.ithaca_transit_android_v2.models.DirectionType
 import com.example.ithaca_transit_android_v2.models.Route
 import com.example.ithaca_transit_android_v2.views.BusNumberComponent
@@ -219,16 +220,31 @@ class RouteListViewAdapter(context: Context, var userList: ArrayList<RouteListAd
         return busHolder
     }
 
-    //If there's a delay, Board in is negative
     private fun drawRouteCard(p0: ViewHolder, p1: Int) {
         p0.routeDynamicList.removeAllViews()
         val routeObj: Route = userList[p1].data as Route
         val sdf = SimpleDateFormat("h:mm a", Locale.US)
 
-        val boardHours = routeObj.boardInMin / 60
-        val boardMins = routeObj.boardInMin % 60
-
-        Log.d("timeDelayBoard", routeObj.boardInMin.toString() + " " + sdf.format(routeObj.depart))
+        var firstBusDirection: Direction? = null
+        for(i in routeObj.directions.indices) {
+            val direction = routeObj.directions[i]
+            if (direction.type == DirectionType.BUS) {
+                firstBusDirection = direction
+                break
+            }
+        }
+        val firstBusDirectionDelay: Int? = if(firstBusDirection?.delay != null) {
+            firstBusDirection.delay
+        } else {
+            null
+        }
+        val boardInMin = if(firstBusDirectionDelay != null && abs(firstBusDirectionDelay) >= 60) {
+            routeObj.boardInMin + firstBusDirectionDelay/60
+        } else {
+            routeObj.boardInMin
+        }
+        val boardHours = boardInMin / 60
+        val boardMins = boardInMin % 60
         var timeString = "in "
         if(boardHours >= 1) {
             timeString += "$boardHours hr"
@@ -243,12 +259,25 @@ class RouteListViewAdapter(context: Context, var userList: ArrayList<RouteListAd
             timeString = "now"
         }
         p0.description?.text = routeCardContext.getString(R.string.board_in_mins, timeString)
+
         p0.delay.text = routeCardContext.getString(R.string.on_time)
-        if(routeObj.delay != null && abs(routeObj.delay) >= 60) { //
-            Log.d("timeDelay", routeObj.delay.toString())
-            p0.delay.text =
-                routeCardContext.getString(R.string.delay, sdf.format(Date(routeObj.depart.time + routeObj.delay*1000)))
-            p0.delay.setTextColor(routeCardContext.getColor(R.color.delay))
+        p0.delay.setTypeface(null, Typeface.BOLD)
+        if(firstBusDirectionDelay != null && abs(firstBusDirectionDelay) >= 60) {
+            // This requires some further investigation. If a route is early, it's probably already
+            // passed. Maybe don't draw onto ListView? In this case boardMins is most likely negative I
+            // believe.
+            if(firstBusDirectionDelay <= -60) {
+                p0.delay.text = routeCardContext.getString(
+                    R.string.early,
+                    sdf.format(Date(firstBusDirection!!.startTime.time + firstBusDirectionDelay * 1000))
+                )
+            } else {
+                p0.delay.text = routeCardContext.getString(
+                    R.string.late,
+                    sdf.format(Date(firstBusDirection!!.startTime.time + firstBusDirectionDelay * 1000))
+                )
+                p0.delay.setTextColor(routeCardContext.getColor(R.color.delay))
+            }
         }
 
         val routeInterval: String =
@@ -261,9 +290,6 @@ class RouteListViewAdapter(context: Context, var userList: ArrayList<RouteListAd
         var isStopDestinationName = true
         for(i in routeObj.directions.indices) {
             val direction = routeObj.directions[i]
-            if(direction.delay != null) {
-                Log.d("timeDelayDirection", direction.delay.toString())
-            }
             if(direction.type == DirectionType.WALK) {
                 // Adds a walking component given whatever distance is in the direction object
                 var distance = "" + direction.distance.toInt() + " ft"
@@ -297,7 +323,7 @@ class RouteListViewAdapter(context: Context, var userList: ArrayList<RouteListAd
                     stopName,
                     isBusStop = isBusRoute,
                     drawSegmentAbove =
-                        i > 0 && routeObj.directions[i - 1].type == DirectionType.BUS && stopName != routeObj.endDestination,
+                    i > 0 && routeObj.directions[i - 1].type == DirectionType.BUS && stopName != routeObj.endDestination,
                     drawSegmentBelow = isBusRoute,
                     isDestination = stopName == routeObj.endDestination)
                 p0.routeDynamicList.addView(directionLayout)
@@ -307,26 +333,25 @@ class RouteListViewAdapter(context: Context, var userList: ArrayList<RouteListAd
                 }
                 if(direction.busStops.isNotEmpty()) {
                     val busStop = direction.busStops.last()
-                    /**
-                     * Only considers adding the last bus stop to the view if it isn't the name
-                     * of the next direction / isn't the end destination. Prevents extra direction layout
-                     * drawn for the same stop. Still considers drawing direction layout if last bus stop has same
-                     * name as end direction, but end direction is some walking direction.
-                     */
-                    if(i < routeObj.directions.lastIndex &&
-                        (busStop.name != routeObj.directions[i+1].name ||
-                                i == routeObj.directions.lastIndex - 1)) {
-                                    p0.routeDynamicList.addView(
-                                        createDirectionLinearLayout(
-                                            busStop.name,
-                                            isBusStop = true,
-                                            drawSegmentAbove = true,
-                                            drawSegmentBelow = i != routeObj.directions.lastIndex - 1,
-                                            isDestination = false
-                                        )
-                                    )
-                    //This considers if the destination happens to be the last stop of the current
-                    //direction
+                     // Only considers adding the last bus stop to the view if it isn't the name
+                     // of the next direction / isn't the end destination. Prevents extra direction layout
+                     // drawn for the same stop. Still considers drawing direction layout if last bus stop has same
+                     // name as end direction, but end direction is some walking direction
+                    if (i < routeObj.directions.lastIndex &&
+                        (busStop.name != routeObj.directions[i + 1].name ||
+                                routeObj.directions[i + 1].type == DirectionType.WALK)
+                    ) {
+                        p0.routeDynamicList.addView(
+                            createDirectionLinearLayout(
+                                busStop.name,
+                                isBusStop = true,
+                                drawSegmentAbove = true,
+                                drawSegmentBelow = i != routeObj.directions.lastIndex - 1,
+                                isDestination = false
+                            )
+                        )
+                    // This considers if the destination happens to be the last stop of the current
+                    // direction
                     } else if(i == routeObj.directions.lastIndex) {
                         if(busStop.name != routeObj.endDestination) isStopDestinationName = false
                         p0.routeDynamicList.addView(
@@ -345,7 +370,12 @@ class RouteListViewAdapter(context: Context, var userList: ArrayList<RouteListAd
         // Creates end destination layout for route that's just walking, hides boarding text if so
         // Also creates an empty walking component to the destination if last stop wasn't destination
         if(isOnlyWalking || !isStopDestinationName) {
-            if(!isStopDestinationName) p0.routeDynamicList.addView(createWalkingComponent("", false))
+            if (!isStopDestinationName) p0.routeDynamicList.addView(
+                createWalkingComponent(
+                    "",
+                    false
+                )
+            )
             val directionLayout = createDirectionLinearLayout(
                 routeObj.endDestination,
                 isBusStop = false,
@@ -355,7 +385,6 @@ class RouteListViewAdapter(context: Context, var userList: ArrayList<RouteListAd
             )
             p0.routeDynamicList.addView(directionLayout)
             if(isOnlyWalking) {
-                Log.d("timeDelayBoard", "Hi" + " " + sdf.format(routeObj.depart))
                 p0.description.visibility = View.GONE
                 p0.delay.visibility = View.GONE
             }

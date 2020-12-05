@@ -2,7 +2,6 @@ package com.example.ithaca_transit_android_v2.ui_adapters
 
 import android.content.Context
 import android.graphics.Typeface
-import android.util.Log
 import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View

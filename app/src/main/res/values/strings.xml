@@ -1,6 +1,9 @@
 <resources>
     <string name="app_name">Ithaca Transit</string>
     <string name="board_in_mins">Board %1$s</string>
+    <string name="depart_at">Depart at &lt;b>%1$s&lt;/b> from &lt;b>%2$s&lt;/b></string>
+    <string name="trip_duration">Trip Duration: %1$s</string>
+    <string name="walk_to">Walk to &lt;b>%1$s&lt;/b></string>
     <string name="on_time">On Time</string>
     <string name="late">Late - %1$s</string>
     <string name="early">Early - %1$s</string>

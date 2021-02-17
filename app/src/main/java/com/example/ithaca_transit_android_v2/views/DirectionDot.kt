@@ -12,6 +12,7 @@ class DirectionDot(context: Context) : View(context) {
     private var useNestedCircles = false
     private var drawSegmentAbove:Boolean = false
     private var drawSegmentBelow:Boolean = false
+    private var drawOutline: Boolean = false
     private var radius:Float = -1f
     private var verticalPadding:Float = -1f
     private var lineWidth:Float = -1f
@@ -22,7 +23,8 @@ class DirectionDot(context: Context) : View(context) {
                 drawSegmentBelow:Boolean,
                 radius: Float,
                 lineWidth: Float,
-                verticalPadding:Float):this(context) {
+                verticalPadding:Float,
+                drawOutline: Boolean = false):this(context) {
         val paint = Paint(Paint.ANTI_ALIAS_FLAG)
         when (colorStr) {
             "blue" -> paint.setARGB(255, 7, 157, 220)
@@ -35,6 +37,7 @@ class DirectionDot(context: Context) : View(context) {
         this.drawSegmentBelow = drawSegmentBelow
         this.verticalPadding = verticalPadding
         this.lineWidth = lineWidth
+        this.drawOutline = drawOutline
 
         initWhitePaint()
     }
@@ -57,7 +60,16 @@ class DirectionDot(context: Context) : View(context) {
         canvas.drawCircle(radius,radius + this.verticalPadding, radius, primaryColor)
         if (useNestedCircles) {
             canvas.drawCircle(radius, radius + this.verticalPadding, radius*2/3, this.whiteColor)
-            canvas.drawCircle(radius, radius + this.verticalPadding, radius/3, this.primaryColor)
+            if(drawOutline) {
+                canvas.drawCircle(radius, radius + this.verticalPadding, radius/3, this.whiteColor)
+            } else {
+                canvas.drawCircle(
+                    radius,
+                    radius + this.verticalPadding,
+                    radius / 3,
+                    this.primaryColor
+                )
+            }
         }
     }
 }

@@ -5,7 +5,6 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     app:ignore="NamespaceTypo">
-
     <LinearLayout xmlns:app="http://schemas.android.com/apk/res-auto"
         android:id="@+id/bottom_sheet"
         android:layout_width="match_parent"
@@ -14,7 +13,6 @@
         app:behavior_hideable="false"
         app:behavior_peekHeight="50dp"
         app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior">
-
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_marginTop="15dp"
@@ -95,21 +93,16 @@
                     android:textColor="@color/leaveNowGray"
                     android:textSize="16sp" />
             </RelativeLayout>
-
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/boarding_soon_routes"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                app:layout_behavior="@string/appbar_scrolling_view_behavior"
                 android:layout_marginLeft="16dp"
                 android:layout_marginTop="8dp"
                 android:layout_marginRight="16dp"
-                android:clipToPadding="false"
-                android:nestedScrollingEnabled="true">
-
+                android:clipToPadding="false">
             </androidx.recyclerview.widget.RecyclerView>
         </LinearLayout>
-
     </LinearLayout>
-
-
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

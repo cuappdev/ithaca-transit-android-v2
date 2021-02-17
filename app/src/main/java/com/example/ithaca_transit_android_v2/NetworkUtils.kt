@@ -124,7 +124,7 @@ class NetworkUtils {
         val tripIds = ArrayList<String>()
         for(route in routes) {
             for (i in route.directions) {
-                if (i.type != DirectionType.WALK && i.tripIds != null && i.tripIds.isNotEmpty()) {
+                if (i.type != DirectionType.WALK && i.tripIds != null) {
                     stopIds.add(i.busStops[0].stopId)
                     tripIds.add(i.tripIds[0])
                 }

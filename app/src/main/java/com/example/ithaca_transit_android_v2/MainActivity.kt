@@ -78,6 +78,7 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
         boarding_soon_routes.layoutManager =
             LinearLayoutManager(this, RecyclerView.VERTICAL, false)
         boarding_soon_routes.adapter = mRouteListViewAdapter
+        boarding_soon_routes.isNestedScrollingEnabled = true
         
 
 

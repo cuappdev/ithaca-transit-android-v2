@@ -21,7 +21,7 @@ data class Direction(
     val routeId: String?,
     @Json(name = "tripIds")
     val tripIds: List<String>?,
-    //val delay: Int
+    val delay: Int,
     val busNumber: Int?,
     val distance: Double
 )

@@ -126,6 +126,32 @@ class RouteOptionsPresenter(
                             Repository._clearMapView();
                             return@subscribe
                         }
+
+                        /**
+                         * When a route is clicked on in the ListView, and someone stays on it in
+                         * the RouteDetailHolder, if they go back the Route is still there, unsure whether
+                         * or not to filter out old routes or re-update the list
+                         */
+//                        //Filter out old routes?
+//                        state.routeOptions.boardingSoon.filter { route ->
+//                            Route.computeBoardInMinWithDelay(route) > 0
+//                        }
+//
+//                        state.routeOptions.fromStop.filter { route ->
+//                            Route.computeBoardInMinWithDelay(route) > 0
+//                        }
+//
+                        //update?
+//                        state.routeOptions = NetworkUtils().getRouteOptions(
+//                            state.startLocation.coordinate,
+//                            state.destLocation.coordinate,
+//
+//                            System.currentTimeMillis() / 1000.0,
+//                            false,
+//                            state.destLocation.name
+//                        )
+
+
                         if (state.routeOptions.boardingSoon.isNotEmpty()) {
                             Repository._updateMapView(state.routeOptions.boardingSoon[0])
                         } else if (state.routeOptions.fromStop.isNotEmpty()) {

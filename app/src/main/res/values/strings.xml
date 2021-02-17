@@ -5,4 +5,6 @@
     <string name="trip_duration">Trip Duration: %1$s</string>
     <string name="walk_to">Walk to &lt;b>%1$s&lt;/b></string>
     <string name="on_time">On Time</string>
+    <string name="late">Late - %1$s</string>
+    <string name="early">Early - %1$s</string>
 </resources>

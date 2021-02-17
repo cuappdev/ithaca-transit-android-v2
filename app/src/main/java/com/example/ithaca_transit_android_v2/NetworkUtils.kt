@@ -2,11 +2,7 @@ package com.example.ithaca_transit_android_v2
 import android.util.Log
 import com.example.ithaca_transit_android_v2.models.*
 import com.example.ithaca_transit_android_v2.models.tracking.BusInformation
-import com.example.ithaca_transit_android_v2.models.Coordinate
-import com.example.ithaca_transit_android_v2.models.Location
-import com.example.ithaca_transit_android_v2.models.RouteOptions
 import com.squareup.moshi.JsonAdapter
-import com.squareup.moshi.JsonReader
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.Types.newParameterizedType
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
@@ -87,7 +83,6 @@ class NetworkUtils {
 
         val adapter: JsonAdapter<RouteOptions> = moshi.adapter(type)
 
-        Log.d("Route", ""+adapter.fromJson(arr.toString()));
         return adapter.fromJson(arr.toString()) ?: RouteOptions(
             emptyList(),
             emptyList(),
@@ -119,7 +114,7 @@ class NetworkUtils {
         val body = client.newCall(request).execute().body?.string()
         val response = JSONObject(body!!)
         val arr = response.get("data")
-        Log.i("qwerty", "The server returns: "+response.toString())
+        Log.i("qwerty", "The server returns: " + response.toString())
     }
 
     // Returns an updated list of routes containing delays
@@ -149,6 +144,7 @@ class NetworkUtils {
         json.put("data", arr)
 
         val requestBody = json.toString().toRequestBody(mediaType)
+
         val request: Request = Request.Builder()
             .url(url + "delays")
             .post(requestBody)
@@ -156,7 +152,6 @@ class NetworkUtils {
         val body = client.newCall(request).execute().body?.string()
         val response = JSONObject(body!!)
         val data:JSONArray = response.getJSONArray("data")
-        Log.i("delays_from_server", data.toString())
 
         return routes.mapIndexed { index, route ->
             val delay = data.getJSONObject(index).getString("delay")

@@ -92,40 +92,75 @@
             android:layout_weight="0.62"
             android:orientation="vertical">
 
-            <EditText
-                android:id="@+id/edit_start_loc"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:background="@android:color/transparent"
-                android:ellipsize="end"
-                android:gravity="center_vertical"
-                android:inputType="textVisiblePassword"
-                android:lines="1"
-                android:maxLines="1"
-                android:minWidth="150dp"
-                android:paddingTop="15dp"
-                android:paddingBottom="15dp"
-                android:scrollHorizontally="true" />
+            <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <EditText
+                    android:id="@+id/edit_start_loc"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@android:color/transparent"
+                    android:ellipsize="end"
+                    android:gravity="center_vertical"
+                    android:inputType="textVisiblePassword"
+                    android:lines="1"
+                    android:maxLines="1"
+                    android:minWidth="150dp"
+                    android:paddingTop="15dp"
+                    android:paddingBottom="15dp"
+                    android:scrollHorizontally="true" />
+
+                <ImageButton
+                    android:id="@+id/cancel_start"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginRight="10dp"
+                    android:layout_gravity="right|center_vertical"
+                    android:background="@drawable/ic_cancel_24px"
+                    android:tint="#DADADA"
+                    android:scaleType="fitXY"/>
+
+            </FrameLayout>
+
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
                 android:background="#eee" />
 
-            <EditText
-                android:id="@+id/edit_dest_loc"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:background="@android:color/transparent"
-                android:ellipsize="end"
-                android:gravity="center_vertical"
-                android:inputType="textVisiblePassword"
-                android:lines="1"
-                android:maxLines="1"
-                android:minWidth="150dp"
-                android:paddingTop="15dp"
-                android:paddingBottom="15dp"
-                android:scrollHorizontally="true" />
+            <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <EditText
+                    android:id="@+id/edit_dest_loc"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@android:color/transparent"
+                    android:ellipsize="end"
+                    android:gravity="center_vertical"
+                    android:inputType="textVisiblePassword"
+                    android:lines="1"
+                    android:maxLines="1"
+                    android:minWidth="150dp"
+                    android:paddingTop="15dp"
+                    android:paddingBottom="15dp"
+                    android:scrollHorizontally="true" />
+
+                <ImageButton
+                    android:id="@+id/cancel_end"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginRight="10dp"
+                    android:layout_gravity="right|center_vertical"
+                    android:background="@drawable/ic_cancel_24px"
+                    android:tint="#DADADA"
+                    android:scaleType="fitXY"/>
+
+            </FrameLayout>
+
+
         </LinearLayout>
 
         <LinearLayout

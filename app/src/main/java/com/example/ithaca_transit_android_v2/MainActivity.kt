@@ -73,14 +73,10 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
         locations_list.adapter = mSearchAdapter
         change_locations_list.adapter = mSearchAdapter
 
-
-
         boarding_soon_routes.layoutManager =
             LinearLayoutManager(this, RecyclerView.VERTICAL, false)
         boarding_soon_routes.adapter = mRouteListViewAdapter
         boarding_soon_routes.isNestedScrollingEnabled = true
-        
-
 
         initializeLocationManager()
         //fetchRouteData()

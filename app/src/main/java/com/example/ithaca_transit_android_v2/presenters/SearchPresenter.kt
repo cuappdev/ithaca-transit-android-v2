@@ -2,6 +2,7 @@ package com.example.ithaca_transit_android_v2.presenters
 
 import android.app.Activity
 import android.content.Context
+import android.graphics.PorterDuff
 import android.text.Editable
 import android.text.TextWatcher
 import android.util.Log
@@ -10,6 +11,7 @@ import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 import com.example.ithaca_transit_android_v2.MapFragment
 import com.example.ithaca_transit_android_v2.NetworkUtils
+import com.example.ithaca_transit_android_v2.R
 import com.example.ithaca_transit_android_v2.Repository
 import com.example.ithaca_transit_android_v2.models.Coordinate
 import com.example.ithaca_transit_android_v2.models.Location
@@ -150,6 +152,13 @@ class SearchPresenter(
             view.edit_start_loc.addTextChangedListener(watcherChangeLoc)
             view.edit_dest_loc.addTextChangedListener(watcherChangeLoc)
 
+            view.cancel_start.setOnClickListener() {
+                view.edit_start_loc.text.clear()
+            }
+            view.cancel_end.setOnClickListener() {
+                view.edit_dest_loc.text.clear()
+            }
+
             view.edit_start_loc.setOnFocusChangeListener { view, hasFocus ->
                 if (hasFocus && mEditing) {
                     mEditingStart = true
@@ -235,6 +244,10 @@ class SearchPresenter(
             var a = NetworkUtils()
         } catch (e: Exception) {
             Log.w("qwerty", e.stackTrace.toString())
+        }
+
+        view.search_input.setOnClickListener() {
+            it.search_input.text.clear()
         }
 
         return observable

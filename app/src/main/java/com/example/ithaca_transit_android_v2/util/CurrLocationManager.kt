@@ -32,6 +32,7 @@ class CurrLocationManager(c: Context, locationManager: LocationManager, activity
                 Manifest.permission.ACCESS_FINE_LOCATION
             ) == PackageManager.PERMISSION_GRANTED
         ) {
+            Repository.isPermissionGranted = true
             locationCallback = object : LocationCallback() {
                 override fun onLocationResult(locationResult: LocationResult?) {
                     Repository.currentLocation = locationResult?.lastLocation

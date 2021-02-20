@@ -9,6 +9,7 @@ object Repository {
     var currentLocation: android.location.Location? = null
     var startLocation: Location? = null
     var destinationLocation: Location? = null
+    var isPermissionGranted = false
 
     // Called from the SearchView everytime the RouteOptionsView should change
     var _updateRouteFromSearch = fun(hidden: Boolean) {}

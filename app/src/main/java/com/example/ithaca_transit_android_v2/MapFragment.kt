@@ -1,11 +1,14 @@
 package com.example.ithaca_transit_android_v2
 
+import android.Manifest
+import android.content.pm.PackageManager
 import android.graphics.Color
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.app.ActivityCompat
 import androidx.fragment.app.Fragment
 import com.example.ithaca_transit_android_v2.R.id.start
 import com.example.ithaca_transit_android_v2.models.*
@@ -90,6 +93,8 @@ class MapFragment: Fragment() , OnMapReadyCallback, GoogleMap.OnPolylineClickLis
     override fun onMapReady(googleMap: GoogleMap) {
         mapDisposable = mMapPresenter.initMapView(googleMap)
         googleMap.uiSettings.isMyLocationButtonEnabled = false
-        googleMap.isMyLocationEnabled = true
+        if (Repository.isPermissionGranted) {
+            googleMap.isMyLocationEnabled = true
+        }
     }
 }

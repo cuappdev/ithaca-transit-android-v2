@@ -51,6 +51,7 @@ class SearchViewAdapter(context: Context, private var locations: List<Location> 
         val place = locations[position]
         viewHolder.placeNameTextView?.text = place.name
 
+        // Icon comments
         if (place.name === "Current Location") {
             viewHolder.placeIcon?.setBackgroundResource(R.drawable.ic_location_blue)
             viewHolder.placeLocTextView?.visibility = View.GONE

@@ -24,7 +24,7 @@ class NetworkUtils {
         .writeTimeout(15, TimeUnit.SECONDS) // write timeout
         .readTimeout(15, TimeUnit.SECONDS) // read timeout
         .build()
-    val url = "https://transit-testflight.cornellappdev.com/api/v3/"
+    val url = "https://transit-backend.cornellappdev.com/api/"
     val mediaType = ("application/json; charset=utf-8").toMediaType()
 
     // Function that takes in query and returns list of Locations
@@ -33,7 +33,7 @@ class NetworkUtils {
         json.put("query", query)
         val requestBody = json.toString().toRequestBody(mediaType)
         val request: Request = Request.Builder()
-            .url(url + "appleSearch")
+            .url(url + "v2/appleSearch")
             .post(requestBody)
             .build()
 
@@ -66,7 +66,7 @@ class NetworkUtils {
 
         val requestBody = json.toString().toRequestBody(mediaType)
         val request: Request = Request.Builder()
-            .url(url + "route")
+            .url(url + "v3/route")
             .post(requestBody)
             .build()
 
@@ -107,7 +107,7 @@ class NetworkUtils {
 
         val requestBody = json.toString().toRequestBody(mediaType)
         val request: Request = Request.Builder()
-            .url(url + "tracking")
+            .url(url + "v3/tracking")
             .post(requestBody)
             .build()
 
@@ -146,7 +146,7 @@ class NetworkUtils {
         val requestBody = json.toString().toRequestBody(mediaType)
 
         val request: Request = Request.Builder()
-            .url(url + "delays")
+            .url(url + "v3/delays")
             .post(requestBody)
             .build()
         val body = client.newCall(request).execute().body?.string()

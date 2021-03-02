@@ -1,11 +1,20 @@
 package com.example.ithaca_transit_android_v2
 
+import com.example.ithaca_transit_android_v2.models.Coordinate
 import com.example.ithaca_transit_android_v2.models.Location
+import com.example.ithaca_transit_android_v2.models.LocationType
 import com.example.ithaca_transit_android_v2.models.Route
 
 object Repository {
     init {
     }
+    // this sets the location to the middle of Cornell's campus
+    var defaultLocation = Location(
+        type = LocationType.APPLE_PLACE,
+        name = "Cornell",
+        coordinate = Coordinate(42.4491, -76.4833),
+        detail = "default location for map zoom")
+
     var currentLocation: android.location.Location? = null
     var startLocation: Location? = null
     var destinationLocation: Location? = null

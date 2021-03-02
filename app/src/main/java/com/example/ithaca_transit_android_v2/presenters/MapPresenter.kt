@@ -3,26 +3,23 @@ package com.example.ithaca_transit_android_v2.presenters
 import android.graphics.Color
 import android.util.Log
 import com.example.ithaca_transit_android_v2.NetworkUtils
-
 import com.example.ithaca_transit_android_v2.Repository
-import com.example.ithaca_transit_android_v2.models.*
+import com.example.ithaca_transit_android_v2.models.DirectionType
+import com.example.ithaca_transit_android_v2.models.Route
 import com.example.ithaca_transit_android_v2.models.tracking.BusInformation
-
-import com.example.ithaca_transit_android_v2.states.*
-import com.example.ithaca_transit_android_v2.ui_adapters.SearchViewAdapter
+import com.example.ithaca_transit_android_v2.states.MapLaunchState
+import com.example.ithaca_transit_android_v2.states.MapState
+import com.example.ithaca_transit_android_v2.states.SelectedTrip
+import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
+import com.google.android.gms.maps.model.LatLng
+import com.google.android.gms.maps.model.Polyline
+import com.google.android.gms.maps.model.PolylineOptions
 import io.reactivex.Observable
 import io.reactivex.ObservableEmitter
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
-
-import kotlinx.android.synthetic.main.search_main.view.*
-import kotlinx.android.synthetic.main.search_secondary.view.*
-import com.google.android.gms.maps.model.LatLng
-import com.google.android.gms.maps.CameraUpdateFactory
-import com.google.android.gms.maps.model.Polyline
-import com.google.android.gms.maps.model.PolylineOptions
 
 class MapPresenter() {
 
@@ -42,7 +39,7 @@ class MapPresenter() {
                 emitter.onNext(
                     SelectedTrip(displayRoute)
                 )
-                liveTrackingTEST(displayRoute)
+//                liveTrackingTEST(displayRoute)
             }
             Repository._updateMapView = callback
 
@@ -78,21 +75,18 @@ class MapPresenter() {
     fun drawRoute(map: GoogleMap, route: Route) {
         for(direction in route.directions){
             val options = PolylineOptions()
+
+            // change color of path based on direction type
             if (direction.type == DirectionType.BUS) {
                 options.color(Color.rgb(0,173,255))
-                options.width(10f)
-                for (coordinate in direction.listOfCoordinates){
-                    val latLng = LatLng(coordinate.latitude, coordinate.longitude)
-                    options.add(latLng)
-                }
-            }
-            if(direction.type == DirectionType.WALK) {
+            } else {
                 options.color(Color.rgb(160,160,160))
-                options.width(10f)
-                for (coordinate in direction.listOfCoordinates){
-                    val latLng = LatLng(coordinate.latitude, coordinate.longitude)
-                    options.add(latLng)
-                }
+            }
+
+            options.width(10f)
+            for (coordinate in direction.listOfCoordinates){
+                val latLng = LatLng(coordinate.latitude, coordinate.longitude)
+                options.add(latLng)
             }
             val polyline =  map.addPolyline(options)
             polylines.add(polyline)
@@ -111,19 +105,28 @@ class MapPresenter() {
             }
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe({ state ->
-                when(state) {
+                when (state) {
                     is MapLaunchState -> {
                         map.animateCamera(
                             CameraUpdateFactory.newLatLngZoom(
                                 LatLng(
-                                    42.4491,
-                                    -76.4833
+                                    Repository.defaultLocation.coordinate.latitude,
+                                    Repository.defaultLocation.coordinate.longitude
                                 ), 15.5f
                             )
                         )
                     }
                     is SelectedTrip -> {
-                        drawRoute(map,state.selectedRoute)
+                        drawRoute(map, state.selectedRoute)
+
+                        // map zooms to start location of selected route
+                        map.animateCamera(CameraUpdateFactory.newLatLngZoom(
+                            Repository.startLocation?.let { loc ->
+                                LatLng(loc.coordinate.latitude, loc.coordinate.longitude)
+                            } ?: LatLng(
+                                Repository.defaultLocation.coordinate.latitude,
+                                Repository.defaultLocation.coordinate.longitude
+                            ), 15.5f))
                     }
                 }
             }, { error -> Log.e("An Error Occurred", error.toString()) })

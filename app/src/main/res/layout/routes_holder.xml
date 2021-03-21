@@ -70,12 +70,12 @@
 
                 <ImageView
                     android:id="@+id/ic_clock"
-                    android:layout_width="26dp"
-                    android:layout_height="22dp"
+                    android:layout_width="24dp"
+                    android:layout_height="20dp"
                     android:layout_below="@+id/fab"
                     android:layout_alignLeft="@+id/chooseTime"
                     android:layout_marginLeft="-28dp"
-                    android:layout_marginTop="6dp"
+                    android:layout_marginTop="8dp"
                     android:src="@drawable/ic_clock" />
 
                 <TextView
@@ -89,7 +89,7 @@
                     android:layout_marginEnd="20dp"
                     android:layout_marginRight="20dp"
                     android:layout_marginBottom="20dp"
-                    android:text="Leave now"
+                    android:text="Leaving now"
                     android:textColor="@color/leaveNowGray"
                     android:textSize="16sp" />
             </RelativeLayout>

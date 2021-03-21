@@ -89,16 +89,6 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
         mCurrLocationManager = CurrLocationManager(this, locationManager, this)
     }
 
-    override fun onStop() {
-        super.onStop()
-        if (!searchDisposable.isDisposed) {
-            searchDisposable.dispose()
-        }
-        if (!routeCardDisposable.isDisposed) {
-            routeCardDisposable.dispose()
-        }
-    }
-
     /* When user grants privileges to the user, initialize the location manager */
     override fun onRequestPermissionsResult(
         requestCode: Int,

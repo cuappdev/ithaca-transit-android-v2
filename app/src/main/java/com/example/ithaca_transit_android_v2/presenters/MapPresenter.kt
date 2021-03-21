@@ -83,7 +83,7 @@ class MapPresenter() {
                 options.color(Color.rgb(160,160,160))
             }
 
-            options.width(10f)
+            options.width(18f)
             for (coordinate in direction.listOfCoordinates){
                 val latLng = LatLng(coordinate.latitude, coordinate.longitude)
                 options.add(latLng)

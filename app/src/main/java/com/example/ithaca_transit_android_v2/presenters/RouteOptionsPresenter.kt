@@ -1,7 +1,6 @@
 package com.example.ithaca_transit_android_v2.presenters
 
 import android.content.Context
-import android.util.Log
 import android.util.TypedValue
 import android.view.View
 import android.widget.LinearLayout
@@ -65,7 +64,6 @@ class RouteOptionsPresenter(
             Repository._updateRouteDetailed = adapterCallback
 
             bottom_sheet.back.setOnClickListener { view ->
-                Log.d("Detailed", "Detailed")
                 if (Repository.startLocation != null && Repository.destinationLocation != null) {
                     emitter.onNext(
                         RouteListState(
@@ -166,7 +164,7 @@ class RouteOptionsPresenter(
                             Repository._updateMapView(state.routeOptions.walking[0])
                         }
 
-                        setBottomSheetHeight(140f)
+                        setBottomSheetHeight(400f)
 
                         // Refresh Views
                         routeCardHolder.boarding_soon_routes.invalidate()

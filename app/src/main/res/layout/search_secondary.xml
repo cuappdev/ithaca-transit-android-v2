@@ -187,7 +187,7 @@
         android:clickable="false"
         android:orientation="vertical">
 
-        <com.example.ithaca_transit_android_v2.ui.MaxHeightListView
+        <com.cornellappdev.android.ithaca_transit.ui.MaxHeightListView
             android:id="@+id/change_locations_list"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

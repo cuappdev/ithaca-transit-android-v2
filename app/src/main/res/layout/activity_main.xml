@@ -10,7 +10,7 @@
 
 
     <fragment
-        android:name="com.example.ithaca_transit_android_v2.MapFragment"
+        android:name="com.cornellappdev.android.ithaca_transit.MapFragment"
         android:id="@+id/map_fragment"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />

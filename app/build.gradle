@@ -14,7 +14,7 @@ android {
     compileSdkVersion 30
     buildToolsVersion '30.0.0'
     defaultConfig {
-        applicationId "com.example.ithaca_transit_android_v2"
+        applicationId "com.cornellappdev.android.ithaca_transit"
         minSdkVersion 23
         targetSdkVersion 30
         versionCode 1
